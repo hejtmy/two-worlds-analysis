@@ -1,6 +1,9 @@
 #give me folder
-source("lib/brainvr-reader/Loading.R")
-load_brainvr_reader("lib/brainvr-reader")
+install.packages("../brainvr-reader/",  type = "source", repos=NULL)
+library(brainvr.R)
+
+detach("package:brainvr.R", unload = TRUE)
+library(restimoter)
 
 source_folder("TwoWorlds")
 
@@ -10,7 +13,6 @@ dir <- "D:/GoogleDrive/Davis/Data/pilot/neo1/"
 obj <- load_experiment(dir, UnityObject)
 changed <- preprocess_player_log(obj$data$player_log)
 if(changed) save_preprocessed_player(dir, obj$data$player_log, obj$timestamp)
-
 
 ## Multiple logs version
 experiments <- load_experiments(dir, UnityObject)
