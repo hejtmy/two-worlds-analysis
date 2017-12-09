@@ -1,6 +1,0 @@
-[submodule "lib/brainvr-reader"]
-	path = lib/brainvr-reader
-	url = https://github.com/BrainVR/brainvr-reader
-[submodule "lib/restimote-reader"]
-	path = lib/restimote-reader
-	url = https://github.com/hejtmy/restimote-reader
