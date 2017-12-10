@@ -5,7 +5,7 @@ library(brainvr.R)
 detach("package:brainvr.R", unload = TRUE)
 library(restimoter)
 
-source_folder("TwoWorlds")
+source("TwoWorlds/twoworld-getters.R")
 
 dir <- "D:/GoogleDrive/Davis/Data/pilot/neo1/"
 
@@ -13,6 +13,18 @@ dir <- "D:/GoogleDrive/Davis/Data/pilot/neo1/"
 obj <- load_experiment(dir, UnityObject)
 changed <- preprocess_player_log(obj$data$player_log)
 if(changed) save_preprocessed_player(dir, obj$data$player_log, obj$timestamp)
+
+obj$map_limits <- list(x = c(-2, 105), y = c(0, 100))
+obj <- mirror_axes(obj)
+obj <- translate_positions(obj, c(33.5, 0, 47.75))
+
+plt <- create_plot(obj)
+dt <- get_player_log_trial(obj, 2)
+plt <- plot_add_player_path(plt, dt)
+
+start_end <- get_trial_start_goal_pos(obj, 2)
+plt <- plot_add_points(plt, start_end)
+plt
 
 ## Multiple logs version
 experiments <- load_experiments(dir, UnityObject)
