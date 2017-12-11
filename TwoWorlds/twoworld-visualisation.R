@@ -7,3 +7,26 @@ plot_learning_trial <- function(obj, trialId){
   plt <- plot_add_points(plt, start_end)
   plt
 }
+
+plot_sop_points <- function(obj, trialIds){
+  plt <- brainvr.R::create_plot(obj)
+  for(id in trialIds){
+    plt <- add_pointing_direction(plt, obj, trialId)
+  }
+  return(plt)
+}
+
+plot_sop_point <- function(obj, trialId){
+  plt <- brainvr.R::create_plot(obj)
+  plt <- add_pointing_direction(plt, obj, trialId)
+}
+
+add_pointing_direction <- function(plt, obj, trialId){
+  ls <- get_trial_start_point_pos(obj, trialId)
+  plt <- brainvr.R::plot_add_points(plt, ls)
+  pointings <- sop_trial_pointing(obj, trialId)
+  df <- build_directions_df(ls$start, c(pointings$Rotation.Controller.x, pointings$correct_angle), 
+                            type = c("rotation", "correct angle"))
+  plt <- plot_add_directions(plt, df)
+  return(plt)
+}
