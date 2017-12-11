@@ -24,6 +24,8 @@ trialId <- 1
 sop_trial_pointing_error(sop, trialId)
 plot_sop_point(sop, 1)
 
+plot_sop_points(sop, 1:6)
+
 ## Restimote
 restimoteObj <- load_restimote_log(dir)
 restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
