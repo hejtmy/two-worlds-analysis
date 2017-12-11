@@ -5,6 +5,7 @@ plot_learning_trial <- function(obj, trialId){
   
   start_end <- get_trial_start_goal_pos(obj, trialId)
   plt <- plot_add_points(plt, start_end)
+  plt <- plt + theme_bw()
   plt
 }
 
@@ -13,12 +14,14 @@ plot_sop_points <- function(obj, trialIds){
   for(id in trialIds){
     plt <- add_pointing_direction(plt, obj, id)
   }
+  plt <- plt + theme_bw()
   return(plt)
 }
 
 plot_sop_point <- function(obj, trialId){
   plt <- brainvr.R::create_plot(obj)
   plt <- add_pointing_direction(plt, obj, trialId)
+  plt <- plt + theme_bw()
   return(plt)
 }
 
