@@ -8,7 +8,9 @@ get_trial_start_goal_pos <- function(obj, trialId){
 
 # For SOP objects only
 get_trial_start_point_pos <- function(obj, trialId){
-  start <- get_trial_start_pos(obj, trialId)
+  # this is actually more accurate, becaseu player might not have moved yet when the trial have started
+  # player moves in monobehavuiour, but trial gets logged before the move happens
+  start <- get_trial_goal_pos(obj, trialId)
   point <- get_trial_point_pos(obj, trialId)
   ls <- list(start = start, point = point)
   return(ls)

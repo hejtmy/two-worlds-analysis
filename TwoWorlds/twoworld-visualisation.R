@@ -11,7 +11,7 @@ plot_learning_trial <- function(obj, trialId){
 plot_sop_points <- function(obj, trialIds){
   plt <- brainvr.R::create_plot(obj)
   for(id in trialIds){
-    plt <- add_pointing_direction(plt, obj, trialId)
+    plt <- add_pointing_direction(plt, obj, id)
   }
   return(plt)
 }
@@ -19,6 +19,7 @@ plot_sop_points <- function(obj, trialIds){
 plot_sop_point <- function(obj, trialId){
   plt <- brainvr.R::create_plot(obj)
   plt <- add_pointing_direction(plt, obj, trialId)
+  return(plt)
 }
 
 add_pointing_direction <- function(plt, obj, trialId){
