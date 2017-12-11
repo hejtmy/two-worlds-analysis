@@ -34,3 +34,10 @@ add_pointing_direction <- function(plt, obj, trialId){
   plt <- plot_add_directions(plt, df)
   return(plt)
 }
+
+
+plot_restimote_path <- function(obj, trialId){
+  plt <- plot_trial_path(obj, trialId)
+  plt <- plt + theme_bw()
+  return(plt)
+}

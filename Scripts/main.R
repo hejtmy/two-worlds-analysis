@@ -30,5 +30,9 @@ plot_sop_points(sop, 1:6)
 restimoteObj <- load_restimote_log(dir)
 restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
 
+restimoteObj <- preprocess_companion_log(restimoteObj)
+restimoteObj <- preprocess_restimote_log(restimoteObj)
+restimoteObj <- remove_pointing(restimoteObj, c(7:8))
+restimoteObj$map_limits <- list(x = c(0, 25), y = c(0, 25))
 
-
+plot_restimote_path(restimoteObj, 1)
