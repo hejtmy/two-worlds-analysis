@@ -1,5 +1,7 @@
 #give me folder
 source("build.R")
+library(brainvr.R)
+library(restimoter)
 library(ggplot2)
 source("TwoWorlds/twoworld-getters.R")
 source("TwoWorlds/twoworld-visualisation.R")
@@ -8,29 +10,25 @@ dir_settings <- "D:/OneDrive/Vyzkum/Davis/Transfer/Settings/"
 
 ## Multiple logs version
 train <- load_experiment(dir, exp_timestamp = '18-58-05-28-01-2018')
-learn <- load_experiment(dir, exp_timestamp = '19-31-25-28-01-2018')
-sop <- load_experiment(dir, exp_timestamp = '19-43-09-28-01-2018')
 
-if(!is_player_preprocessed(learn$data$player_log)){
-  preprocess_player_log(learn$data$player_log, "virtualizer")
-  #save_preprocessed_player(dir, learn$data$player_log, learn$timestamp)
-}
+ls <- load_unity(dir, '19-31-25-28-01-2018', '19-43-09-28-01-2018')
+learn <- ls$learn
+sop <- ls$sop
 
-learn <- mirror_axes(learn)
-learn <- translate_positions(learn, c(33.5, 0, 47.75))
-learn$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
-brainvr.R::make_trial_image(learn, 5)
+plot_trial_path(learn, 5)
+get_trial_start_goal(learn,1)
+get_trial_start_goal(sop,1)
 
 ls <- list()
 for(i in 1:17){
-  ls[[i]] <- brainvr.R::make_trial_image(learn, i)
+  ls[[i]] <- plot_trial_path(learn, i)
   ls[[i]] <- ls[[i]] + theme_bw()
 }
 navr::multiplot(ls, cols = 5)
 
 #see discrepancy between vive and virtualiser
-dt_player <- learn$data$player_log
-
+dt_player <- get_log(learn)
+get_trial_start_goal.learn
 plt <- ggplot(dt_player, aes(x = Time))
 plt + geom_line(aes(y = Rotation.X), color = "black") + 
   geom_line(aes(y = Rotation.Virtualizer), color = "red")
