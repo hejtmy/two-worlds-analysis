@@ -3,7 +3,7 @@ plot_learning_trial <- function(obj, trialId){
   dt <- get_player_log_trial(obj, trialId)
   plt <- navr::plot_add_path(plt, dt)
   
-  start_end <- get_trial_start_goal_pos(obj, trialId)
+  start_end <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, start_end)
   plt <- plt + theme_bw()
   plt
