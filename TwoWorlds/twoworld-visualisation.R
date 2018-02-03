@@ -19,19 +19,18 @@ plot_sop_points <- function(obj, trialIds){
 }
 
 plot_sop_point <- function(obj, trialId){
-  plt <- navr::create_plot(obj)
-  plt <- navr::add_pointing_direction(plt, obj, trialId)
+  plt <- navr::create_plot()
+  plt <- add_pointing_direction.sop(plt, obj, trialId)
   plt <- plt + theme_bw()
   return(plt)
 }
 
-add_pointing_direction <- function(plt, obj, trialId){
-  ls <- get_trial_start_point_pos(obj, trialId)
+add_pointing_direction.sop <- function(plt, obj, trialId){
+  ls <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, ls)
   pointings <- sop_trial_pointing(obj, trialId)
-  df <- build_directions_df(ls$start, c(pointings$Rotation.Controller.x, pointings$correct_angle), 
-                            type = c("rotation", "correct angle"))
-  plt <- navr::plot_add_directions(plt, df)
+  plt <- navr::plot_add_direction(plt, ls$start,pointings$pointed_angle, color = "black", len = 10)
+  plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 10)
   return(plt)
 }
 

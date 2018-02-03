@@ -12,7 +12,6 @@ sop_results <- function(obj){
   return(df)
 }
 
-
 sop_trial_pointing <- function(obj, trialId){
   # WEIRD thing that the controller actually was transformed by this amout, so we need to input it back
   UNITY_SHIFT <- -90
