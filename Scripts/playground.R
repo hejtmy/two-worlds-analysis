@@ -47,11 +47,6 @@ goal_pos <- read.csv(goal_pos_path, dec = ",")
 restimoteObj <- load_restimote(dir, goal_pos)
 restimoteObj <- add_goal_order(restimoteObj, c(3,5,2,1,4,6,2,5,1,4,3,6,3,2,5,6,1,4))
 
-plot_trial_path(restimoteObj, 3)
-plot_true_trial_path(restimoteObj, 3)
-
-ls <- list()
-for(i in 1:17){
-  ls[[i]] <- plot_restimote_path(restimoteObj, i)
-}
-navr::multiplot(ls, cols = 5)
+restimoteObj$pointing_location <- c(7,7,7,7,7,7,8,8,8,8,8,8)
+restimoteObj$pointing_target <- c(1,4,2,3,6,5,6,4,2,5,3,1)
+restimote_sop_results(restimoteObj)

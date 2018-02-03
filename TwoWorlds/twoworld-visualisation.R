@@ -8,8 +8,6 @@ plot_all <- function(obj, ids, FUN){
   return(plt)
 }
 
-
-
 plot_learning_trial <- function(obj, trialId){
   plt <- create_plot(obj)
   dt <- get_player_log_trial(obj, trialId)
@@ -21,7 +19,7 @@ plot_learning_trial <- function(obj, trialId){
   plt
 }
 
-plot_sop_point <- function(obj, trialId){
+plot_sop_point.sop <- function(obj, trialId){
   plt <- navr::create_plot()
   plt <- brainvr.R::add_limits(plt, obj)
   plt <- add_goals.twunity(plt, obj)
@@ -29,6 +27,16 @@ plot_sop_point <- function(obj, trialId){
   plt <- plt + theme_bw()
   return(plt)
 }
+
+plot_sop_point.restimote <- function(obj, trialId){
+  plt <- navr::create_plot()
+  plt <- brainvr.R::add_limits(plt, obj)
+  plt <- add_goals.twunity(plt, obj)
+  plt <- add_pointing_direction.sop(plt, obj, trialId)
+  plt <- plt + theme_bw()
+  return(plt)
+}
+
 
 add_goals.twunity <- function(plt, obj){
   ls_goals <- get_all_goal_positions(obj, include_SOP = F)
