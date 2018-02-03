@@ -24,3 +24,26 @@ sop_trial_pointing <- function(obj, trialId){
   ls$angle_difference <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
   return(ls)
 }
+
+restimote_sop_results <- function(obj){
+  N_POINTING <- 11
+  df <- data.frame(id = rep(obj$participant_id, N_POINTING), 
+                   PointingTime = rep(NA, N_POINTING), 
+                   PointingError = rep(NA, N_POINTING))
+  for (iTrial in 1:N_POINTING){
+    point <- restimote_sop_trial_pointing(obj, iTrial)
+    times <- get_trial_point_times(obj, iTrial)
+    df[iTrial, "PointingTime"] <- times$end - times$start
+    df[iTrial, "PointingError"] <- point$angle_difference
+  }
+  return(df)
+}
+
+restimote_sop_trial_pointing <- function(obj, trialId){
+  ls_pos <- get_sop_location_target.restimote(obj, trialId)
+  point_line <- get_trial_point_orientation(obj, trialId)
+  ls$pointed_angle <- point_line$Orientation
+  ls$correct_angle <- navr::angle_from_positions(unlist(ls_pos$location), unlist(ls_pos$target))
+  ls$angle_difference <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
+  return(ls)
+}

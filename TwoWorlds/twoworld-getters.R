@@ -91,8 +91,20 @@ get_start.restimote <- function(obj, trialId){
 get_goal.restimote <- function(obj, trialId){
   return(restimoter::get_goal_position(obj, trialId))
 }
+get_sop_location_target.restimote <- function(obj, trialId){
+  ls <- list()
+  ls$location <- get_sop_location.restimote(obj, trialId)
+  ls$target <- get_sop_target.restimote(obj, trialId)
+  return(ls)
+}
+get_sop_location.restimote <- function(obj, trialId){
+  return(obj$goal_positions[obj$pointing_location[trialId],2:3])
+}
+get_sop_target.restimote <- function(obj, trialId){
+  return(obj$goal_positions[obj$pointing_target[trialId],2:3])
+}
 get_trial_point.restimote <- function(obj, trialId){
-  
+  get_trial_point_orientation(obj, trialId)
 }
 ###Universal ----
 get_rotations <- function(df){
