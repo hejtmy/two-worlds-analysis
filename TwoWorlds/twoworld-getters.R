@@ -96,9 +96,10 @@ get_trial_start.sop <- function(obj, trialId){
   return(get_goal(obj, goal_id))
 }
 get_trial_point.sop <- function(obj, trialId){
-  #when player points, trial ends so the point is at the trial end
-  player_log <- get_trial_log(obj, trialId)
-  point_line <- tail(player_log, 1)
+  #when player points, trial ends so the point is at the trial end, but because of unity timing
+  #sometimes logged after trial finishes
+  log <- get_trial_log(obj, trialId)
+  point_line <- tail(log, 1)
   return(point_line)
 }
 ### RESTIMOTE ----------

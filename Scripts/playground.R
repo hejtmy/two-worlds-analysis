@@ -25,7 +25,7 @@ plot_trial_path(learn, 1)
 
 #see discrepancy between vive and virtualiser
 dt_player <- get_log(learn)
-plt <- ggplot(dt_player, aes(x = Time))
+plt <- ggplot(dt_player[5000:10000], aes(x = Time))
 plt + geom_line(aes(y = Rotation.X), color = "black") + 
   geom_line(aes(y = Rotation.Virtualizer), color = "red")
 
@@ -34,7 +34,7 @@ ggplot(dt_player) + geom_histogram(aes(x = Rotation.X), fill = "black") +
 
 summary(dt_player$Rotation.X - dt_player$Rotation.Virtualizer)
 summary(dt_player$Rotation.Virtualizer)
-dt_player$Rotation.X <- navr::angle_to_360(dt_player$Rotation.X + 76)
+dt_player$Rotation.X <- navr::angle_to_360(dt_player$Rotation.X + 90)
 
 ### RESTIOMOTE
 goal_pos_path <- paste0(dir_settings, "/goal-positions.csv")
