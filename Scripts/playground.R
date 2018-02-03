@@ -26,6 +26,7 @@ plot_trial_path(learn, 1)
 
 sop_results(sop)
 plot_sop_point(sop, 3)
+plot_all(sop, 1:12, plot_sop_point)
 #see discrepancy between vive and virtualiser
 dt_player <- get_log(learn)
 plt <- ggplot(dt_player[5000:10000], aes(x = Time))

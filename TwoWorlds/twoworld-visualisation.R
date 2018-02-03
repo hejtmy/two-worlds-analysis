@@ -1,3 +1,15 @@
+# plots all plots of certain ids given certain fuction
+plot_all <- function(obj, ids, FUN){
+  ls <- list()
+  for(iTrial in ids){
+    ls[[iTrial]] <- FUN(obj, iTrial)
+  }
+  plt <- navr::multiplot(ls, cols = 4)
+  return(plt)
+}
+
+
+
 plot_learning_trial <- function(obj, trialId){
   plt <- create_plot(obj)
   dt <- get_player_log_trial(obj, trialId)
