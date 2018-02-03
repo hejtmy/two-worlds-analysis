@@ -1,3 +1,12 @@
+#' Title
+#'
+#' @param dir where to search for the unity logs
+#' @param learn_timestamp what timestamp does the learning part have
+#' @param sop_timestamp what timestamp does the sop task have
+#'
+#' @return list with learn and sop brainvr objects
+#'
+#' @examples
 load_unity <- function(dir, learn_timestamp, sop_timestamp){
   learn <- load_experiment(dir, exp_timestamp = learn_timestamp)
   class(learn) <- append(class(learn), c("twunity", "learn"))
@@ -12,4 +21,27 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
   learn$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
   sop$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
   return(list(learn = learn, sop = sop))
+}
+
+#' Title
+#'
+#' @param dir directory witht he log
+#' @param df_goal_pos data frame with goal positions
+#'
+#' @return RestimoteObject
+#'
+#' @examples
+load_restimote <-function(dir, df_goal_pos){
+  restimoteObj <- load_restimote_log(dir)
+  restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
+  
+  restimoteObj <- add_goal_positions(restimoteObj, df_goal_pos)
+  
+  restimoteObj <- preprocess_companion_log(restimoteObj)
+  restimoteObj <- preprocess_restimote_log(restimoteObj)
+  
+  restimoteObj$map_limits <- list(x = c(-2, 27), y = c(-2, 27))
+  return(restimoteObj)
+  
+  #add goal order
 }
