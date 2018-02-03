@@ -22,8 +22,9 @@ get_trial_start_goal <- function(obj, trialId){
   UseMethod("get_trial_start_goal")
 }
 
-get_trial_pointing <- function(obj, trialId){
-  
+# Returns line when player pointed for unity, something else for REstimote
+get_trial_point <- function(obj, trialId){
+  UseMethod("get_trial_point")
 }
 ### twunity ---------
 get_goal.twunity <- function(obj, goal_id){
@@ -49,7 +50,7 @@ get_trial_start_goal.twunity <- function(obj, trialId){
 #' @param obj BrainvrObject
 #' @param target_pos vector 2 of target position
 #' @noRd
-get_trial_pointing.twunity <- function(obj, trialId, target_pos = NULL){
+get_trial_point.twunity <- function(obj, trialId, target_pos = NULL){
   ls <- list()
   quest_log <- get_trial_log(obj, trialId)
   point_situation <- quest_log[Input == "Point", ]
@@ -91,13 +92,14 @@ get_trial_goal_id.sop <- function(obj, trialId){
   return(goal_id + 1)
 }
 get_trial_start.sop <- function(obj, trialId){
-  goal_id <- obj$data$experiment_log$settings$GoalOrder[trialId]
+  goal_id <- obj$data$experiment_log$settings$GoalOrder[trialId] + 1
   return(get_goal(obj, goal_id))
 }
 get_trial_point.sop <- function(obj, trialId){
   #when player points, trial ends so the point is at the trial end
-  player_log <- get_player_log_trial(obj, trialId)
+  player_log <- get_trial_log(obj, trialId)
   point_line <- tail(player_log, 1)
+  return(point_line)
 }
 ### RESTIMOTE ----------
 get_start.restimote <- function(obj, trialId){
@@ -105,6 +107,9 @@ get_start.restimote <- function(obj, trialId){
 }
 get_goal.restimote <- function(obj, trialId){
   return(restimoter::get_goal_position(obj, trialId))
+}
+get_trial_point.restimote <- function(obj, trialId){
+  
 }
 ###Universal ----
 get_rotations <- function(df){
