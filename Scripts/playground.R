@@ -7,6 +7,7 @@ source("TwoWorlds/twoworld-getters.R")
 source("TwoWorlds/twoworld-visualisation.R")
 source("TwoWorlds/twoworld-loading.R")
 source("TwoWorlds/twoworld-preparing.R")
+source("TwoWorlds/twoworld-results.R")
 dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/tw5_28-01-2018/"
 dir_settings <- "D:/OneDrive/Vyzkum/Davis/Transfer/Settings/"
 
@@ -23,6 +24,8 @@ get_trial_start_goal(sop, 1)
 
 plot_trial_path(learn, 1)
 
+sop_results(sop)
+plot_sop_point(sop, 3)
 #see discrepancy between vive and virtualiser
 dt_player <- get_log(learn)
 plt <- ggplot(dt_player[5000:10000], aes(x = Time))

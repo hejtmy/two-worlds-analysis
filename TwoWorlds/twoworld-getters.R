@@ -21,7 +21,9 @@ get_trial_goal_name <- function(obj, trialId){
 get_trial_start_goal <- function(obj, trialId){
   UseMethod("get_trial_start_goal")
 }
-
+get_all_goal_positions <- function(obj, include_SOP){
+  UseMethod("get_all_goal_positions")
+}
 # Returns line when player pointed for unity, something else for REstimote
 get_trial_point <- function(obj, trialId){
   UseMethod("get_trial_point")
@@ -44,6 +46,11 @@ get_trial_start_goal.twunity <- function(obj, trialId){
   goal <- get_trial_goal(obj, trialId)
   ls <- list(start = start, goal = goal)
   return(ls)
+}
+get_all_goal_positions.twunity <- function(obj, include_SOP = FALSE){
+  if(include_SOP){i <- 1:10}else{i <- 1:6}
+  ls_goals <- setNames(split(obj$data$experiment_log$positions$GoalPositions[i, c(1,3)], i), i)
+  return(ls_goals)
 }
 ### learn ------
 get_trial_goal_id.learn <- function(obj, trialId){

@@ -16,7 +16,7 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
   learn <- preprocess_unity_log(learn, dir)
   sop <- preprocess_unity_log(sop, dir)
   learn <- transform_unity_coordinates(learn)
-  #sop <- transform_unity_coordinates(sop)
+  sop <- transform_unity_coordinates(sop)
   
   learn$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
   sop$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
