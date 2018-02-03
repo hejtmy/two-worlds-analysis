@@ -1,5 +1,15 @@
 sop_results <- function(obj){
-  for (iTrial )  
+  N_POINTING <- 12
+  df <- data.frame(id = rep(obj$participant_id, N_POINTING), 
+                   PointingTime = rep(NA, N_POINTING), 
+                   PointingError = rep(NA, N_POINTING))
+  for (iTrial in 1:N_POINTING){
+    point <- sop_trial_pointing(obj, iTrial)
+    times <- get_trial_times(obj, iTrial)
+    df[iTrial, "PointingTime"] <- times$finish - times$start
+    df[iTrial, "PointingError"] <- point$angle_difference
+  }
+  return(df)
 }
 
 

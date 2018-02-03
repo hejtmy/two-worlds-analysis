@@ -45,31 +45,6 @@ get_trial_start_goal.twunity <- function(obj, trialId){
   ls <- list(start = start, goal = goal)
   return(ls)
 }
-#' Returns pointing direction during given trial. If there are more than two pointings, selects the first one
-#' If target position is passed, also returnes what should have been the correct pointing angle
-#' @param obj BrainvrObject
-#' @param target_pos vector 2 of target position
-#' @noRd
-get_trial_point.twunity <- function(obj, trialId, target_pos = NULL){
-  ls <- list()
-  quest_log <- get_trial_log(obj, trialId)
-  point_situation <- quest_log[Input == "Point", ]
-  ls$target <- NA
-  if(nrow(point_situation) < 1){
-    print(paste0("Warning", "get_trial_pointing", "no point event found"))
-    ls$time <- NA
-    ls$chosen <- NA
-  } else { 
-    point_situation = point_situation[1]
-    player_pos <- c(point_situation$Position.x, point_situation$Position.z)
-    ls$time <- point_situation$Time
-    ls$chosen <- point_situation$Rotation.X
-    if (!is.null(target_pos)){
-      ls$target <- navr::angle_from_positions(player_pos, target_pos)
-    }
-  }
-  return(ls)
-}
 ### learn ------
 get_trial_goal_id.learn <- function(obj, trialId){
   # C# indexes from 0
