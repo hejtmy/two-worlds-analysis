@@ -9,9 +9,9 @@
 #' @examples
 load_unity <- function(dir, learn_timestamp, sop_timestamp){
   learn <- load_experiment(dir, exp_timestamp = learn_timestamp)
-  class(learn) <- append(class(learn), c("twunity", "learn"))
+  class(learn) <- append(class(learn), c("learn", "twunity"))
   sop <- load_experiment(dir, exp_timestamp = sop_timestamp)
-  class(sop) <- append(class(sop), c("twunity", "sop"))
+  class(sop) <- append(class(sop), c("sop", "twunity"))
   
   learn <- preprocess_unity_log(learn, dir)
   sop <- preprocess_unity_log(sop, dir)
@@ -42,6 +42,5 @@ load_restimote <-function(dir, df_goal_pos){
   
   restimoteObj$map_limits <- list(x = c(-2, 27), y = c(-2, 27))
   return(restimoteObj)
-  
   #add goal order
 }

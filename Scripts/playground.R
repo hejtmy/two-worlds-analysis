@@ -18,8 +18,8 @@ learn <- ls$learn
 sop <- ls$sop
 
 plot_trial_path(learn, 5)
-get_trial_start_goal(learn,1)
-get_trial_start_goal(sop,1)
+get_trial_start_goal(learn, 1)
+get_trial_start_goal(sop, 1)
 
 plot_trial_path(learn, 1)
 
