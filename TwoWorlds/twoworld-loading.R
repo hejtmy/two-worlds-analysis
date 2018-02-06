@@ -44,3 +44,11 @@ load_restimote <-function(dir, df_goal_pos){
   return(restimoteObj)
   #add goal order
 }
+
+load_settings <- function(){
+  ls <- list()
+  WORKBOOK_NAME = "TW-GoalOrder"
+  SHEET_NAMES = c("Learning", "Viewpoint", "Pointing")
+  ls$goal_order = fetch_sheet(WORKBOOK_NAME, SHEET_NAMES)
+  return(ls)
+}
