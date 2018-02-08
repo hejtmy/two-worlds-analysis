@@ -1,3 +1,4 @@
+source('TwoWorlds/helpers-loading.R')
 #' Title
 #'
 #' @param dir where to search for the unity logs
@@ -31,7 +32,7 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
 #' @return RestimoteObject
 #'
 #' @examples
-load_restimote <-function(dir, df_goal_pos){
+load_restimote <- function(dir, df_goal_pos){
   restimoteObj <- load_restimote_log(dir)
   restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
   
@@ -45,10 +46,13 @@ load_restimote <-function(dir, df_goal_pos){
   #add goal order
 }
 
-load_settings <- function(){
+load_google_sheets <- function(){
   ls <- list()
-  WORKBOOK_NAME = "TW-GoalOrder"
-  SHEET_NAMES = c("Learning", "Viewpoint", "Pointing")
-  ls$goal_order = fetch_sheet(WORKBOOK_NAME, SHEET_NAMES)
+  goal_order <- "TW-GoalOrder"
+  sheets_goal_order <- c("Learning", "Viewpoint", "Pointing")
+  ls$goal_order <- fetch_sheet(goal_order, sheets_goal_order)
+  participants <- "TW-Participants"
+  sheets_participants <- c("Settings")
+  ls$participants <- fetch_sheet(goal_order, sheets_participants)
   return(ls)
 }
