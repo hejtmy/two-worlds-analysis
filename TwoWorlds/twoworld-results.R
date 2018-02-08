@@ -1,8 +1,26 @@
+unity_results <- function(obj){
+  
+}
+
+# Expects brainvr learn object
+learn_results.brainvr <- function(obj){
+  df <- create_learn_df()
+  for (iTrial in 1:N_TRIALS){
+    log <- get_trial_log(obj, iTrial)
+    df[iTrial, "TrialTime"] <- diff(range(log$Time))
+    df[iTrial, "TrialLength"] <- diff(range(log$cumulative_distance))
+  }
+  return(df)
+}
+
+# Expects restimote object
+learn_results.restimote <- function(obj){
+  df <- create_learn_df()
+  return(df)
+}
+
 sop_results <- function(obj){
-  N_POINTING <- 12
-  df <- data.frame(id = rep(obj$participant_id, N_POINTING), 
-                   PointingTime = rep(NA, N_POINTING), 
-                   PointingError = rep(NA, N_POINTING))
+  df <- create_sop_df()
   for (iTrial in 1:N_POINTING){
     point <- sop_trial_pointing(obj, iTrial)
     times <- get_trial_times(obj, iTrial)

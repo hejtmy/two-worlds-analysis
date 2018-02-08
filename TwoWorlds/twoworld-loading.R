@@ -13,10 +13,10 @@ load_participant <- function(code, settings, dir){
   if(is.null(line)) return(NULL)
   
   if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$LearnTimestamp1, line$SOPTimestamp1)
-  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, settings)
+  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, 1, settings)
   
   if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$LearnTimestamp2, line$SOPTimestamp2)
-  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, settings)
+  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, 2, settings)
   return(ls)
 }
 
@@ -54,7 +54,7 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
 #' @return RestimoteObject
 #'
 #' @examples
-load_restimote <- function(dir, settings){
+load_restimote <- function(dir, code, phase, settings){
   restimoteObj <- load_restimote_log(dir)
   restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
   
@@ -65,7 +65,10 @@ load_restimote <- function(dir, settings){
   restimoteObj <- preprocess_companion_log(restimoteObj)
   restimoteObj <- preprocess_restimote_log(restimoteObj)
   
-  restimoteObj$map_limits <- list(x = c(-2, 27), y = c(-2, 27))
+  restimoteObj$goal_order <- get_settings_order(code, "Learning", phase, settings)
+  restimoteObj$pointing_location <- get_settings_order(code, "Viewpoint", phase, settings)
+  restimoteObj$pointing_target <- get_settings_order(code, "Pointing", phase, settings)
+  restimoteObj$map_limits <- list(x = c(-2, 30), y = c(-2, 30))
   return(restimoteObj)
   #add goal order
 }
