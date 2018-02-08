@@ -8,15 +8,13 @@ plot_all <- function(obj, ids, FUN){
   return(plt)
 }
 
-plot_learning_trial <- function(obj, trialId){
-  plt <- create_plot(obj)
-  dt <- get_player_log_trial(obj, trialId)
-  plt <- navr::plot_add_path(plt, dt)
-  
+plot_trial.learn <- function(obj, trialId){
+  plt <- navr::create_plot()
+  dt <- get_trial_log(obj, trialId)
+  plt <- navr::plot_add_path(plt, dt$Position.x, dt$Position.z)
   start_end <- get_trial_start_goal(obj, trialId)
-  plt <- navr::plot_add_points(plt, start_end)
-  plt <- plt + theme_bw()
-  plt
+  plt <- navr::plot_add_points(plt, start_end, color = "green")
+  return(plt)
 }
 
 plot_sop_point.sop <- function(obj, trialId){
@@ -54,8 +52,8 @@ add_pointing_direction.sop <- function(plt, obj, trialId){
   ls <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, ls, color = "red")
   pointings <- sop_trial_pointing(obj, trialId)
-  plt <- navr::plot_add_direction(plt, ls$start,pointings$pointed_angle, color = "black", len = 10)
-  plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 10)
+  plt <- navr::plot_add_direction(plt, ls$start,pointings$pointed_angle, color = "black", len = 20)
+  plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 20)
   return(plt)
 }
 

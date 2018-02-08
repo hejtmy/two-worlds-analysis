@@ -1,3 +1,5 @@
+source("TwoWorlds/helpers-results.R")
+
 unity_results <- function(obj){
   
 }
@@ -5,7 +7,7 @@ unity_results <- function(obj){
 # Expects brainvr learn object
 learn_results.brainvr <- function(obj){
   df <- create_learn_df()
-  for (iTrial in 1:N_TRIALS){
+  for (iTrial in 1:18){
     log <- get_trial_log(obj, iTrial)
     df[iTrial, "TrialTime"] <- diff(range(log$Time))
     df[iTrial, "TrialLength"] <- diff(range(log$cumulative_distance))
@@ -16,6 +18,13 @@ learn_results.brainvr <- function(obj){
 # Expects restimote object
 learn_results.restimote <- function(obj){
   df <- create_learn_df()
+  for (iTrial in 1:18){
+    log <- get_trial_log(obj, iTrial)
+    log_true <- true_trial_log(obj, iTrial, 30, radius = 3)
+    df[iTrial, "TrialTime"] <- diff(range(log$Time))
+    df[iTrial, "TrialLength"] <- sum(log_true$distance)
+  }
+  df$TrialLength[df$TrialLength == 0] <- NA
   return(df)
 }
 
