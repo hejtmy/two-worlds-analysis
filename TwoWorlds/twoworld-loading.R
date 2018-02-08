@@ -1,15 +1,22 @@
 source('TwoWorlds/helpers-loading.R')
 
 load_participant <- function(code, settings, dir){
+  dirs <- list.dirs(dir)
+  which_folder <- grep(paste0(".*", code, ".*"), dirs)
+  if(length(which_folder) != 1){
+    warning(paste0("No folder of code ", code, " in ", dir))
+    return(NULL)
+  }
+  exp_folder <- dirs[which_folder]
   ls <- list()
   line <- get_participant_line(code, settings)
   if(is.null(line)) return(NULL)
   
-  if(line$First.phase == "vr") ls$phase1 <- load_unity(dir, line$LearnTimestamp1, line$SOPTimestamp1)
-  if(line$First.phase == "real") ls$phase1 <- load_restimote(dir, settings)
+  if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$LearnTimestamp1, line$SOPTimestamp1)
+  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, settings)
   
-  if(line$Second.phase == "vr") ls$phase2 <- load_unity(dir, line$LearnTimestamp2, line$SOPTimestamp2)
-  if(line$Second.phase == "real") ls$phase2 <- load_restimote(dir, settings)
+  if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$LearnTimestamp2, line$SOPTimestamp2)
+  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, settings)
   return(ls)
 }
 
