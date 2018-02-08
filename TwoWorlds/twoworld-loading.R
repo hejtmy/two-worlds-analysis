@@ -59,7 +59,7 @@ load_google_sheets <- function(){
   ls$goal_order <- fetch_sheet(goal_order, sheets_goal_order)
   participants <- "TW-Participants"
   settings <- fetch_sheet(participants, "Settings")
-  ls$settings <- settings$Settings
+  ls$participants <- settings$Settings
   positions <- "TW-BuildingPositions"
   pos <- fetch_sheet(positions, "Positions")
   ls$positions <- pos$Positions
