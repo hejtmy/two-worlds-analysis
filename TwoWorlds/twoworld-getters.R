@@ -5,19 +5,15 @@ get_goal <- function(obj, goal_id){
 get_trial_start <- function(obj, trialId){
   UseMethod("get_trial_start")
 }
-
 get_trial_goal <- function(obj, trialId){
   UseMethod("get_trial_goal")
 }
-
 get_trial_goal_id <- function(obj, trialId){
   UseMethod("get_trial_goal_id")
 }
-
 get_trial_goal_name <- function(obj, trialId){
   UseMethod("get_trial_goal_name")
 }
-
 get_trial_start_goal <- function(obj, trialId){
   UseMethod("get_trial_start_goal")
 }
@@ -108,7 +104,6 @@ get_sop_target.restimote <- function(obj, trialId){
 get_trial_point.restimote <- function(obj, trialId){
   get_trial_point_orientation(obj, trialId)
 }
-
 get_all_goal_positions.restimote <- function(obj, include_SOP = F){
   if(include_SOP){i <- 1:10} else {i <- 1:6}
   ls_goals <- setNames(split(obj$goal_positions[i, c(2,3)], i), obj$goal_positions$Name[i])

@@ -46,13 +46,22 @@ load_restimote <- function(dir, df_goal_pos){
   #add goal order
 }
 
+#' Loads all google sheets with settings and positions
+#'
+#' @return
+#' @export
+#'
+#' @examples
 load_google_sheets <- function(){
   ls <- list()
   goal_order <- "TW-GoalOrder"
   sheets_goal_order <- c("Learning", "Viewpoint", "Pointing")
   ls$goal_order <- fetch_sheet(goal_order, sheets_goal_order)
   participants <- "TW-Participants"
-  sheets_participants <- c("Settings")
-  ls$participants <- fetch_sheet(goal_order, sheets_participants)
+  settings <- fetch_sheet(participants, "Settings")
+  ls$settings <- settings$Settings
+  positions <- "TW-BuildingPositions"
+  pos <- fetch_sheet(positions, "Positions")
+  ls$positions <- pos$Positions
   return(ls)
 }
