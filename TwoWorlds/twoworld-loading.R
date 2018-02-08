@@ -1,4 +1,19 @@
 source('TwoWorlds/helpers-loading.R')
+
+load_participant <- function(code, settings, dir){
+  ls <- list()
+  line <- get_participant_line(code, settings)
+  if(is.null(line)) return(NULL)
+  
+  if(line$First.phase == "vr") ls$phase1 <- load_unity(dir, line$LearnTimestamp1, line$SOPTimestamp1)
+  if(line$First.phase == "real") ls$phase1 <- load_restimote(dir, settings)
+  
+  if(line$Second.phase == "vr") ls$phase2 <- load_unity(dir, line$LearnTimestamp2, line$SOPTimestamp2)
+  if(line$Second.phase == "real") ls$phase2 <- load_restimote(dir, settings)
+  return(ls)
+}
+
+
 #' Title
 #'
 #' @param dir where to search for the unity logs
@@ -27,14 +42,16 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
 #' Title
 #'
 #' @param dir directory witht he log
-#' @param df_goal_pos data frame with goal positions
+#' @param settings settings file from google sheets
 #'
 #' @return RestimoteObject
 #'
 #' @examples
-load_restimote <- function(dir, df_goal_pos){
+load_restimote <- function(dir, settings){
   restimoteObj <- load_restimote_log(dir)
   restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
+  
+  df_goal_pos <- settings$positions[, 1:3]
   
   restimoteObj <- add_goal_positions(restimoteObj, df_goal_pos)
   
