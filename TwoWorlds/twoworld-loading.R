@@ -81,14 +81,20 @@ load_restimote <- function(dir, code, phase, settings){
 #' @examples
 load_google_sheets <- function(){
   ls <- list()
-  goal_order <- "TW-GoalOrder"
-  sheets_goal_order <- c("Learning", "Viewpoint", "Pointing")
-  ls$goal_order <- fetch_sheet(goal_order, sheets_goal_order)
-  participants <- "TW-Participants"
-  settings <- fetch_sheet(participants, "Settings")
-  ls$participants <- settings$Settings[!is.na(settings$Settings$Code),]
-  positions <- "TW-BuildingPositions"
-  pos <- fetch_sheet(positions, "Positions")
-  ls$positions <- pos$Positions
+  ls$goal_order <- fetch_sheet("TW-GoalOrder", c("Learning", "Viewpoint", "Pointing"))
+  settings <- fetch_sheet("TW-Participants", "Settings")
+  ls$versions <- settings$Settings[!is.na(settings$Settings$Code),]
+  positions <- fetch_sheet("TW-BuildingPositions", "Positions")
+  ls$positions <- positions$Positions
+
+  tw_questionnaire <- fetch_sheet('TW questionnaire (Responses)', 'Form Responses 1')
+  tw_questionnaire <- tw_questionnaire$`Form Responses 1`
+  tw_participants <- fetch_sheet('TW-Participants', 'Overview')
+  tw_participants <- tw_participants$Overview
+  ls$participants <- merge(tw_participants, tw_questionnaire, by = 'Code')
+  
+  colnames(ls$participants)[18:20] <- c("age", "weight", "hours_sleep")
+  colnames(ls$participants)[44:45] <- c("sex", "ethnicity")
+  
   return(ls)
 }

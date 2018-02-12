@@ -28,7 +28,7 @@ fetch_sheet <- function(name, sheets){
 }
 
 get_participant_line <- function(code, settings){
-  line <- settings$participants[settings$participants$Code == code, ]
+  line <- settings$versions[settings$versions$Code == code, ]
   if(nrow(line) != 1){
     warning(paste0("Participant ", code, ", doesn't have single line"))
     return(NULL)
