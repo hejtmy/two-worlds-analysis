@@ -59,7 +59,7 @@ restimote_sop_results <- function(obj){
                    PointingError = rep(NA, N_POINTING))
   for (iTrial in 1:N_POINTING){
     point <- restimote_sop_trial_pointing(obj, iTrial)
-    times <- get_trial_point_times(obj, iTrial)
+    times <- get_trial_point_times.restimote(obj, iTrial)
     df[iTrial, "PointingTime"] <- times$end - times$start
     df[iTrial, "PointingError"] <- point$angle_difference
   }
@@ -69,7 +69,7 @@ restimote_sop_results <- function(obj){
 restimote_sop_trial_pointing <- function(obj, trialId){
   ls_pos <- get_sop_location_target.restimote(obj, trialId)
   ls <- list()
-  ls$pointed_angle <- get_trial_point_orientation(obj, trialId)
+  ls$pointed_angle <- get_trial_point_orientation.restimote(obj, trialId)
   ls$correct_angle <- navr::angle_from_positions(unlist(ls_pos$location), unlist(ls_pos$target))
   ls$angle_difference <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
   return(ls)
