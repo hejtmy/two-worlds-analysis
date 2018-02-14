@@ -13,10 +13,10 @@ load_participant <- function(code, settings, dir){
   if(is.null(line)) return(NULL)
   
   if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$LearnTimestamp1, line$SOPTimestamp1)
-  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, 1, settings)
+  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, line$LearnTimestamp1, 1, settings)
   
   if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$LearnTimestamp2, line$SOPTimestamp2)
-  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, 2, settings)
+  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, line$LearnTimestamp2, 2, settings)
   return(ls)
 }
 
@@ -54,9 +54,9 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
 #' @return RestimoteObject
 #'
 #' @examples
-load_restimote <- function(dir, code, phase, settings){
-  restimoteObj <- load_restimote_log(dir)
-  restimoteObj <- load_restimote_companion_log(dir, obj = restimoteObj)
+load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
+  restimoteObj <- load_restimote_log(dir, exp_timestamp = exp_timestamp)
+  restimoteObj <- load_restimote_companion_log(dir, exp_timestamp = exp_timestamp, obj = restimoteObj)
   
   df_goal_pos <- settings$positions[, 1:3]
   
