@@ -20,7 +20,7 @@ get_trial_start_goal(sop, 1)
 
 plot_trial_path(learn, 1)
 
-sop_results(sop)
+sop_results(ls)
 plot_sop_point(sop, 3)
 plot_all(sop, 1:12, plot_sop_point)
 #see discrepancy between vive and virtualiser
@@ -35,7 +35,7 @@ restimoteObj <- add_goal_order(restimoteObj, settings$goal_order$Learning$`Versi
 
 restimoteObj$pointing_location <- settings$goal_order$Viewpoint$`Version-4`
 restimoteObj$pointing_target <-  settings$goal_order$Pointing$`Version-4`
-restimote_sop_results(restimoteObj)
+sop_results(restimoteObj)
 
 plot_trial_path(restimoteObj, 2)
 plot_all(restimoteObj, 1:18, plot_true_trial_path)

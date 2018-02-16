@@ -25,25 +25,25 @@ get_trial_point <- function(obj, trialId){
   UseMethod("get_trial_point")
 }
 ### twunity ---------
-get_goal.twunity <- function(obj, goal_id){
+get_goal.brainvr <- function(obj, goal_id){
   goal_pos <- obj$data$experiment_log$positions$GoalPositions[goal_id, ]
   return(c(goal_pos$Position.x, goal_pos$Position.z))
 }
-get_trial_goal.twunity <- function(obj, trialId){
+get_trial_goal.brainvr <- function(obj, trialId){
   goal_id <- get_trial_goal_id(obj, trialId)
   return(get_goal(obj, goal_id))
 }
-get_trial_goal_name.twunity <- function(obj, trialId){
+get_trial_goal_name.brainvr <- function(obj, trialId){
   id <- get_trial_goal_id(obj, trialId)
   return(obj$data$experiment_log$settings$GoalNames[id])
 }
-get_trial_start_goal.twunity <- function(obj, trialId){
+get_trial_start_goal.brainvr <- function(obj, trialId){
   start <- get_trial_start(obj, trialId)
   goal <- get_trial_goal(obj, trialId)
   ls <- list(start = start, goal = goal)
   return(ls)
 }
-get_all_goal_positions.twunity <- function(obj, include_SOP = FALSE){
+get_all_goal_positions.brainvr <- function(obj, include_SOP = FALSE){
   if(include_SOP){i <- 1:10}else{i <- 1:6}
   ls_goals <- setNames(split(obj$data$experiment_log$positions$GoalPositions[i, c(1,3)], i), i)
   return(ls_goals)

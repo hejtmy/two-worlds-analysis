@@ -32,9 +32,9 @@ load_participant <- function(code, settings, dir){
 #' @examples
 load_unity <- function(dir, learn_timestamp, sop_timestamp){
   learn <- load_experiment(dir, exp_timestamp = learn_timestamp)
-  class(learn) <- append(class(learn), c("learn", "twunity"))
+  class(learn) <- append(class(learn), c("learn"))
   sop <- load_experiment(dir, exp_timestamp = sop_timestamp)
-  class(sop) <- append(class(sop), c("sop", "twunity"))
+  class(sop) <- append(class(sop), c("sop"))
   
   learn <- preprocess_unity_log(learn, dir)
   sop <- preprocess_unity_log(sop, dir)
@@ -43,7 +43,9 @@ load_unity <- function(dir, learn_timestamp, sop_timestamp){
   
   learn$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
   sop$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
-  return(list(learn = learn, sop = sop))
+  ls <- list(learn = learn, sop = sop)
+  class(ls) <-  append(class(ls), "twunity")
+  return(ls)
 }
 
 #' Title
