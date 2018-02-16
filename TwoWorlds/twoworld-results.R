@@ -11,17 +11,11 @@ learn_results <- function(obj){
   UseMethod("learn_results")
 }
 learn_trial_results <- function(obj, trialId){
-  UseMethod("learn_results")
+  UseMethod("learn_trial_results")
 }
 ## UNITY ----
 sop_results.twunity <- function(obj){
-  df <- create_sop_df(obj$sop)
-  for (trialId in 1:12){
-    ls <- sop_trial_results.twunity(obj, trialId)
-    df[trialId, "pointing_time"] <- ls$pointing_time
-    df[trialId, "pointing_error"] <- ls$pointing_error
-  }
-  return(df)
+  return(sop_results.general(obj$sop))
 }
 sop_trial_results.twunity <- function(obj, trialId){
   return(sop_trial_results(obj$sop))
@@ -36,34 +30,28 @@ sop_trial_results.sop <- function(obj, trialId){
   ls$pointing_error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
   times <- get_trial_times(obj, trialId)
   ls$pointing_time <- times$finish - times$start
+  ls$pointing_start <- ""
+  ls$pointing_goal <- ""
   return(ls)
 }
 learn_results.twunity <- function(obj){
-  df_results <- create_learn_df(obj$learn)
-  for (trialId in 1:18){
-    ls <- learn_trial_results.twunity(obj, trialId)
-    df_results[trialId, "trial_time"] <- ls$trial_time
-    df_results[trialId, "trial_distance"] <- ls$trial_distance
-  }
-  return(df_results)
+  return(learn_results.general(obj$learn))
 }
 learn_trial_results.twunity <- function(obj, trialId){
+ return(learn_trial_results.learn(obj$learn, trialId))
+}
+learn_trial_results.learn <- function(obj, trialId){
   ls <- list()
-  log <- get_trial_log(obj$learn, trialId)
+  log <- get_trial_log(obj, trialId)
   ls$trial_time <- diff(range(log$Time))
   ls$trial_distance <- diff(range(log$cumulative_distance))
+  ls$trial_start <- ""
+  ls$trial_goal <- ""
   return(ls)
 }
 ## RESTIMOTE ----
 learn_results.restimote <- function(obj){
-  df_results <- create_learn_df(obj)
-  for (trialId in 1:18){
-    ls <- learn_trial_results.restimote(obj, trialId)
-    df_results[trialId, "trial_time"] <- ls$trial_time
-    df_results[trialId, "trial_distance"] <- ls$trial_distance
-  }
-  df_results$trial_distance[df_results$trial_distance == 0] <- NA
-  return(df_results)
+  return(learn_results.general(obj))
 }
 learn_trial_results.restimote <- function(obj, trialId){
   log <- get_trial_log(obj, trialId)
@@ -71,16 +59,12 @@ learn_trial_results.restimote <- function(obj, trialId){
   ls <- list()
   ls$trial_time <- diff(range(log$Time))
   ls$trial_distance <- sum(log_true$distance)
+  ls$trial_start <- ""
+  ls$trial_goal <- ""
   return(ls)
 }
 sop_results.restimote <- function(obj){
-  df_results <- create_sop_df(obj)
-  for (trialId in 1:12){
-    ls <- sop_trial_results.restimote(obj, trialId)
-    df_results[trialId, "pointing_time"] <- ls$pointing_time
-    df_results[trialId, "pointing_error"] <- ls$pointing_error
-  }
-  return(df_results)
+  return(sop_results.general(obj))
 }
 sop_trial_results.restimote <- function(obj, trialId){
   ls <- list()
@@ -90,5 +74,32 @@ sop_trial_results.restimote <- function(obj, trialId){
   ls$correct_angle <- navr::angle_from_positions(unlist(ls_pos$location), unlist(ls_pos$target))
   ls$pointing_error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
   ls$pointing_time <- times$end - times$start
+  ls$pointing_start <- ""
+  ls$pointing_goal <- ""
   return(ls)
+}
+
+# GENERAL ----
+sop_results.general <- function (obj){
+  df_results <- create_sop_df(obj)
+  for (trialId in 1:12){
+    ls <- sop_trial_results(obj, trialId)
+    df_results[trialId, "pointing_time"] <- ls$pointing_time
+    df_results[trialId, "pointing_error"] <- ls$pointing_error
+    df_results[trialId, "pointing_start"] <- ls$pointing_start
+    df_results[trialId, "pointing_goal"] <- ls$pointing_goal
+  }
+  return(df_results)
+}
+learn_results.general <- function(obj){
+  df_results <- create_learn_df(obj)
+  for (trialId in 1:18){
+    ls <- learn_trial_results(obj, trialId)
+    df_results[trialId, "trial_time"] <- ls$trial_time
+    df_results[trialId, "trial_distance"] <- ls$trial_distance
+    df_results[trialId, "trial_start"] <- ls$trial_start
+    df_results[trialId, "trial_goal"] <- ls$trial_goal
+  }
+  df_results$trial_distance[df_results$trial_distance == 0] <- NA
+  return(df_results)
 }
