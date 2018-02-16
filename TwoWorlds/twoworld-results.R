@@ -39,15 +39,15 @@ sop_trial_results.twunity <- function(obj, trialId){
 learn_results.twunity <- function(obj){
   df_results <- create_learn_df(obj$learn)
   for (trialId in 1:18){
-    ls <- learn_trial_results.twunity(obj)
+    ls <- learn_trial_results.twunity(obj, trialId)
     df_results[trialId, "trial_time"] <- ls$trial_time
     df_results[trialId, "trial_distance"] <- ls$trial_distance
   }
   return(df_results)
 }
-learn_trial_results.twunity <- function(obj){
+learn_trial_results.twunity <- function(obj, trialId){
   ls <- list()
-  log <- get_trial_log(obj$learn, iTrial)
+  log <- get_trial_log(obj$learn, trialId)
   ls$trial_time <- diff(range(log$Time))
   ls$trial_distance <- diff(range(log$cumulative_distance))
   return(ls)
@@ -69,6 +69,7 @@ learn_trial_results.restimote <- function(obj, trialId){
   ls <- list()
   ls$trial_time <- diff(range(log$Time))
   ls$trial_distance <- sum(log_true$distance)
+  return(ls)
 }
 sop_results.restimote <- function(obj){
   df_results <- create_sop_df(obj)

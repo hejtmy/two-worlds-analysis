@@ -19,12 +19,13 @@ plot_trial.learn(ls$phase2$learn, 10)
 get_trial_start_goal(ls$phase1$learn, 1)
 get_trial_start_goal(ls$phase1$sop, 1)
 
-sop_results(ls$phase1$sop)
+sop_results(ls$phase1)
 plot_sop_point.sop(ls$phase1$sop, 8)
 plot_all(ls$phase1$sop, 1:12, plot_sop_point.sop)
 plot_all(ls$phase1$learn, 1:18, plot_trial.learn)
 
 ### RESTIOMOTE
+learn_results(ls$phase1)
 sop_results(ls$phase1)
 ls$phase1 <- calibrate_compass(ls$phase1, 344)
 sop_results(ls$phase1)
