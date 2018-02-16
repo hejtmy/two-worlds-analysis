@@ -35,7 +35,7 @@ plot_sop_point.restimote <- function(obj, trialId){
 add_pointing_direction.restimote <- function(plt, obj, trialId){
   ls <- get_sop_location_target.restimote(obj, trialId)
   plt <- navr::plot_add_points(plt, ls, color = "red")
-  pointings <- sop_trial_results(obj, trialId)
+  pointings <- sop_trial_results.restimote(obj, trialId)
   plt <- navr::plot_add_direction(plt, ls$location, pointings$pointed_angle, color = "black", len = 4)
   plt <- navr::plot_add_direction(plt, ls$location, pointings$correct_angle, color = "green", len = 4)
   return(plt)
