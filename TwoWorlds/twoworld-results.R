@@ -30,8 +30,8 @@ sop_trial_results.sop <- function(obj, trialId){
   ls$error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
   times <- get_trial_times(obj, trialId)
   ls$time <- times$finish - times$start
-  ls$start <- ""
-  ls$goal <- ""
+  ls$start <- "SOME VIEWPOINT"
+  ls$goal <- get_trial_goal_name.brainvr(obj, trialId)
   return(ls)
 }
 learn_results.twunity <- function(obj){
@@ -45,8 +45,8 @@ learn_trial_results.learn <- function(obj, trialId){
   log <- get_trial_log(obj, trialId)
   ls$time <- diff(range(log$Time))
   ls$distance <- diff(range(log$cumulative_distance))
-  ls$start <- ""
-  ls$goal <- ""
+  ls$start <- get_trial_goal_name.brainvr(obj, trialId - 1)
+  ls$goal <- get_trial_goal_name.brainvr(obj, trialId)
   return(ls)
 }
 ## RESTIMOTE ----

@@ -23,7 +23,7 @@ add_pointing_direction.sop <- function(plt, obj, trialId){
   ls <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, ls, color = "red")
   pointings <- sop_trial_results.twunity(obj, trialId)
-  plt <- navr::plot_add_direction(plt, ls$start,pointings$pointed_angle, color = "black", len = 20)
+  plt <- navr::plot_add_direction(plt, ls$start, pointings$pointed_angle, color = "black", len = 20)
   plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 20)
   return(plt)
 }

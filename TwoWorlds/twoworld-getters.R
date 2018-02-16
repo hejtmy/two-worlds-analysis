@@ -34,6 +34,7 @@ get_trial_goal.brainvr <- function(obj, trialId){
   return(get_goal(obj, goal_id))
 }
 get_trial_goal_name.brainvr <- function(obj, trialId){
+  if(trialId == 0) return("Starting location")
   id <- get_trial_goal_id(obj, trialId)
   return(obj$data$experiment_log$settings$GoalNames[id])
 }
