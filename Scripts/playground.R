@@ -20,6 +20,7 @@ get_trial_start_goal(ls$phase1$learn, 1)
 get_trial_start_goal(ls$phase1$sop, 1)
 
 sop_results(ls$phase1)
+learn_results(ls$phase2)
 plot_sop_point(ls$phase1, 8)
 plot_all(ls$phase1, 1:12, plot_sop_point)
 plot_all(ls$phase1$learn, 1:18, plot_trial.learn)

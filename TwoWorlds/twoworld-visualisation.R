@@ -3,7 +3,7 @@ plot_sop_point <- function(obj, trialId){
   UseMethod("plot_sop_point")
 }
 add_pointing_direction<-function(plt, obj, trialId){
-  UseMethod("add_pointing_direction",object = obj)
+  UseMethod("add_pointing_direction", object = obj)
 }
 ## UNITY ----
 plot_trial.learn <- function(obj, trialId){
