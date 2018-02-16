@@ -24,15 +24,17 @@ sop_results.twunity <- function(obj){
   return(df)
 }
 sop_trial_results.twunity <- function(obj, trialId){
-  sop <- obj$sop
+  return(sop_trial_results(obj$sop))
+}
+sop_trial_results.sop <- function(obj, trialId){
   UNITY_SHIFT <- -90 # WEIRD thing that the controller actually was transformed by this amout, so we need to input it back
-  ls_pos <- get_trial_start_goal(sop, trialId)
-  point_line <- get_trial_point.sop(sop, trialId)
+  ls_pos <- get_trial_start_goal(obj, trialId)
+  point_line <- get_trial_point.sop(obj, trialId)
   ls <- as.list(get_rotations(point_line))
   ls$pointed_angle <- navr::angle_to_360(point_line$Rotation.Controller.x) + UNITY_SHIFT
   ls$correct_angle <- navr::angle_from_positions(ls_pos$start, ls_pos$goal)
   ls$pointing_error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
-  times <- get_trial_times(sop, trialId)
+  times <- get_trial_times(obj, trialId)
   ls$pointing_time <- times$finish - times$start
   return(ls)
 }
