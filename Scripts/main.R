@@ -23,7 +23,6 @@ plot_learning_trial(learn, 17)
 
 ## calculating pointing
 trialId <- 1
-sop_trial_pointing_error(sop, trialId)
 plot_sop_point(sop, 1)
 
 plot_sop_points(sop, 1:6)

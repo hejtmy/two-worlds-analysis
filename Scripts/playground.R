@@ -25,13 +25,13 @@ plot_all(ls$phase1$sop, 1:12, plot_sop_point.sop)
 plot_all(ls$phase1$learn, 1:18, plot_trial.learn)
 
 ### RESTIOMOTE
-restimote_sop_results(ls$phase1)
+sop_results(ls$phase1)
 ls$phase1 <- calibrate_compass(ls$phase1, 344)
-restimote_sop_results(ls$phase1)
+sop_results(ls$phase1)
 plot_trial_path(ls$phase2, 10)
 plot_true_trial_path(ls$phase1, 14)
 plot_all(ls$phase2, 1:18, plot_true_trial_path)
 
 plot_sop_point.restimote(ls$phase2, 4)
-plot_all(ls$phase2, 1:12, plot_sop_point.restimote)
+plot_all(ls$phase1, 1:12, plot_sop_point.restimote)
 
