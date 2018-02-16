@@ -73,11 +73,11 @@ learn_trial_results.restimote <- function(obj, trialId){
 sop_results.restimote <- function(obj){
   df_results <- create_sop_df(obj)
   for (trialId in 1:12){
-    ls <-  sop_results.restimote(obj, trialId)
-    df[trialId, "pointing_time"] <- ls$pointing_time
-    df[trialId, "pointing_error"] <- point$pointing_error
+    ls <- sop_trial_results.restimote(obj, trialId)
+    df_results[trialId, "pointing_time"] <- ls$pointing_time
+    df_results[trialId, "pointing_error"] <- ls$pointing_error
   }
-  return(df)
+  return(df_results)
 }
 sop_trial_results.restimote <- function(obj, trialId){
   ls <- list()

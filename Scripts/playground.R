@@ -13,7 +13,7 @@ dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 
-ls <- load_participant('tw25', settings, dir)
+ls <- load_participant('tw26', settings, dir)
 
 plot_trial.learn(ls$phase2$learn, 10)
 get_trial_start_goal(ls$phase1$learn, 1)
