@@ -5,7 +5,7 @@ plot_sop_point <- function(obj, trialId){
 plot_walk_trial <- function(obj, trialId){
   UseMethod("plot_walk_trial")
 }
-add_pointing_direction<-function(plt, obj, trialId){
+add_pointing_direction <-function(plt, obj, trialId){
   UseMethod("add_pointing_direction", object = obj)
 }
 ## UNITY ----
@@ -26,7 +26,7 @@ plot_sop_point.twunity <- function(obj, trialId){
 add_pointing_direction.sop <- function(plt, obj, trialId){
   ls <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, ls, color = "red")
-  pointings <- sop_trial_results.twunity(obj, trialId)
+  pointings <- sop_trial_results.sop(obj, trialId)
   plt <- navr::plot_add_direction(plt, ls$start, pointings$pointed_angle, color = "black", len = 20)
   plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 20)
   return(plt)
@@ -59,18 +59,15 @@ plot_sop_point.general <- function(plt, obj, trialId){
   plt <- plt + theme_bw()
   return(plt)
 }
-
 add_building <- function(plt, obj){
   plt <- plot_add_shape(plt, BUILDING_SHAPE$x, BUILDING_SHAPE$y, fill = NA, color = 'black')
   return(plt)
 }
-
 add_goals <- function(plt, obj){
   ls_goals <- get_all_goal_positions(obj, include_SOP = F)
   plt <- navr::plot_add_points(plt, ls_goals, color = "black")
   return(plt)
 }
-
 # plots all plots of certain ids given certain fuction
 plot_all <- function(obj, ids, FUN){
   ls <- list()

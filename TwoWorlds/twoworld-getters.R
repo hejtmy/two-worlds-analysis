@@ -88,6 +88,18 @@ get_start.restimote <- function(obj, trialId){
 get_goal.restimote <- function(obj, trialId){
   return(restimoter::get_goal_position(obj, trialId))
 }
+get_trial_goal_name.restimote <- function(obj, trialId){
+  
+}
+get_trial_start_name.restimote <- function(obj, trialId){
+  
+}
+get_trial_point_goal_name.restimote <- function(obj, trialId){
+  
+}
+get_trial_point_start_name.restimote <- function(obj, trialId){
+  
+}
 get_sop_location_target.restimote <- function(obj, trialId){
   ls <- list()
   ls$location <- get_sop_location.restimote(obj, trialId)
