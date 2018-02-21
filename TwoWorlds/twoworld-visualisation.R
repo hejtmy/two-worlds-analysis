@@ -2,11 +2,14 @@
 plot_sop_point <- function(obj, trialId){
   UseMethod("plot_sop_point")
 }
+plot_walk_trial <- function(obj, trialId){
+  UseMethod("plot_walk_trial")
+}
 add_pointing_direction<-function(plt, obj, trialId){
   UseMethod("add_pointing_direction", object = obj)
 }
 ## UNITY ----
-plot_trial.learn <- function(obj, trialId){
+plot_walk_trial.learn <- function(obj, trialId){
   plt <- navr::create_plot()
   dt <- get_trial_log(obj, trialId)
   plt <- navr::plot_add_path(plt, dt$Position.x, dt$Position.z)
@@ -29,6 +32,11 @@ add_pointing_direction.sop <- function(plt, obj, trialId){
   return(plt)
 }
 ## RESTIMOTE ----
+plot_walk_trial.restimote <- function(obj, trialId){
+  plt <- plot_true_trial_path(obj, trialId)
+  plt <- add_building(plt)
+  return(plt)
+}
 plot_sop_point.restimote <- function(obj, trialId){
   plt <- navr::create_plot()
   plt <- add_building(plt)
@@ -53,7 +61,7 @@ plot_sop_point.general <- function(plt, obj, trialId){
 }
 
 add_building <- function(plt, obj){
-  plt <- plot_add_shape(plt, BUILDING_SHAPE$x, BUILDING_SHAPE$y, fill = 'white', color = 'black')
+  plt <- plot_add_shape(plt, BUILDING_SHAPE$x, BUILDING_SHAPE$y, fill = NA, color = 'black')
   return(plt)
 }
 

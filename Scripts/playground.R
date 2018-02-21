@@ -30,7 +30,7 @@ learn_results(ls$phase2)
 sop_results(ls$phase1)
 ls$phase1 <- calibrate_compass(ls$phase1, 344)
 sop_results(ls$phase1)
-plot_trial_path(ls$phase2, 10)
+plot_trial(ls$phase2, 10)
 plot_true_trial_path(ls$phase1, 14)
 plot_all(ls$phase2, 1:18, plot_true_trial_path)
 
