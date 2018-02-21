@@ -9,7 +9,7 @@ add_pointing_direction<-function(plt, obj, trialId){
   UseMethod("add_pointing_direction", object = obj)
 }
 ## UNITY ----
-plot_walk_trial.learn <- function(obj, trialId){
+plot_walk_trial.walk <- function(obj, trialId){
   plt <- navr::create_plot()
   dt <- get_trial_log(obj, trialId)
   plt <- navr::plot_add_path(plt, dt$Position.x, dt$Position.z)

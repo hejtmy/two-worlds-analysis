@@ -1,4 +1,4 @@
-create_learn_df <- function(obj){
+create_walk_df <- function(obj){
   N_TRIALS <- 18
   df <- data.frame(id = rep(obj$participant_id, N_TRIALS), 
                    time = rep(NA, N_TRIALS), 

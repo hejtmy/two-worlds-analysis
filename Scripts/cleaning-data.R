@@ -11,14 +11,14 @@ dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/tw17_06-02-2018/"
 dir_settings <- "D:/OneDrive/Vyzkum/Davis/Transfer/Settings/"
 
 ls <- load_unity(dir, '19-44-48-05-02-2018', '20-08-25-05-02-2018')
-learn <- ls$learn
+walk <- ls$walk
 sop <- ls$sop
 
-plot_trial_path(learn, 5)
-get_trial_start_goal(learn, 1)
+plot_trial_path(walk, 5)
+get_trial_start_goal(walk, 1)
 get_trial_start_goal(sop, 1)
 
-plot_trial_path(learn, 1)
+plot_trial_path(walk, 1)
 
 sop_results(ls)
 plot_sop_point(sop, 3)
@@ -31,7 +31,7 @@ goal_pos_path <- paste0(dir_settings, "/goal-positions.csv")
 goal_pos <- read.csv(goal_pos_path, dec = ",")
 
 restimoteObj <- load_restimote(dir, goal_pos)
-restimoteObj <- add_goal_order(restimoteObj, settings$goal_order$Learning$`Version-3`)
+restimoteObj <- add_goal_order(restimoteObj, settings$goal_order$Walking$`Version-3`)
 
 restimoteObj$pointing_location <- settings$goal_order$Viewpoint$`Version-4`
 restimoteObj$pointing_target <-  settings$goal_order$Pointing$`Version-4`

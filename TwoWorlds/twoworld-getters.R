@@ -49,13 +49,13 @@ get_all_goal_positions.brainvr <- function(obj, include_SOP = FALSE){
   ls_goals <- setNames(split(obj$data$experiment_log$positions$GoalPositions[i, c(1,3)], i), i)
   return(ls_goals)
 }
-### learn ------
-get_trial_goal_id.learn <- function(obj, trialId){
+### walk ------
+get_trial_goal_id.walk <- function(obj, trialId){
   # C# indexes from 0
   goal_id <- obj$data$experiment_log$settings$GoalOrder[trialId]
   return(goal_id + 1)
 }
-get_trial_start.learn <- function(obj, trialId){
+get_trial_start.walk <- function(obj, trialId){
   #First trial is started in a center hall
   if(trialId == 1){
     df_firs_pos <- obj$data$player_log[1, ]

@@ -1,6 +1,6 @@
 server <- function(input, output, session){
   output$plotTrialPath <- renderPlot({
-    plot_learning_trial(learn, input$sliderTrial)
+    plot_walking_trial(walk, input$sliderTrial)
   })
   
   output$plotSop <- renderPlot({
