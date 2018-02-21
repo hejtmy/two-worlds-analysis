@@ -7,11 +7,11 @@ sop_results <- function(obj){
 sop_trial_results <- function(obj, trialId){
   UseMethod("sop_trial_results")
 }
-learn_results <- function(obj){
-  UseMethod("learn_results")
+walk_results <- function(obj){
+  UseMethod("walk_results")
 }
-learn_trial_results <- function(obj, trialId){
-  UseMethod("learn_trial_results")
+walk_trial_results <- function(obj, trialId){
+  UseMethod("walk_trial_results")
 }
 ## UNITY ----
 sop_results.twunity <- function(obj){
@@ -34,13 +34,13 @@ sop_trial_results.sop <- function(obj, trialId){
   ls$goal <- get_trial_goal_name.brainvr(obj, trialId)
   return(ls)
 }
-learn_results.twunity <- function(obj){
-  return(learn_results.general(obj$learn))
+walk_results.twunity <- function(obj){
+  return(walk_results.general(obj$walk))
 }
-learn_trial_results.twunity <- function(obj, trialId){
- return(learn_trial_results.learn(obj$learn, trialId))
+walk_trial_results.twunity <- function(obj, trialId){
+ return(walk_trial_results.walk(obj$walk, trialId))
 }
-learn_trial_results.learn <- function(obj, trialId){
+walk_trial_results.walk <- function(obj, trialId){
   ls <- list()
   log <- get_trial_log(obj, trialId)
   ls$time <- diff(range(log$Time))
@@ -50,10 +50,10 @@ learn_trial_results.learn <- function(obj, trialId){
   return(ls)
 }
 ## RESTIMOTE ----
-learn_results.restimote <- function(obj){
-  return(learn_results.general(obj))
+walk_results.restimote <- function(obj){
+  return(walk_results.general(obj))
 }
-learn_trial_results.restimote <- function(obj, trialId){
+walk_trial_results.restimote <- function(obj, trialId){
   log <- get_trial_log(obj, trialId)
   log_true <- true_trial_log(obj, trialId, 30, radius = 3)
   ls <- list()
@@ -91,10 +91,10 @@ sop_results.general <- function (obj){
   }
   return(df_results)
 }
-learn_results.general <- function(obj){
-  df_results <- create_learn_df(obj)
+walk_results.general <- function(obj){
+  df_results <- create_walk_df(obj)
   for (trialId in 1:18){
-    ls <- learn_trial_results(obj, trialId)
+    ls <- walk_trial_results(obj, trialId)
     df_results[trialId, "time"] <- ls$time
     df_results[trialId, "distance"] <- ls$distance
     df_results[trialId, "start"] <- ls$start

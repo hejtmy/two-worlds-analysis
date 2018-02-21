@@ -1,5 +1,15 @@
 source('TwoWorlds/helpers-loading.R')
 
+#' Loads complete participant using directory and code
+#'
+#' @param code 
+#' @param settings 
+#' @param dir 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 load_participant <- function(code, settings, dir){
   dirs <- list.dirs(dir)
   which_folder <- grep(paste0(".*", code, ".*"), dirs)
@@ -12,46 +22,48 @@ load_participant <- function(code, settings, dir){
   line <- get_participant_line(code, settings)
   if(is.null(line)) return(NULL)
   
-  if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$LearnTimestamp1, line$SOPTimestamp1)
-  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, line$LearnTimestamp1, 1, settings)
+  if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$WalkTimestamp1, line$SOPTimestamp1)
+  if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, line$WalkTimestamp1, 1, settings)
   
-  if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$LearnTimestamp2, line$SOPTimestamp2)
-  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, line$LearnTimestamp2, 2, settings)
+  if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$WalkTimestamp2, line$SOPTimestamp2)
+  if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, line$WalkTimestamp2, 2, settings)
   return(ls)
 }
 
-
-#' Title
+#' Loads unity logs
 #'
 #' @param dir where to search for the unity logs
-#' @param learn_timestamp what timestamp does the learning part have
+#' @param walk_timestamp what timestamp does the walking part have
 #' @param sop_timestamp what timestamp does the sop task have
 #'
-#' @return list with learn and sop brainvr objects
+#' @return list with walk and sop brainvr objects
 #'
 #' @examples
-load_unity <- function(dir, learn_timestamp, sop_timestamp){
-  learn <- load_experiment(dir, exp_timestamp = learn_timestamp)
-  class(learn) <- append(class(learn), c("learn"))
+load_unity <- function(dir, walk_timestamp, sop_timestamp){
+  walk <- load_experiment(dir, exp_timestamp = walk_timestamp)
+  class(walk) <- append(class(walk), c("walk"))
   sop <- load_experiment(dir, exp_timestamp = sop_timestamp)
   class(sop) <- append(class(sop), c("sop"))
   
-  learn <- preprocess_unity_log(learn, dir)
+  walk <- preprocess_unity_log(walk, dir)
   sop <- preprocess_unity_log(sop, dir)
-  learn <- transform_unity_coordinates(learn)
+  walk <- transform_unity_coordinates(walk)
   sop <- transform_unity_coordinates(sop)
   
-  learn$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
+  walk$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
   sop$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
-  ls <- list(learn = learn, sop = sop)
+  ls <- list(walk = walk, sop = sop)
   class(ls) <-  append(class(ls), "twunity")
   return(ls)
 }
 
-#' Title
+#' Loads restimote 
 #'
 #' @param dir directory witht he log
 #' @param settings settings file from google sheets
+#' @param code 
+#' @param exp_timestamp 
+#' @param phase 
 #'
 #' @return RestimoteObject
 #'
@@ -67,7 +79,7 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
   restimoteObj <- preprocess_companion_log(restimoteObj)
   restimoteObj <- preprocess_restimote_log(restimoteObj)
   
-  restimoteObj$goal_order <- get_settings_order(code, "Learning", phase, settings)
+  restimoteObj$goal_order <- get_settings_order(code, "Walking", phase, settings)
   restimoteObj$pointing_location <- get_settings_order(code, "Viewpoint", phase, settings)
   restimoteObj$pointing_target <- get_settings_order(code, "Pointing", phase, settings)
   restimoteObj$map_limits <- list(x = c(-2, 30), y = c(-2, 30))
@@ -83,7 +95,7 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
 #' @examples
 load_google_sheets <- function(){
   ls <- list()
-  ls$goal_order <- fetch_sheet("TW-GoalOrder", c("Learning", "Viewpoint", "Pointing"))
+  ls$goal_order <- fetch_sheet("TW-GoalOrder", c("Walking", "Viewpoint", "Pointing"))
   settings <- fetch_sheet("TW-Participants", "Settings")
   ls$versions <- settings$Settings[!is.na(settings$Settings$Code),]
   positions <- fetch_sheet("TW-BuildingPositions", "Positions")

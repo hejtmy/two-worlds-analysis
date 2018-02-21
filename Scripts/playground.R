@@ -4,25 +4,25 @@ library(brainvr.R)
 library(restimoter)
 library(ggplot2)
 library(googlesheets)
-
+source("Scripts/loading.R")
 dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 
 ls <- load_participant('tw25', settings, dir)
 
-plot_trial.learn(ls$phase2$learn, 10)
-get_trial_start_goal(ls$phase1$learn, 1)
+plot_trial.walk(ls$phase2$walk, 10)
+get_trial_start_goal(ls$phase1$walk, 1)
 get_trial_start_goal(ls$phase1$sop, 1)
 
 sop_results(ls$phase1)
-learn_results(ls$phase2)
+walk_results(ls$phase2)
 plot_sop_point(ls$phase1, 8)
 plot_all(ls$phase1, 1:12, plot_sop_point)
-plot_all(ls$phase1$learn, 1:18, plot_trial.learn)
+plot_all(ls$phase1$walk, 1:18, plot_trial.walk)
 
 ### RESTIOMOTE
-learn_results(ls$phase2)
+walk_results(ls$phase2)
 sop_results(ls$phase1)
 ls$phase1 <- calibrate_compass(ls$phase1, 344)
 sop_results(ls$phase1)

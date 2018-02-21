@@ -1,6 +1,6 @@
 ui <- fluidPage(
   sliderInput(inputId = "sliderTrial", label = "Select trial to plot", 
-              value = 1, min = 1, step = 1, max = n_learn_trials),
+              value = 1, min = 1, step = 1, max = n_walk_trials),
   plotOutput(outputId = "plotTrialPath"),
   sliderInput(inputId = "sliderSop", label = "Slide to select pointing", 
               value = 1, min = 1, max = n_sop_trials, step = 1),
