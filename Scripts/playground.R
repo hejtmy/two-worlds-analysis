@@ -6,12 +6,13 @@ library(ggplot2)
 library(googlesheets)
 source("Scripts/loading.R")
 dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
+dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 
-ls <- load_participant('tw25', settings, dir)
+ls <- load_participant('tw43', settings, dir)
 
-plot_trial.walk(ls$phase2$walk, 10)
+plot_walk_trial(ls$phase2, 8)
 get_trial_start_goal(ls$phase1$walk, 1)
 get_trial_start_goal(ls$phase1$sop, 1)
 
