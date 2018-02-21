@@ -4,11 +4,7 @@ library(brainvr.R)
 library(restimoter)
 library(ggplot2)
 library(googlesheets)
-source("TwoWorlds/twoworld-getters.R")
-source("TwoWorlds/twoworld-visualisation.R")
-source("TwoWorlds/twoworld-loading.R")
-source("TwoWorlds/twoworld-preparing.R")
-source("TwoWorlds/twoworld-results.R")
+
 dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
