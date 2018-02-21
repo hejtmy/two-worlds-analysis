@@ -16,7 +16,8 @@ plot_trial.learn <- function(obj, trialId){
 }
 plot_sop_point.twunity <- function(obj, trialId){
   obj <- obj$sop
-  plt <- plot_sop_point.general(obj, trialId)
+  plt <- navr::create_plot()
+  plt <- plot_sop_point.general(plt, obj, trialId)
   return(plt)
 }
 add_pointing_direction.sop <- function(plt, obj, trialId){
@@ -29,7 +30,9 @@ add_pointing_direction.sop <- function(plt, obj, trialId){
 }
 ## RESTIMOTE ----
 plot_sop_point.restimote <- function(obj, trialId){
-  plt <- plot_sop_point.general(obj, trialId)
+  plt <- navr::create_plot()
+  plt <- add_building(plt)
+  plt <- plot_sop_point.general(plt, obj, trialId)
   return(plt)
 }
 add_pointing_direction.restimote <- function(plt, obj, trialId){
@@ -41,12 +44,16 @@ add_pointing_direction.restimote <- function(plt, obj, trialId){
   return(plt)
 }
 ## GENERAL ----
-plot_sop_point.general <- function(obj, trialId){
-  plt <- navr::create_plot()
+plot_sop_point.general <- function(plt, obj, trialId){
   plt <- brainvr.R::add_limits(plt, obj)
   plt <- add_goals(plt, obj)
   plt <- add_pointing_direction(plt, obj, trialId)
   plt <- plt + theme_bw()
+  return(plt)
+}
+
+add_building <- function(plt, obj){
+  plt <- plot_add_shape(plt, BUILDING_SHAPE$x, BUILDING_SHAPE$y, fill = 'white', color = 'black')
   return(plt)
 }
 
