@@ -30,7 +30,7 @@ sop_trial_results.sop <- function(obj, trialId){
   ls$error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
   times <- get_trial_times(obj, trialId)
   ls$time <- times$finish - times$start
-  ls$start <- "SOME VIEWPOINT"
+  ls$start <- paste0("Viewpoint", get_trial_goal_id.sop())
   ls$goal <- get_trial_goal_name.brainvr(obj, trialId)
   return(ls)
 }

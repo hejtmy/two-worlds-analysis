@@ -2,20 +2,44 @@
 get_goal <- function(obj, goal_id){
   UseMethod("get_goal")
 }
+get_trial_start_id <- function(obj, trialId){
+  UseMethod("get_trial_start_id")
+}
 get_trial_start <- function(obj, trialId){
   UseMethod("get_trial_start")
 }
-get_trial_goal <- function(obj, trialId){
-  UseMethod("get_trial_goal")
+get_trial_start_name <- function(obj, trialId){
+  UseMethod("get_trial_start_name")
 }
 get_trial_goal_id <- function(obj, trialId){
   UseMethod("get_trial_goal_id")
+}
+get_trial_goal <- function(obj, trialId){
+  UseMethod("get_trial_goal")
 }
 get_trial_goal_name <- function(obj, trialId){
   UseMethod("get_trial_goal_name")
 }
 get_trial_start_goal <- function(obj, trialId){
   UseMethod("get_trial_start_goal")
+}
+get_point_start_id <- function(obj, trialId){
+  UseMethod("get_point_start_id")
+}
+get_point_start_name <- function(obj, trialId){
+  UseMethod("get_point_start_name")
+}
+get_point_start <- function(obj, trialId){
+  UseMethod("get_point_start")
+}
+get_point_goal_id <- function(obj, trialId){
+  UseMethod("get_point_goal_id")
+}
+get_point_goal_name <- function(obj, trialId){
+  UseMethod("get_point_goal_name")
+}
+get_point_goal <- function(obj, trialId){
+  UseMethod("get_point_goal")
 }
 get_all_goal_positions <- function(obj, include_SOP){
   UseMethod("get_all_goal_positions")
@@ -74,12 +98,18 @@ get_trial_start.sop <- function(obj, trialId){
   goal_id <- obj$data$experiment_log$settings$GoalOrder[trialId] + 1
   return(get_goal(obj, goal_id))
 }
+get_trial_start_id.sop <- function(obj, trialId){
+  return(get_trial_goal_id.walk(obj, trialId))
+}
 get_trial_point.sop <- function(obj, trialId){
   #when player points, trial ends so the point is at the trial end, but because of unity timing
   #sometimes logged after trial finishes
   log <- get_trial_log(obj, trialId)
   point_line <- tail(log, 1)
   return(point_line)
+}
+get_trial_point_start <- function(obj, trialId){
+  
 }
 ### RESTIMOTE ----------
 get_start.restimote <- function(obj, trialId){
