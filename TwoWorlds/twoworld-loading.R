@@ -49,9 +49,12 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   sop <- preprocess_unity_log(sop, dir)
   walk <- transform_unity_coordinates(walk)
   sop <- transform_unity_coordinates(sop)
+  walk <- resize_layout(walk, 1/4)
+  sop <- resize_layout(sop, 1/4)
   
-  walk$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
-  sop$map_limits <- list(x = c(-5, 105), y = c(-5, 105))
+  walk$map_limits <- BUILDING_LIMITS
+  sop$map_limits <- BUILDING_LIMITS
+  
   ls <- list(walk = walk, sop = sop)
   class(ls) <-  append(class(ls), "twunity")
   return(ls)
@@ -82,7 +85,7 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
   restimoteObj$goal_order <- get_settings_order(code, "Walking", phase, settings)
   restimoteObj$pointing_location <- get_settings_order(code, "Viewpoint", phase, settings)
   restimoteObj$pointing_target <- get_settings_order(code, "Pointing", phase, settings)
-  restimoteObj$map_limits <- list(x = c(-2, 30), y = c(-2, 30))
+  restimoteObj$map_limits <- BUILDING_LIMITS
   return(restimoteObj)
   #add goal order
 }

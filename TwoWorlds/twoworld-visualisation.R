@@ -13,6 +13,7 @@ plot_walk_trial.twunity <- function(obj, trialId){
   plt <- navr::plot_add_path(plt, dt$Position.x, dt$Position.z)
   start_end <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, start_end, color = "green")
+  plt <- plot_walk.general(plt, obj, trialId)
   return(plt)
 }
 plot_sop_point.twunity <- function(obj, trialId){
@@ -25,13 +26,12 @@ plot_sop_point.twunity <- function(obj, trialId){
 ## RESTIMOTE ----
 plot_walk_trial.restimote <- function(obj, trialId){
   plt <- plot_true_trial_path(obj, trialId)
-  plt <- add_building(plt)
+  plt <- plot_walk.general(plt, obj, trialId)
   return(plt)
 }
 plot_sop_point.restimote <- function(obj, trialId){
   plt <- navr::create_plot()
   plt <- brainvr.R::add_limits(plt, obj)
-  plt <- add_building(plt)
   plt <- add_goals(plt, obj)
   plt <- plot_sop_point.general(plt, obj, trialId)
   return(plt)
@@ -45,12 +45,17 @@ add_pointing_direction <- function(plt, obj, trialId){
   plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 4)
   return(plt)
 }
+plot_walk.general <- function(plt, obj, trialId){
+  plt <- add_building(plt)
+  return(plt)
+}
 plot_sop_point.general <- function(plt, obj, trialId){
+  plt <- add_building(plt)
   plt <- add_pointing_direction(plt, obj, trialId)
   plt <- plt + theme_void()
   return(plt)
 }
-add_building <- function(plt, obj){
+add_building <- function(plt){
   plt <- plot_add_shape(plt, BUILDING_SHAPE$x, BUILDING_SHAPE$y, fill = NA, color = 'black')
   return(plt)
 }
