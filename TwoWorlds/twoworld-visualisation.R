@@ -5,9 +5,6 @@ plot_sop_point <- function(obj, trialId){
 plot_walk_trial <- function(obj, trialId){
   UseMethod("plot_walk_trial")
 }
-add_pointing_direction <-function(plt, obj, trialId){
-  UseMethod("add_pointing_direction", object = obj)
-}
 ## UNITY ----
 plot_walk_trial.walk <- function(obj, trialId){
   plt <- navr::create_plot()
@@ -18,17 +15,10 @@ plot_walk_trial.walk <- function(obj, trialId){
   return(plt)
 }
 plot_sop_point.twunity <- function(obj, trialId){
-  obj <- obj$sop
   plt <- navr::create_plot()
+  plt <- brainvr.R::add_limits(plt, obj$sop)
+  plt <- add_goals(plt, obj$sop)
   plt <- plot_sop_point.general(plt, obj, trialId)
-  return(plt)
-}
-add_pointing_direction.sop <- function(plt, obj, trialId){
-  ls <- get_trial_start_goal(obj, trialId)
-  plt <- navr::plot_add_points(plt, ls, color = "red")
-  pointings <- sop_trial_results.sop(obj, trialId)
-  plt <- navr::plot_add_direction(plt, ls$start, pointings$pointed_angle, color = "black", len = 20)
-  plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 20)
   return(plt)
 }
 ## RESTIMOTE ----
@@ -39,22 +29,22 @@ plot_walk_trial.restimote <- function(obj, trialId){
 }
 plot_sop_point.restimote <- function(obj, trialId){
   plt <- navr::create_plot()
+  plt <- brainvr.R::add_limits(plt, obj)
   plt <- add_building(plt)
+  plt <- add_goals(plt, obj)
   plt <- plot_sop_point.general(plt, obj, trialId)
   return(plt)
 }
-add_pointing_direction.restimote <- function(plt, obj, trialId){
-  ls <- get_point_start_goal.restimote(obj, trialId)
+## GENERAL ----
+add_pointing_direction <- function(plt, obj, trialId){
+  ls <- get_point_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, ls, color = "red")
-  pointings <- sop_trial_results.restimote(obj, trialId)
+  pointings <- sop_trial_results(obj, trialId)
   plt <- navr::plot_add_direction(plt, ls$start, pointings$pointed_angle, color = "black", len = 4)
   plt <- navr::plot_add_direction(plt, ls$start, pointings$correct_angle, color = "green", len = 4)
   return(plt)
 }
-## GENERAL ----
 plot_sop_point.general <- function(plt, obj, trialId){
-  plt <- brainvr.R::add_limits(plt, obj)
-  plt <- add_goals(plt, obj)
   plt <- add_pointing_direction(plt, obj, trialId)
   plt <- plt + theme_bw()
   return(plt)
