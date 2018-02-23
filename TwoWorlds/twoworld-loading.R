@@ -1,8 +1,13 @@
-load_all <- function(settings, dir){
+load_all <- function(settings, dir, select = NULL){
   ls <- list()
   finished <- settings$versions[settings$versions$finished == "yes", "Code"][[1]]
-  for(code in finished){
+  if(!is.null(select)) finished <- finished[select] 
+  for(i in 1:length(finished)){
+    code <- finished[i]
+    print(paste0("Loading participant ", i,  " with code ", code))
     ls[[code]] <- load_participant(code, settings, dir)
+    print("Finished")
+    print("----------------------------")
   }
   return(ls)
 }

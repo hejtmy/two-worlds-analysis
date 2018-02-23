@@ -1,5 +1,3 @@
-source("TwoWorlds/helpers-results.R")
-
 # GENERIC ----
 sop_results <- function(obj){
   UseMethod("sop_results")
