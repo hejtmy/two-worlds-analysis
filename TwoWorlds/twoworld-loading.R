@@ -93,6 +93,7 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
   restimoteObj <- preprocess_restimote_log(restimoteObj)
   
   restimoteObj <- calibrate_compass(restimoteObj, 333)
+  restimoteObj$participant_id <- code
   restimoteObj$goal_order <- get_settings_order(code, "Walking", phase, settings)
   restimoteObj$pointing_location <- get_settings_order(code, "Viewpoint", phase, settings)
   restimoteObj$pointing_target <- get_settings_order(code, "Pointing", phase, settings)
