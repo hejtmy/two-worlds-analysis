@@ -1,7 +1,7 @@
 # Walk ----
 get_trial_start_id.restimote <- function(obj, trialId){
   if(trialId == 1) return(NULL)
-  return(obj$goal_order[trialId])
+  return(obj$goal_order[trialId-1])
 }
 get_trial_start.restimote <- function(obj, trialId){
   return(restimoter::get_start_position(obj, trialId))
