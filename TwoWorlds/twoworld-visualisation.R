@@ -46,7 +46,7 @@ add_pointing_direction <- function(plt, obj, trialId){
 }
 plot_sop_point.general <- function(plt, obj, trialId){
   plt <- add_pointing_direction(plt, obj, trialId)
-  plt <- plt + theme_bw()
+  plt <- plt + theme_void()
   return(plt)
 }
 add_building <- function(plt, obj){
