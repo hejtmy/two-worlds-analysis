@@ -38,9 +38,27 @@ get_trial_start.walk <- function(obj, trialId){
   return(get_trial_goal(obj, trialId - 1))
 }
 
-###Universal ----
-get_rotations <- function(df){
-  ids <- grep("Rotation", colnames(df))
-  return(as.data.frame(df[,..ids]))
-  return(as.data.frame(df[,ids]))
+## SOP ----
+get_trial_goal_id.sop <- function(obj, trialId){
+  #in SOP trials we actually care about Point order
+  goal_id <- obj$data$experiment_log$settings$GoalPointOrder[trialId]
+  #c# indexes from 0
+  return(goal_id + 1)
+}
+get_trial_start.sop <- function(obj, trialId){
+  goal_id <- obj$data$experiment_log$settings$GoalOrder[trialId] + 1
+  return(get_goal(obj, goal_id))
+}
+get_trial_start_id.sop <- function(obj, trialId){
+  return(get_trial_goal_id.walk(obj, trialId))
+}
+get_trial_point.sop <- function(obj, trialId){
+  #when player points, trial ends so the point is at the trial end, but because of unity timing
+  #sometimes logged after trial finishes
+  log <- get_trial_log(obj, trialId)
+  point_line <- tail(log, 1)
+  return(point_line)
+}
+get_point_start.sop <- function(obj, trialId){
+  return(get_trial_start_id.sop(obj, trialId))
 }
