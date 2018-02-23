@@ -24,6 +24,14 @@ ggplot(sop_all, aes(x = condition, y = abs(error), fill=factor(phase))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 
+ggplot(walk_all, aes(x = type, y = distance, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+
+ggplot(walk_all, aes(x = type, y = time, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+
 ggplot(walk_all, aes(x = condition, y = distance, fill=factor(phase))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
