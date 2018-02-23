@@ -1,4 +1,16 @@
-source('TwoWorlds/helpers-loading.R')
+load_all <- function(settings, dir, select = NULL){
+  ls <- list()
+  finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" | is.na(settings$versions$is_ok)), "Code"][[1]]
+  if(!is.null(select)) finished <- finished[select] 
+  for(i in 1:length(finished)){
+    code <- finished[i]
+    print(paste0("Loading participant ", i,  " with code ", code))
+    ls[[code]] <- load_participant(code, settings, dir)
+    print("Finished")
+    print("----------------------------")
+  }
+  return(ls)
+}
 
 #' Loads complete participant using directory and code
 #'
@@ -12,7 +24,7 @@ source('TwoWorlds/helpers-loading.R')
 #' @examples
 load_participant <- function(code, settings, dir){
   dirs <- list.dirs(dir)
-  which_folder <- grep(paste0(".*", code, ".*"), dirs)
+  which_folder <- grep(paste0(".*", code, "[_].*"), dirs)
   if(length(which_folder) != 1){
     warning(paste0("No folder of code ", code, " in ", dir))
     return(NULL)
@@ -49,8 +61,6 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   sop <- preprocess_unity_log(sop, dir)
   walk <- transform_unity_coordinates(walk)
   sop <- transform_unity_coordinates(sop)
-  walk <- resize_layout(walk, 1/4)
-  sop <- resize_layout(sop, 1/4)
   
   walk$map_limits <- BUILDING_LIMITS
   sop$map_limits <- BUILDING_LIMITS
@@ -83,10 +93,18 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
   restimoteObj <- preprocess_restimote_log(restimoteObj)
   
   restimoteObj <- calibrate_compass(restimoteObj, 333)
+  restimoteObj$participant_id <- code
   restimoteObj$goal_order <- get_settings_order(code, "Walking", phase, settings)
   restimoteObj$pointing_location <- get_settings_order(code, "Viewpoint", phase, settings)
   restimoteObj$pointing_target <- get_settings_order(code, "Pointing", phase, settings)
   restimoteObj$map_limits <- BUILDING_LIMITS
+  
+  ### WARNINGS
+  if(restimoteObj$n_trials != 18) warning(paste0(code, " in phase ", phase, " has ", restimoteObj$n_trials, " instead of 18 trials"))
+  n_pointings <- get_n_pointings(restimoteObj)
+  if (n_pointings$log != 14) warning(paste0(code, " in phase ", phase, " has ", n_pointings$log, " instead of 14 pointings in player log"))
+  if (n_pointings$companion != 12) warning(paste0(code, " in phase ", phase," has ", n_pointings$companion, " instead of 12 should point in companion log"))
+  
   return(restimoteObj)
   #add goal order
 }

@@ -9,8 +9,13 @@ dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
+ls <- load_all(settings, dir)
+sop_results <- multi_sop_results(ls)
+walk_results <- multi_walk_results(ls)
+write.table(sop_results, file = "sop.csv", sep=";")
+write.table(walk_results, file = "walk.csv", sep=";")
 
-ls <- load_participant('tw41', settings, dir)
+ls <- load_participant('tw31', settings, dir)
 
 plot_walk_trial(ls$phase1, 8)
 
@@ -18,11 +23,10 @@ sop_results(ls$phase1)
 walk_results(ls$phase1)
 
 plot_all(ls$phase1, 1:12, plot_sop_point)
-plot_all(ls$phase1$walk, 1:18, plot_trial.walk)
-
+plot_all(ls$phase1, 1:18, plot_walk_trial)
 ### RESTIOMOTE
-walk_results(ls$phase2)
-sop_results(ls$phase2)
+walk_results(ls$phase1)
+sop_results(ls$phase1)
 ls$phase2 <- calibrate_compass(ls$phase2, 333)
 plot_sop_point(ls$phase2, 12)
 sop_results(ls$phase1)

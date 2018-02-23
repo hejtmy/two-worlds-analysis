@@ -1,5 +1,3 @@
-source("TwoWorlds/helpers-results.R")
-
 # GENERIC ----
 sop_results <- function(obj){
   UseMethod("sop_results")
@@ -55,7 +53,7 @@ walk_trial_results.restimote <- function(obj, trialId){
   log <- get_trial_log(obj, trialId)
   log_true <- true_trial_log(obj, trialId, 30, radius = 3)
   ls <- list()
-  ls$time <- diff(range(log$Time))
+  ls$time <- diff(range(log$Time)) 
   ls$distance <- sum(log_true$distance)
   ls$start <- get_trial_start_name.restimote(obj, trialId)
   ls$goal <- get_trial_goal_name.restimote(obj, trialId)

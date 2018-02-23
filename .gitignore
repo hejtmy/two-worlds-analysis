@@ -35,3 +35,4 @@ vignettes/*.pdf
 
 #Output files
 *.pdf
+*.csv
