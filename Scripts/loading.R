@@ -1,6 +1,4 @@
-source("TwoWorlds/twoworld-getters.R")
-source("TwoWorlds/twoworld-visualisation.R")
-source("TwoWorlds/twoworld-loading.R")
-source("TwoWorlds/twoworld-preparing.R")
-source("TwoWorlds/twoworld-results.R")
-source("TwoWorlds/two-worlds-constants.R")
+source_folder <- function(path){
+  sapply(list.files(pattern = "[.]R$", path = path, full.names = TRUE), source);
+}
+source_folder("TwoWorlds")
