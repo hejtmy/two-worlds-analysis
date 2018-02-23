@@ -97,6 +97,13 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
   restimoteObj$pointing_location <- get_settings_order(code, "Viewpoint", phase, settings)
   restimoteObj$pointing_target <- get_settings_order(code, "Pointing", phase, settings)
   restimoteObj$map_limits <- BUILDING_LIMITS
+  
+  ### WARNINGS
+  if(restimoteObj$n_trials != 18) warning(paste0(code, " in phase ", phase, " has ", restimoteObj$n_trials, " instead of 18 trials"))
+  n_pointings <- get_n_pointings(restimoteObj)
+  if (n_pointings$log != 14) warning(paste0(code, " in phase ", phase, " has ", n_pointings$log, " instead of 14 pointings in player log"))
+  if (n_pointings$companion != 12) warning(paste0(code, " in phase ", phase," has ", n_pointings$companion, " instead of 12 should point in companion log"))
+  
   return(restimoteObj)
   #add goal order
 }
