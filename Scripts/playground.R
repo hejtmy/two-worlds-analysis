@@ -16,14 +16,15 @@ plot_walk_trial(ls$phase1, 8)
 
 sop_results(ls$phase1)
 walk_results(ls$phase1)
-plot_sop_point(ls$phase2, 8)
+
 plot_all(ls$phase1, 1:12, plot_sop_point)
 plot_all(ls$phase1$walk, 1:18, plot_trial.walk)
 
 ### RESTIOMOTE
 walk_results(ls$phase2)
-sop_results(ls$phase1)
+sop_results(ls$phase2)
 ls$phase2 <- calibrate_compass(ls$phase2, 333)
+plot_sop_point(ls$phase2, 12)
 sop_results(ls$phase1)
 plot_trial(ls$phase2, 10)
 plot_true_trial_path(ls$phase1, 14)

@@ -1,7 +1,7 @@
 ### twunity ----
 get_trial_start_id.twunity <- function(obj, trialId){
   if(trialId == 1) return(NULL)
-  return(get_trial_goal_id.twunity(trialId - 1))
+  return(get_trial_goal_id.twunity(obj, trialId - 1))
 }
 get_trial_start.twunity <- function(obj, trialId){
   #First trial is started in a center hall
@@ -22,7 +22,8 @@ get_trial_goal_id.twunity <- function(obj, trialId){
   return(iGoal + 1) #C# indexes from 0
 }
 get_trial_goal.twunity <- function(obj, trialId){
-  return(get_goal.brainvr(obj$walk, trialId))
+  iGoal <- get_trial_goal_id.twunity(obj, trialId)
+  return(get_goal.brainvr(obj$walk, iGoal))
 }
 get_trial_goal_name.twunity <- function(obj, trialId){
   iGoal <- get_trial_goal_id.twunity(obj, trialId)

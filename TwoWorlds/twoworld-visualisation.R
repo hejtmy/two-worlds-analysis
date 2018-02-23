@@ -6,9 +6,10 @@ plot_walk_trial <- function(obj, trialId){
   UseMethod("plot_walk_trial")
 }
 ## UNITY ----
-plot_walk_trial.walk <- function(obj, trialId){
+plot_walk_trial.twunity <- function(obj, trialId){
   plt <- navr::create_plot()
-  dt <- get_trial_log(obj, trialId)
+  dt <- get_trial_log(obj$walk, trialId)
+  plt <- brainvr.R::add_limits(plt, obj$walk)
   plt <- navr::plot_add_path(plt, dt$Position.x, dt$Position.z)
   start_end <- get_trial_start_goal(obj, trialId)
   plt <- navr::plot_add_points(plt, start_end, color = "green")
