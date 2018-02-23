@@ -1,3 +1,18 @@
+#X --get_trial_start_id
+#X --get_trial_start
+#X --get_trial_start_name
+#X --get_trial_goal_id
+#X --get_trial_goal
+#X --get_trial_goal_name
+#X --get_trial_start_goal
+#X --get_point_start_id
+#X --get_point_start_name
+#X --get_point_start
+#X --get_point_goal_id
+#X --get_point_goal_name
+#X --get_point_goal
+#X --get_trial_point
+#X --get_all_goal_positions
 ### twunity ---------
 get_goal.brainvr <- function(obj, goal_id){
   goal_pos <- obj$data$experiment_log$positions$GoalPositions[goal_id, ]
@@ -37,7 +52,6 @@ get_trial_start.walk <- function(obj, trialId){
   }
   return(get_trial_goal(obj, trialId - 1))
 }
-
 ## SOP ----
 get_trial_goal_id.sop <- function(obj, trialId){
   #in SOP trials we actually care about Point order

@@ -1,3 +1,19 @@
+#X --get_trial_start_id
+#X --get_trial_start
+#X --get_trial_start_name
+#X --get_trial_goal_id
+#X --get_trial_goal
+#X --get_trial_goal_name
+#X --get_trial_start_goal
+#X --get_point_start_id
+#X --get_point_start_name
+#X --get_point_start
+#X --get_point_goal_id
+#X --get_point_goal_name
+#X --get_point_goal
+#X --get_trial_point
+#X --get_all_goal_positions
+
 ### GENERIC DEFINITIONS ---------
 get_goal <- function(obj, goal_id){
   UseMethod("get_goal")
@@ -40,6 +56,9 @@ get_point_goal_name <- function(obj, trialId){
 }
 get_point_goal <- function(obj, trialId){
   UseMethod("get_point_goal")
+}
+get_point_start_goal <- function(obj, trialId){
+  UseMethod("get_point_start_goal")
 }
 get_all_goal_positions <- function(obj, include_SOP){
   UseMethod("get_all_goal_positions")
