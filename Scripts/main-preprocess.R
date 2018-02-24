@@ -3,6 +3,7 @@
 library(brainvr.R)
 library(restimoter)
 library(ggplot2)
+library(dplyr)
 library(googlesheets)
 source("Scripts/loading.R")
 dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"

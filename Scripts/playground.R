@@ -20,7 +20,7 @@ ls <- load_participant('tw31', settings, dir)
 plot_walk_trial(ls$phase1, 8)
 
 sop_results(ls$phase1)
-walk_results(ls$phase1)
+walk_results(tw15$phase1)
 
 plot_all(ls$phase1, 1:12, plot_sop_point)
 plot_all(ls$phase1, 1:18, plot_walk_trial)

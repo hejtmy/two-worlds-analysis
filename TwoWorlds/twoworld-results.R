@@ -13,18 +13,16 @@ walk_trial_results <- function(obj, trialId){
 }
 ## UNITY ----
 walk_results.twunity <- function(obj){
-  return(walk_results.general(obj$walk))
+  df_results <- create_walk_df(obj$walk)
+  return(walk_results.general(obj, df_results))
 }
 walk_trial_results.twunity <- function(obj, trialId){
-  return(walk_trial_results.walk(obj$walk, trialId))
-}
-walk_trial_results.walk <- function(obj, trialId){
   ls <- list()
-  log <- get_trial_log(obj, trialId)
+  log <- get_trial_log(obj$walk, trialId)
   ls$time <- diff(range(log$Time))
   ls$distance <- diff(range(log$cumulative_distance))
-  ls$start <- get_trial_goal_name.brainvr(obj, trialId - 1)
-  ls$goal <- get_trial_goal_name.brainvr(obj, trialId)
+  ls$start <- get_trial_start_name.twunity(obj, trialId)
+  ls$goal <- get_trial_goal_name.twunity(obj, trialId)
   return(ls)
 }
 sop_results.twunity <- function(obj){
@@ -47,7 +45,8 @@ sop_trial_results.twunity <- function(obj, trialId){
 }
 ## RESTIMOTE ----
 walk_results.restimote <- function(obj){
-  return(walk_results.general(obj))
+  df_results <- create_walk_df(obj)
+  return(walk_results.general(obj, df_results))
 }
 walk_trial_results.restimote <- function(obj, trialId){
   log <- get_trial_log(obj, trialId)
@@ -86,8 +85,7 @@ sop_results.general <- function (obj, df_results){
   }
   return(df_results)
 }
-walk_results.general <- function(obj){
-  df_results <- create_walk_df(obj)
+walk_results.general <- function(obj, df_results){
   for (trialId in 1:18){
     ls <- walk_trial_results(obj, trialId)
     df_results[trialId, "time"] <- ls$time
