@@ -1,0 +1,140 @@
+---
+title: "lab-meeting"
+author: "Lukas 'hejtmy' Hejtmanek"
+date: "24 February 2018"
+output: 
+  revealjs::revealjs_presentation:
+    theme: night
+    transition: none
+    self_contained: true
+    css: slides.css
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+```
+
+```r
+
+```
+
+# What
+
+--- 
+
+Transfer of spatial knowledge across differet 
+
+# Methods
+
+## Overview
+
+Building has in total XX doors
+
+6 doors are ascribed to fictional workers: Emily, Michael, Daniel, Jesicca, Jacob and Sarah 
+ - Taken from the list of most used names in CA from 2000
+
+4 pointing locations
+
+XX Image of their placement
+
+## Design
+
+Full experiemntal design with 4 possible conditions
+
+- vr - vr
+- real - vr
+- vr - real
+- real - real
+
+## Procedure
+Participants fill questionnaires
+
+They do the virtualiser training regardless of their condition (even in real-to real)
+
+Experiment has 2 phases, each has two parts: walking/pointing
+- Free roaming from door to door - all 6 ofices in 3 blocks (18 trials)
+- Pointing from 2 points to all 6 offices; exactly one office is always visible
+
+Drawing blank map
+
+## Settings
+
+6 possible settings
+
+Example of settings
+
+Question: Should we run two same settings? To directly compare performance in the same sequence of goals and points?
+
+# Participants
+
+## Descriptives
+
+## Number crunching
+So far we:
+
+- scheduled 56 timeslots
+- administered 45 participants
+- have `r length(unique(walk_all$id))` usable subjects
+- wasted 5 working days
+
+There are some issues with high dropout rate, so far about a 1/3
+
+---
+
+Dropout by gender
+
+---
+
+Dropout by ethnicity
+
+asdasdas
+
+--- 
+
+Dropout by condition
+
+asdasadas
+
+# Analysis
+
+## Normalisation
+Min normalising
+
+# Results
+
+## The bad
+Unfortunatelly, out of `r as.numeric(walk_all %>% filter(type == "restimote") %>% count())` trials in the restimote we have `r as.numeric(walk_all %>% filter(type == "restimote") %>% filter(is.na(distance)) %>% count())` not fully executed. 
+
+## Distance
+
+Distance absolute
+```{r, echo = F,warning=FALSE}
+ggplot(walk_all, aes(x = condition, y = distance, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+---
+
+Distance normalised
+```{r, echo = F, warning=FALSE}
+ggplot(walk_all, aes(x = condition, y = min_norm_distance, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+---
+
+```{r, echo = T}
+walk_all %>% 
+  group_by(condition) %>% 
+  summarise(p.value = t.test(distance ~ phase)$p.value,
+            phase1 = t.test(distance ~ phase)$estimate[[1]],
+            phase2 = t.test(distance ~ phase)$estimate[[2]])
+```
+
+## Time
+
