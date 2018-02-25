@@ -108,6 +108,8 @@ Min normalising
 ## The bad
 Unfortunatelly, out of `r as.numeric(walk_all %>% filter(type == "restimote") %>% count())` trials in the restimote we have `r as.numeric(walk_all %>% filter(type == "restimote") %>% filter(is.na(distance)) %>% count())` not fully executed. 
 
+XXX example image
+
 ## Distance
 
 Distance absolute
@@ -128,13 +130,79 @@ ggplot(walk_all, aes(x = condition, y = min_norm_distance, fill=factor(phase))) 
 
 ---
 
-```{r, echo = T}
+```{r, echo = F,results='hide'}
 walk_all %>% 
   group_by(condition) %>% 
   summarise(p.value = t.test(distance ~ phase)$p.value,
             phase1 = t.test(distance ~ phase)$estimate[[1]],
             phase2 = t.test(distance ~ phase)$estimate[[2]])
 ```
-
+```{r, echo = T}
+aov_distance_condition <- aov(min_norm_distance~condition*phase, 
+                              data = walk_all)
+summary(aov_distance_condition)
+```
+```{r, echo = T}
+aov_distance_condition_2 <- aov(min_norm_distance~condition, 
+                              data = walk_all[walk_all$phase == 2,])
+summary(aov_distance_condition_2)
+```
 ## Time
 
+Time absolute
+```{r, echo = F,warning=FALSE}
+ggplot(walk_all, aes(x = condition, y = time, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+---
+
+Time normalised
+```{r, echo = F,warning=FALSE}
+ggplot(walk_all, aes(x = condition, y = min_norm_time, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+---
+
+```{r, echo = F,results='hide'}
+walk_all %>% 
+  group_by(condition) %>% 
+  summarise(p.value = t.test(time ~ phase)$p.value,
+            phase1 = t.test(time ~ phase)$estimate[[1]],
+            phase2 = t.test(time ~ phase)$estimate[[2]])
+```
+```{r, echo = T}
+aov_time_condition <- aov(min_norm_time~condition*phase, 
+                              data = walk_all)
+summary(aov_time_condition)
+```
+```{r, echo = T}
+aov_time_condition_2 <- aov(min_norm_time~condition, 
+                              data = walk_all[walk_all$phase == 2,])
+summary(aov_time_condition_2)
+```
+
+## Pointing accuracy
+
+```{r, echo = F,warning=FALSE}
+ggplot(sop_all, aes(x = condition, y = abs(error), fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+---
+
+```{r, echo = T}
+aov_point_condition <- aov(abs(error)~condition*phase, 
+                           data = sop_all)
+summary(aov_point_condition)
+```
+
+```{r, echo = T}
+aov_point_condition_2 <- aov(abs(error)~condition, 
+                             data = sop_all[sop_all$phase == 2, ])
+summary(aov_point_condition_2)
+```

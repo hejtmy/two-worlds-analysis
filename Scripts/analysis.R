@@ -10,12 +10,11 @@ t.test(abs(sop_all$error)~sop_all$type)
 aov_point_condition <- aov(abs(error)~condition*phase, data = sop_all)
 summary(aov_point_condition)
 
-aov_distance_condition <- aov(distance~condition*phase, data = walk_all)
+aov_distance_condition <- aov(min_norm_distance~condition*phase, data = walk_all)
 summary(aov_distance_condition)
 
 aov_time_condition <- aov(time~condition*phase, data = walk_all)
 summary(aov_time_condition)
-
 
 ggplot(sop_all, aes(x = condition, y = abs(error), fill=factor(phase))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
