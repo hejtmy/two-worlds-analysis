@@ -100,8 +100,11 @@ asdasadas
 
 # Analysis
 
-## Normalisation
-Min normalising
+## Preprocessing
+
+So far no outliers have been removed
+Paths haven't been smoothed
+because of VR-real world differences, distances and times have been min-normalised
 
 # Results
 
@@ -206,3 +209,21 @@ aov_point_condition_2 <- aov(abs(error)~condition,
                              data = sop_all[sop_all$phase == 2, ])
 summary(aov_point_condition_2)
 ```
+
+# TODO
+
+---
+
+Get about 15-16 more participants. Not sure if 80 is necessary given current results.
+Smooth paths and try to clean it enough to get less estimote dropouts
+Remove outliers
+Work with "wrong-door" stats
+
+
+## Questions
+
+Look are initial 3 trials performance after environment shift vs no shift
+
+Look at progressive learning curve from block to block, rather than phase summaries
+
+Add in the EEG
