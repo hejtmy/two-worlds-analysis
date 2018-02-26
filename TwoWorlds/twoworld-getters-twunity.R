@@ -85,7 +85,7 @@ get_goal_name.brainvr <- function(obj, iGoal){
 }
 get_all_goal_positions.brainvr <- function(obj, include_SOP = FALSE){
   if(include_SOP){i <- 1:10}else{i <- 1:6}
-  ls_goals <- setNames(split(obj$data$experiment_log$positions$GoalPositions[i, c(1,3)], i), i)
+  ls_goals <- setNames(split(obj$data$experiment_log$positions$GoalPositions[i, c(1,3)], i), obj$data$experiment_log$settings$GoalNames[i])
   return(ls_goals)
 }
 get_point_start.sop <- function(obj, trialId){
