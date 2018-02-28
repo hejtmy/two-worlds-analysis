@@ -23,6 +23,7 @@ walk_trial_results.twunity <- function(obj, trialId){
   ls$distance <- diff(range(log$cumulative_distance))
   ls$start <- get_trial_start_name.twunity(obj, trialId)
   ls$goal <- get_trial_goal_name.twunity(obj, trialId)
+  ls$errors <- get_trial_errors.twunity(obj, trialId)
   return(ls)
 }
 sop_results.twunity <- function(obj){
@@ -56,6 +57,7 @@ walk_trial_results.restimote <- function(obj, trialId){
   ls$distance <- sum(log_true$distance)
   ls$start <- get_trial_start_name.restimote(obj, trialId)
   ls$goal <- get_trial_goal_name.restimote(obj, trialId)
+  ls$errors <- get_trial_errors.restimote(obj, trialId)
   return(ls)
 }
 sop_results.restimote <- function(obj){

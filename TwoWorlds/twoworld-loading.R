@@ -85,7 +85,7 @@ load_restimote <- function(dir, code, exp_timestamp = NULL, phase, settings){
   restimoteObj <- load_restimote_log(dir, exp_timestamp = exp_timestamp)
   restimoteObj <- load_restimote_companion_log(dir, exp_timestamp = exp_timestamp, obj = restimoteObj)
   
-  df_goal_pos <- settings$positions[, 1:3]
+  df_goal_pos <- settings$goal_positions[, 1:3]
   
   restimoteObj <- add_goal_positions(restimoteObj, df_goal_pos)
   
@@ -120,9 +120,10 @@ load_google_sheets <- function(){
   ls$goal_order <- fetch_sheet("TW-GoalOrder", c("Walking", "Viewpoint", "Pointing"))
   settings <- fetch_sheet("TW-Participants", "Settings")
   ls$versions <- settings$Settings[!is.na(settings$Settings$Code),]
-  positions <- fetch_sheet("TW-BuildingPositions", "Positions")
-  ls$positions <- positions$Positions
-
+  positions <- fetch_sheet("TW-BuildingPositions", c("GoalPositions", "AllDoors"))
+  ls$goal_positions <- positions$Positions
+  ls$door_positions <- positions$AllDoors
+  
   tw_questionnaire <- fetch_sheet('TW questionnaire (Responses)', 'Form Responses 1')
   tw_questionnaire <- tw_questionnaire$`Form Responses 1`
   tw_participants <- fetch_sheet('TW-Participants', 'Overview')

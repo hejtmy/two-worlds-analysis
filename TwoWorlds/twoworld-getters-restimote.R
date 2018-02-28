@@ -21,6 +21,9 @@ get_trial_goal_name.restimote <- function(obj, trialId){
   iGoal <- get_trial_goal_id.restimote(obj, trialId)
   return(get_goal_name.restimote(obj, iGoal))
 }
+get_trial_errors.restimote <- function(obj, trialId){
+  return(get_trial_n_actions(obj, trialId, "Wrong door"))
+}
 # SOP ----
 get_point_start_id.restimote <- function(obj, trialId){
   return(obj$pointing_location[trialId])
