@@ -35,6 +35,10 @@ get_trial_start_goal.twunity <- function(obj, trialId){
   ls <- list(start = start, goal = goal)
   return(ls)
 }
+get_trial_errors <- function(obj, trialId){
+  return(NA)
+}
+## SOP ----
 get_point_start_id.twunity <- function(obj, trialId){
   iStart <- obj$sop$data$experiment_log$settings$GoalOrder[trialId]
   return(iStart + 1)

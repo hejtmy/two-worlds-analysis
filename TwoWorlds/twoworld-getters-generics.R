@@ -67,3 +67,6 @@ get_all_goal_positions <- function(obj, include_SOP){
 get_trial_point <- function(obj, trialId){
   UseMethod("get_trial_point")
 }
+get_trial_errors <- function(obj, trialId){
+  UseMethod("get_trial_errors")
+}
