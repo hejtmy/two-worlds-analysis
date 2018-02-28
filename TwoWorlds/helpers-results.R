@@ -18,3 +18,12 @@ create_sop_df <- function(participant_id){
                    start = rep(NA, N_POINTING),
                    goal = rep(NA, N_POINTING))
 }
+
+list_to_row <- function(df, ls, iRow){
+  df_cols <- colnames(df)
+  ls_names <- names(ls)
+  for(name in ls_names){
+    if(name %in% df_cols) df[iRow, name] <- ls[[name]]
+  }
+  return(df)
+}

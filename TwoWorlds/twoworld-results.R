@@ -78,20 +78,14 @@ sop_trial_results.restimote <- function(obj, trialId){
 sop_results.general <- function (obj, df_results){
   for (trialId in 1:12){
     ls <- sop_trial_results(obj, trialId)
-    df_results[trialId, "time"] <- ls$time
-    df_results[trialId, "error"] <- ls$error
-    df_results[trialId, "start"] <- ls$start
-    df_results[trialId, "goal"] <- ls$goal
+    df_results <- list_to_row(df_results, ls, trialId)
   }
   return(df_results)
 }
 walk_results.general <- function(obj, df_results){
   for (trialId in 1:18){
     ls <- walk_trial_results(obj, trialId)
-    df_results[trialId, "time"] <- ls$time
-    df_results[trialId, "distance"] <- ls$distance
-    df_results[trialId, "start"] <- ls$start
-    df_results[trialId, "goal"] <- ls$goal
+    df_results <- list_to_row(df_results, ls, trialId)
   }
   df_results$distance[df_results$distance == 0] <- NA
   return(df_results)
