@@ -35,8 +35,20 @@ get_trial_start_goal.twunity <- function(obj, trialId){
   ls <- list(start = start, goal = goal)
   return(ls)
 }
-get_trial_errors <- function(obj, trialId){
-  return(NA)
+get_trial_errors.twunity <- function(obj, trialId){
+  #gets_log
+  DIAMETER <- 0.52
+  ALL_DOORS_POSITIONS <- settings$door_positions #a bit problmatic, fethces stuff from the global env
+  n_errors <- -2 # we will get one correct hit at the goal start and end
+  df_log <- get_trial_log(obj$walk, trialId)
+  df_positions <- df_log[,c('Position.x', 'Position.z')]
+  for(i in 1:nrow(ALL_DOORS_POSITIONS)){
+    position <- c(ALL_DOORS_POSITIONS$Estimote.x[i], ALL_DOORS_POSITIONS$Estimote.y[i])
+    diffs <- sweep(df_positions, 2, position)
+    distances <- apply(diffs, 1, function(x){sqrt(sum(x ^ 2))})
+    if(any(distances < DIAMETER)) n_errors <- n_errors + 1
+  }
+  return(n_errors)
 }
 ## SOP ----
 get_point_start_id.twunity <- function(obj, trialId){
