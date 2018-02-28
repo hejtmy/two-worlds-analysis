@@ -56,6 +56,7 @@ walk_trial_results.restimote <- function(obj, trialId){
   ls$distance <- sum(log_true$distance)
   ls$start <- get_trial_start_name.restimote(obj, trialId)
   ls$goal <- get_trial_goal_name.restimote(obj, trialId)
+  ls$errors <- get_trial_n_actions(obj, trialId, "Wrong door")
   return(ls)
 }
 sop_results.restimote <- function(obj){
