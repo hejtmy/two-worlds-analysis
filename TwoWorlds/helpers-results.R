@@ -1,6 +1,6 @@
-create_walk_df <- function(obj){
+create_walk_df <- function(participant_id){
   N_TRIALS <- 18
-  df <- data.frame(id = rep(obj$participant_id, N_TRIALS), 
+  df <- data.frame(id = rep(participant_id, N_TRIALS), 
                    time = rep(NA, N_TRIALS), 
                    distance = rep(NA, N_TRIALS),
                    optimal_distance = rep(NA, N_TRIALS),
@@ -10,9 +10,9 @@ create_walk_df <- function(obj){
   return(df)
 }
 
-create_sop_df <- function(obj){
+create_sop_df <- function(participant_id){
   N_POINTING <- 12
-  df <- data.frame(id = rep(obj$participant_id, N_POINTING), 
+  df <- data.frame(id = rep(participant_id, N_POINTING), 
                    time = rep(NA, N_POINTING), 
                    error = rep(NA, N_POINTING),
                    start = rep(NA, N_POINTING),

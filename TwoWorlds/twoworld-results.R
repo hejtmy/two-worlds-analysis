@@ -13,7 +13,7 @@ walk_trial_results <- function(obj, trialId){
 }
 ## UNITY ----
 walk_results.twunity <- function(obj){
-  df_results <- create_walk_df(obj$walk)
+  df_results <- create_walk_df(obj$walk$participant_id)
   return(walk_results.general(obj, df_results))
 }
 walk_trial_results.twunity <- function(obj, trialId){
@@ -26,7 +26,7 @@ walk_trial_results.twunity <- function(obj, trialId){
   return(ls)
 }
 sop_results.twunity <- function(obj){
-  df_results <- create_sop_df(obj$sop)
+  df_results <- create_sop_df(obj$sop$participant_id)
   return(sop_results.general(obj, df_results))
 }
 sop_trial_results.twunity <- function(obj, trialId){
@@ -45,7 +45,7 @@ sop_trial_results.twunity <- function(obj, trialId){
 }
 ## RESTIMOTE ----
 walk_results.restimote <- function(obj){
-  df_results <- create_walk_df(obj)
+  df_results <- create_walk_df(obj$participant_id)
   return(walk_results.general(obj, df_results))
 }
 walk_trial_results.restimote <- function(obj, trialId){
@@ -59,7 +59,7 @@ walk_trial_results.restimote <- function(obj, trialId){
   return(ls)
 }
 sop_results.restimote <- function(obj){
-  df_results <- create_sop_df(obj)
+  df_results <- create_sop_df(obj$participant_id)
   return(sop_results.general(obj, df_results))
 }
 sop_trial_results.restimote <- function(obj, trialId){

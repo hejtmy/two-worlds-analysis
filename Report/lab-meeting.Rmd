@@ -74,6 +74,38 @@ Pointing fromn Viewpoint 1 and 3
 
 Never pointing from the same viewpoints in both cases
 
+## Path examples
+
+Unity
+
+```{r, echo=F, warning=FALSE, message=F}
+plot_walk_trial(ls$tw11$phase1, 8)
+```
+
+---
+
+Real
+
+```{r, echo=F, warning=FALSE, message=F}
+plot_walk_trial(ls$tw29$phase1, 3)
+```
+
+## Pointing examples
+
+Unity
+
+```{r, echo=F, warning=FALSE, message=F}
+plot_sop_point(ls$tw18$phase2, 4)
+```
+
+---
+
+Real
+
+```{r, echo=F, warning=FALSE, message=F}
+plot_sop_point(ls$tw29$phase1, 3)
+```
+
 # Participants
 
 ## Number crunching
@@ -95,6 +127,7 @@ ggplot(df_participants, aes(x = condition, fill = finished)) + geom_bar(position
 ```
 
 ---
+
 Average time spent in the device per condition
 
 ```{r, echo = F}
@@ -137,38 +170,6 @@ Unfortunatelly, out of `r as.numeric(walk_all %>% filter(type == "restimote") %>
 
 ```{r, echo=F, warning=FALSE, message=F}
 plot_walk_trial(ls$tw11$phase2, 8)
-```
-
-## Path examples
-
-Unity
-
-```{r, echo=F, warning=FALSE, message=F}
-plot_walk_trial(ls$tw11$phase1, 8)
-```
-
----
-
-Real
-
-```{r, echo=F, warning=FALSE, message=F}
-plot_walk_trial(ls$tw29$phase1, 3)
-```
-
-## Pointing examples
-
-Unity
-
-```{r, echo=F, warning=FALSE, message=F}
-plot_sop_point(ls$tw18$phase2, 4)
-```
-
----
-
-Real
-
-```{r, echo=F, warning=FALSE, message=F}
-plot_sop_point(ls$tw29$phase1, 3)
 ```
 
 # Results
