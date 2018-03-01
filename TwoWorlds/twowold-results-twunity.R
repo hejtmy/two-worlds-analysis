@@ -6,7 +6,7 @@ walk_results.twunity <- function(obj){
 walk_trial_results.twunity <- function(obj, trialId){
   ls <- list()
   log <- get_trial_log(obj$walk, trialId)
-  ls$time <- get_trial_duration(obj, trialId, withoutPauses = T)
+  ls$time <- brainvr.R::get_trial_duration(obj$walk, trialId, without_pauses = T)
   ls$distance <- diff(range(log$cumulative_distance))
   ls$start <- get_trial_start_name.twunity(obj, trialId)
   ls$goal <- get_trial_goal_name.twunity(obj, trialId)
@@ -25,8 +25,7 @@ sop_trial_results.twunity <- function(obj, trialId){
   ls$pointed_angle <- navr::angle_to_360(point_line$Rotation.Controller.x) + UNITY_SHIFT
   ls$correct_angle <- navr::angle_from_positions(ls_pos$start, ls_pos$goal)
   ls$error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
-  times <- get_trial_times(obj$sop, trialId)
-  ls$time <- times$finish - times$start
+  ls$time <- brainvr.R::get_trial_duration(obj$sop, trialId, without_pauses = F)
   ls$start <- get_point_start_name(obj, trialId)
   ls$goal <- get_point_goal_name(obj, trialId)
   return(ls)
