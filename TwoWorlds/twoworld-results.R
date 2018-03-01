@@ -27,10 +27,11 @@ walk_results.general <- function(obj, df_results){
   df_results$distance[df_results$distance == 0] <- NA
   return(df_results)
 }
-
 create_walk_df <- function(participant_id){
   N_TRIALS <- 18
-  df <- data.frame(id = rep(participant_id, N_TRIALS), 
+  df <- data.frame(id = rep(participant_id, N_TRIALS),
+                   trial_id = rep(NA, N_TRIALS),
+                   block_id = rep(NA, N_TRIALS),
                    time = rep(NA, N_TRIALS), 
                    distance = rep(NA, N_TRIALS),
                    optimal_distance = rep(NA, N_TRIALS),
@@ -39,10 +40,11 @@ create_walk_df <- function(participant_id){
                    goal = rep(NA, N_TRIALS))
   return(df)
 }
-
 create_sop_df <- function(participant_id){
   N_POINTING <- 12
   df <- data.frame(id = rep(participant_id, N_POINTING), 
+                   trial_id = rep(NA, N_TRIALS),
+                   block_id = rep(NA, N_TRIALS),
                    time = rep(NA, N_POINTING), 
                    error = rep(NA, N_POINTING),
                    start = rep(NA, N_POINTING),
