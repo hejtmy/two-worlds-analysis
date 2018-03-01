@@ -29,8 +29,7 @@ distance_offices_summary <- walk_all %>%
            min.dist = min(distance, na.rm = T), 
            max.dist = max(distance, na.rm = T)) %>%
   arrange(start, goal)
- 
- 
+
 wide_distance_offices_summary <- distance_offices_summary %>% melt(id.vars=c("type", "start", "goal")) %>% dcast(start + goal ~ type + variable)
 office_distance_type_diff_min <- distance_offices_summary %>% group_by(start, goal) %>% summarise(min_diff = diff(min.dist))
 qplot(data = office_distance_type_diff_min, x = 1:nrow(office_distance_type_diff_min), y = min_diff, geom = "line")
@@ -47,6 +46,7 @@ time_offices_summary <- walk_all %>%
             min.time = min(time, na.rm = T), 
             max.time = max(time, na.rm = T)) %>%
   arrange(start, goal)
+
 wide_time_offices_summary <- time_offices_summary %>% melt(id.vars=c("type", "start", "goal")) %>% dcast(start + goal ~ type + variable)
 office_time_type_diff_min <- time_offices_summary %>% group_by(start, goal) %>% summarise(min_diff = diff(min.time))
 qplot(data = office_time_type_diff_min, x = 1:nrow(office_time_type_diff_min), y = min_diff, geom = "line")
