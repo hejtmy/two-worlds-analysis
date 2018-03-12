@@ -121,7 +121,7 @@ load_google_sheets <- function(){
   settings <- fetch_sheet("TW-Participants", "Settings")
   ls$versions <- settings$Settings[!is.na(settings$Settings$Code),]
   positions <- fetch_sheet("TW-BuildingPositions", c("GoalPositions", "AllDoors"))
-  ls$goal_positions <- positions$Positions
+  ls$goal_positions <- positions$GoalPositions
   ls$door_positions <- positions$AllDoors
   
   tw_questionnaire <- fetch_sheet('TW questionnaire (Responses)', 'Form Responses 1')

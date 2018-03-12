@@ -70,7 +70,6 @@ get_trial_point <- function(obj, trialId){
 get_trial_errors <- function(obj, trialId){
   UseMethod("get_trial_errors")
 }
-
 ###Universal ----
 get_rotations <- function(df){
   ids <- grep("Rotation", colnames(df))
