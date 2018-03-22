@@ -55,10 +55,17 @@ create_sop_df <- function(participant_id){
 list_to_row <- function(df, ls, iRow){
   df_cols <- colnames(df)
   ls_names <- names(ls)
+  ls <- replace_for_na(ls)
   for(name in ls_names){
     if(name %in% df_cols) df[iRow, name] <- ls[[name]]
   }
   return(df)
+}
+replace_for_na <- function(ls){
+  for(i in 1:length(ls)){
+    if(length(ls[[i]]) == 0) ls[[i]] <- NA
+  }
+  return(ls)
 }
 add_trial_block_id <- function(df_results, trialId){
   df_results$trial_id[trialId] <- trialId

@@ -43,3 +43,12 @@ ggplot(walk_all, aes(x = condition, y = time, fill=factor(phase))) +
 ggplot(walk_all, aes(x = condition, y = errors, fill=factor(phase))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+
+### PER BLOCK ----
+ggplot(walk_all, aes(x = condition, y = min_norm_distance, fill=factor(exp_block_id))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+
+ggplot(walk_all, aes(x = condition, y = errors, fill=factor(exp_block_id))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95),geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")

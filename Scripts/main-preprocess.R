@@ -12,6 +12,8 @@ dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 ls <- load_all(settings, dir)
+save(ls, file = "multi.data")
+
 sop_all <- multi_sop_results(ls)
 walk_all <- multi_walk_results(ls)
 
@@ -23,7 +25,8 @@ sop_all$exp_trial_id <- sop_all$trial_id + (sop_all$phase-1)*18
 sop_all$exp_block_id <- sop_all$block_id + (sop_all$phase-1)*3
 
 ### Conditions ----
-conditions <- sop_all %>% select(id, type, phase) %>% unique() %>% group_by(id) %>% summarise(condition = paste(type, collapse = "-"))
+conditions <- sop_all %>% select(id, type, phase) %>% 
+  unique() %>% group_by(id) %>% summarise(condition = paste(type, collapse = "-"))
 conditions$condition <- gsub('twunity', 'vr', conditions$condition)
 conditions$condition <- gsub('restimote', 'real', conditions$condition)
 sop_all <- right_join(sop_all, conditions, by = "id")
