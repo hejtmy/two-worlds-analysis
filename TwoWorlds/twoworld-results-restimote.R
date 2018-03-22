@@ -5,7 +5,7 @@ walk_results.restimote <- function(obj){
 }
 walk_trial_results.restimote <- function(obj, trialId){
   log <- get_trial_log(obj, trialId)
-  log_true <- true_trial_log(obj, trialId, 30, radius = 3)
+  log_true <- true_trial_log(obj, trialId, 20, radius = 5)
   ls <- list()
   ls$time <- restimoter::get_trial_duration(obj, trialId, without_pauses = T)
   ls$distance <- sum(log_true$distance)
@@ -20,11 +20,12 @@ sop_results.restimote <- function(obj){
 }
 sop_trial_results.restimote <- function(obj, trialId){
   ls <- list()
+  times <- get_trial_point_times.restimote(obj, trialId)
   ls_pos <- get_point_start_goal.restimote(obj, trialId)
   ls$pointed_angle <- get_trial_point.restimote(obj, trialId)
   ls$correct_angle <- navr::angle_from_positions(unlist(ls_pos$start), unlist(ls_pos$goal))
   ls$error <- navr::angle_to_180(ls$correct_angle - ls$pointed_angle)
-  ls$time <- restimoter::get_trial_duration(obj, trialId, without_pauses = F)
+  ls$time <- times$end - times$start
   ls$start <- get_point_start_name.restimote(obj, trialId)
   ls$goal <- get_point_goal_name.restimote(obj, trialId)
   return(ls)

@@ -6,7 +6,7 @@ walk_results.twunity <- function(obj){
 walk_trial_results.twunity <- function(obj, trialId){
   ls <- list()
   log <- get_trial_log(obj$walk, trialId)
-  ls$time <- brainvr.R::get_trial_duration(obj$walk, trialId, without_pauses = T)
+  ls$time <- brainvr.R::get_trial_duration(obj$walk, trialId, without_pauses = F)
   ls$distance <- diff(range(log$cumulative_distance))
   ls$start <- get_trial_start_name.twunity(obj, trialId)
   ls$goal <- get_trial_goal_name.twunity(obj, trialId)
