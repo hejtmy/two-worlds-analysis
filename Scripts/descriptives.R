@@ -44,7 +44,7 @@ table(df_participants$finished)
 #colnames. Also make plot/table for reason to dropping out.
 
 
-
+#makes histogram graph, seperated by sex. substitue any variable in for "vr_experience" for new graph
 ggplot(df_participants, aes(x = sex, fill=vr_experience)) + 
   geom_bar(position="dodge", stat="count")
 
