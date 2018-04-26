@@ -43,3 +43,8 @@ table(df_participants$finished)
 #Make Plots and Tables for all above and video game experience. Also, change the
 #colnames. Also make plot/table for reason to dropping out.
 
+
+
+ggplot(df_participants, aes(x = sex, fill=vr_experience)) + 
+  geom_bar(position="dodge", stat="count")
+
