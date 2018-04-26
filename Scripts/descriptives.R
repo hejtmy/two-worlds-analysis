@@ -1,8 +1,7 @@
-library(brainvr.R)
-library(restimoter)
 library(ggplot2)
 library(googlesheets)
-source("Scripts/loading.R")
+source("TwoWorlds/twoworld-loading.R")
+source("TwoWorlds/helpers-loading.R")
 ls <- load_google_sheets()
 df_participants <- ls$participants
 colnames(df_participants)
