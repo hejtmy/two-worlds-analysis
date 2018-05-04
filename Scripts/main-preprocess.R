@@ -11,6 +11,7 @@ dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
+save(settings, file = "settings.data")
 ls <- load_all(settings, dir)
 save(ls, file = "multi.data")
 
@@ -41,10 +42,6 @@ distance_offices_summary <- walk_all %>%
            max.dist = max(distance, na.rm = T)) %>%
   arrange(start, goal)
 
-wide_distance_offices_summary <- distance_offices_summary %>% melt(id.vars=c("type", "start", "goal")) %>% dcast(start + goal ~ type + variable)
-office_distance_type_diff_min <- distance_offices_summary %>% group_by(start, goal) %>% summarise(min_diff = diff(min.dist))
-qplot(data = office_distance_type_diff_min, x = 1:nrow(office_distance_type_diff_min), y = min_diff, geom = "line")
-
 walk_all <- right_join(walk_all, distance_offices_summary[, c(1:3, 6)], by = c("type", "start", "goal"))
 walk_all$min_norm_distance <- walk_all$distance/walk_all$min.dist
 
@@ -58,9 +55,6 @@ time_offices_summary <- walk_all %>%
             max.time = max(time, na.rm = T)) %>%
   arrange(start, goal)
 
-wide_time_offices_summary <- time_offices_summary %>% melt(id.vars=c("type", "start", "goal")) %>% dcast(start + goal ~ type + variable)
-office_time_type_diff_min <- time_offices_summary %>% group_by(start, goal) %>% summarise(min_diff = diff(min.time))
-qplot(data = office_time_type_diff_min, x = 1:nrow(office_time_type_diff_min), y = min_diff, geom = "line")
 walk_all <- right_join(walk_all, time_offices_summary[, c(1:3, 6)], by = c("type", "start", "goal"))
 walk_all$min_norm_time <- walk_all$time/walk_all$min.time
 

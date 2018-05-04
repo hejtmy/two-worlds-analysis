@@ -1,6 +1,6 @@
 load_all <- function(settings, dir, select = NULL){
   ls <- list()
-  finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" | is.na(settings$versions$is_ok)), "Code"][[1]]
+  finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" & !is.na(settings$versions$is_ok)), "Code"][[1]]
   if(!is.null(select)) finished <- finished[select] 
   for(i in 1:length(finished)){
     code <- finished[i]
