@@ -10,7 +10,7 @@ dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 
-code <- "tw67"
+code <- "tw125"
 ls <- load_participant(code, settings, dir)
 sop_results(ls$phase1)
 sop_results(ls$phase2)

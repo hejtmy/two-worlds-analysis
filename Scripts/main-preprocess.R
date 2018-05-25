@@ -14,6 +14,7 @@ settings <- load_google_sheets()
 save(settings, file = "settings.data")
 ls <- load_all(settings, dir)
 save(ls, file = "multi.data")
+#load(file = "multi.data")
 
 sop_all <- multi_sop_results(ls)
 walk_all <- multi_walk_results(ls)
