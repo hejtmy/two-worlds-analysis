@@ -59,6 +59,8 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   
   walk <- preprocess_unity_log(walk, dir)
   sop <- preprocess_unity_log(sop, dir)
+  
+  #messes up Y rotation axis - looking up and down
   walk <- transform_unity_coordinates(walk)
   sop <- transform_unity_coordinates(sop)
   
@@ -66,6 +68,7 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   sop$map_limits <- BUILDING_LIMITS
   
   ls <- list(walk = walk, sop = sop)
+  
   class(ls) <-  append(class(ls), "twunity")
   return(ls)
 }
