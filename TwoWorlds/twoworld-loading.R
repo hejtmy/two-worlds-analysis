@@ -1,7 +1,11 @@
-load_all <- function(settings, dir, select = NULL){
+load_all <- function(settings, dir, select = NULL, only_ok = TRUE){
   ls <- list()
-  finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" & !is.na(settings$versions$is_ok)), "Code"][[1]]
-  if(!is.null(select)) finished <- finished[select] 
+  if(only_ok){
+    finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" & !is.na(settings$versions$is_ok)), "Code"][[1]]
+  } else {
+    finished <- settings$versions[settings$versions$finished == "yes", "Code"][[1]]
+  }
+  if(!is.null(select)) finished <- finished[select]
   for(i in 1:length(finished)){
     code <- finished[i]
     print(paste0("Loading participant ", i,  " with code ", code))
@@ -34,10 +38,10 @@ load_participant <- function(code, settings, dir){
   line <- get_participant_line(code, settings)
   if(is.null(line)) return(NULL)
   
-  if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$WalkTimestamp1, line$SOPTimestamp1)
+  if(line$First.phase %in% c("vr", "ve")) ls$phase1 <- load_unity(exp_folder, line$WalkTimestamp1, line$SOPTimestamp1)
   if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, line$WalkTimestamp1, 1, settings)
   
-  if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$WalkTimestamp2, line$SOPTimestamp2)
+  if(line$Second.phase %in% c("vr", "ve")) ls$phase2 <- load_unity(exp_folder, line$WalkTimestamp2, line$SOPTimestamp2)
   if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, line$WalkTimestamp2, 2, settings)
   return(ls)
 }
@@ -59,6 +63,8 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   
   walk <- preprocess_unity_log(walk, dir)
   sop <- preprocess_unity_log(sop, dir)
+  
+  #messes up Y rotation axis - looking up and down
   walk <- transform_unity_coordinates(walk)
   sop <- transform_unity_coordinates(sop)
   
@@ -66,6 +72,7 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   sop$map_limits <- BUILDING_LIMITS
   
   ls <- list(walk = walk, sop = sop)
+  
   class(ls) <-  append(class(ls), "twunity")
   return(ls)
 }
