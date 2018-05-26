@@ -1,7 +1,11 @@
-load_all <- function(settings, dir, select = NULL){
+load_all <- function(settings, dir, select = NULL, only_ok = TRUE){
   ls <- list()
-  finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" & !is.na(settings$versions$is_ok)), "Code"][[1]]
-  if(!is.null(select)) finished <- finished[select] 
+  if(only_ok){
+    finished <- settings$versions[settings$versions$finished == "yes" & (settings$versions$is_ok == "yes" & !is.na(settings$versions$is_ok)), "Code"][[1]]
+  } else {
+    finished <- settings$versions[settings$versions$finished == "yes", "Code"][[1]]
+  }
+  if(!is.null(select)) finished <- finished[select]
   for(i in 1:length(finished)){
     code <- finished[i]
     print(paste0("Loading participant ", i,  " with code ", code))
