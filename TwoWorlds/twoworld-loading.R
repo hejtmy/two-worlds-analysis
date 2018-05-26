@@ -34,10 +34,10 @@ load_participant <- function(code, settings, dir){
   line <- get_participant_line(code, settings)
   if(is.null(line)) return(NULL)
   
-  if(line$First.phase == "vr") ls$phase1 <- load_unity(exp_folder, line$WalkTimestamp1, line$SOPTimestamp1)
+  if(line$First.phase %in% c("vr", "ve")) ls$phase1 <- load_unity(exp_folder, line$WalkTimestamp1, line$SOPTimestamp1)
   if(line$First.phase == "real") ls$phase1 <- load_restimote(exp_folder, code, line$WalkTimestamp1, 1, settings)
   
-  if(line$Second.phase == "vr") ls$phase2 <- load_unity(exp_folder, line$WalkTimestamp2, line$SOPTimestamp2)
+  if(line$Second.phase %in% c("vr", "ve")) ls$phase2 <- load_unity(exp_folder, line$WalkTimestamp2, line$SOPTimestamp2)
   if(line$Second.phase == "real") ls$phase2 <- load_restimote(exp_folder, code, line$WalkTimestamp2, 2, settings)
   return(ls)
 }
