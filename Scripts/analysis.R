@@ -42,7 +42,6 @@ ggplot(sop_all, aes(x = condition, y = abs(error), fill=factor(exp_block_id))) +
   stat_summary(fun.y=mean,position=position_dodge(width=0.95), geom="bar")
 
 make_graph(sop_all[sop_all$time < 12,], "condition", "time", "phase")
- 
 make_graph(sop_all[sop_all$time < 12, ], "condition", "time", "exp_block_id")
 
 ## Walking ----

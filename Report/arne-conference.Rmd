@@ -1,0 +1,72 @@
+---
+title: "Conference output"
+author: "Lukáš 'hejtmy' Hejtmánek"
+date: "3 May 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+source('../Scripts/analysis-helpers.R')
+sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+```
+
+```{r}
+walk_all %>% group_by(condition) %>% summarise(N = n_distinct(id))
+```
+
+## Walking ----
+
+## Per phase separation
+```{r warning=F, echo=F}
+make_graph(walk_all, "condition", "distance", "phase") + ylab("Average absolute trial distance") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "min_norm_distance", "phase") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "time", "phase") + ylab("Average absolute trial duration") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "min_norm_time", "phase")+ ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "errors", "phase")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Phase")
+```
+
+## PER BLOCK
+```{r warning=F, echo=F}
+make_graph(walk_all, "condition", "min_norm_distance", "exp_block_id") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Block")
+make_graph(walk_all, "condition", "min_norm_time", "exp_block_id")+ ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Block")
+make_graph(walk_all, "condition", "errors", "exp_block_id")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Block")
+
+ggplot(walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average normalised trial distance") + xlab("Block") + scale_fill_discrete("condition")
+
+ggplot(walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Number of mistakes in office decision") + xlab("Block") + scale_fill_discrete("condition")
+
+```
+
+
+## Pointing
+```{r warning=F, echo=F}
+ggplot(sop_all[sop_all$time < 12, ], aes(x = condition, y = abs(error), fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing error in degrees") + xlab("Phase") + scale_fill_discrete("Condition")
+
+ggplot(sop_all[sop_all$time < 12, ], aes(x = phase, y = abs(error), color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average pointing error in degrees") + xlab("Phase") + scale_fill_discrete("Condition")
+
+ggplot(sop_all[sop_all$time < 12, ], aes(x = condition, y = time, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing time") + xlab("Phase") + scale_fill_discrete("Condition")
+
+ggplot(sop_all[sop_all$time < 12, ], aes(x = phase, y = time, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average pointing time") + xlab("Phase") + scale_fill_discrete("Condition")
+
+```
