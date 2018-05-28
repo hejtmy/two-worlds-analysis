@@ -1,4 +1,5 @@
 library(ggplot2)
+library(reshape2)
 library(dplyr)
 source('Scripts/analysis-helpers.R')
 sop_all <- read.table("sop.csv", sep=";", header = T, stringsAsFactors = F)
@@ -26,6 +27,57 @@ summary(aov_distance_condition)
 aov_time_condition <- aov(time~condition*phase, data = walk_all)
 summary(aov_time_condition)
 
+
+## Arne ----
+#' for each dependent measure, (block 4 - block 3) / (block 4+block3) 
+#' so we can compare transfer for ve vs vr vs reality (ie all 5 conditions)
+#' 
+
+## Per office pair ---- 
+condition_offices_sums <- walk_all %>% 
+  group_by(exp_block_id, start, goal, condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T))
+
+### Distances
+condition_distance_sums_wide <- dcast(condition_offices_sums, condition + goal + start ~ exp_block_id, value.var = "sum.distance")
+colnames(condition_distance_sums_wide) <- c("condition","goal","start","block1","block2","block3","block4","block5","block6")
+
+distance_block_measures <- condition_distance_sums_wide %>% 
+  group_by(condition) %>%
+  summarise(block1.mean  = mean(block1, na.rm = T), block3.mean = mean(block3, na.rm = T), block4.mean = mean(block4, na.rm = T),
+            block43diff = sum(block4-block3, na.rm = T)/sum(block4+block3, na.rm = T),
+            block41diff = sum(block4-block1, na.rm = T)/sum(block4+block1, na.rm = T))
+
+### Errors
+condition_errors_sums_wide <- dcast(condition_offices_sums, condition + goal + start ~ exp_block_id, value.var = "sum.errors")
+colnames(condition_errors_sums_wide) <- c("condition","goal","start","block1","block2","block3","block4","block5","block6")
+
+errors_block_measures <- condition_errors_sums_wide %>% 
+  group_by(condition) %>%
+  summarise(block1.mean  = mean(block1, na.rm = T),  block3.mean = mean(block3, na.rm = T), block4.mean = mean(block4, na.rm = T),
+            block43diff = sum(block4-block3, na.rm = T)/sum(block4+block3, na.rm = T),
+            block41diff = sum(block4-block1, na.rm = T)/sum(block4+block1, na.rm = T))
+
+## Not per office pair ---
+condition_all_sums <- walk_all %>% 
+  group_by(exp_block_id, id, condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T),
+            mean.distance = mean(min_norm_distance, na.rm = T),
+            mean.error = mean(errors, na.rm = T))
+
+block_measure <- function(df, value){
+  df_wide <- dcast(df, condition + id ~ exp_block_id, value.var = value)
+  colnames(df_wide) <- c("condition","id", "block1","block2","block3","block4","block5","block6")
+  df_wide %>% 
+    group_by(condition) %>%
+    summarise(block1.mean  = mean(block1, na.rm = T),  block3.mean = mean(block3, na.rm = T), block4.mean = mean(block4, na.rm = T),
+              block43diff = sum(block4-block3, na.rm = T)/sum(block4+block3, na.rm = T),
+              block41diff = sum(block4-block1, na.rm = T)/sum(block4+block1, na.rm = T))
+}
+
+block_measure(condition_all_sums, "mean.error")
 # Plots ----
 
 ## Pointing ----
