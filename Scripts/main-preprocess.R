@@ -12,7 +12,7 @@ dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 save(settings, file = "settings.data")
-ls <- load_all(settings, dir)
+ls <- load_all(settings, dir, only_ok = F)
 save(ls, file = "multi.data")
 #load(file = "multi.data")
 
@@ -27,12 +27,17 @@ sop_all$exp_trial_id <- sop_all$trial_id + (sop_all$phase-1)*18
 sop_all$exp_block_id <- sop_all$block_id + (sop_all$phase-1)*3
 
 ### Conditions ----
-conditions <- sop_all %>% select(id, type, phase) %>% 
-  unique() %>% group_by(id) %>% summarise(condition = paste(type, collapse = "-"))
-conditions$condition <- gsub('twunity', 'vr', conditions$condition)
-conditions$condition <- gsub('restimote', 'real', conditions$condition)
-sop_all <- right_join(sop_all, conditions, by = "id")
-walk_all <-  right_join(walk_all, conditions, by = "id")
+conditions <- data.frame(id = settings$participants$Code,
+                         phase1 = settings$participants$First.phase,
+                         phase2 = settings$participants$Second.phase,
+                         condition = apply(settings$participants[,c("First.phase", "Second.phase")],
+                                           1, paste, collapse = "-"),
+                         stringsAsFactors = F)
+conditions <- melt(conditions, id.vars = c("id", "condition"), variable.name = "phase", value.name = "type")
+conditions$phase <- as.numeric(gsub("phase", "", as.character(conditions$phase)))
+
+sop_all <- left_join(sop_all, conditions, by = c("id", "phase"))
+walk_all <-  left_join(walk_all, conditions, by = c("id", "phase"))
 
 #Distance normalisations
 distance_offices_summary <- walk_all %>% 

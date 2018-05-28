@@ -1,0 +1,118 @@
+---
+title: "Conference output"
+author: "Lukáš 'hejtmy' Hejtmánek"
+date: "3 May 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+source('../Scripts/analysis-helpers.R')
+sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+```
+
+#Number of participants
+```{r}
+walk_all %>% group_by(condition) %>% summarise(N = n_distinct(id))
+```
+
+## Walking ----
+
+## Per phase separation
+```{r warning=F, echo=F}
+make_graph(walk_all, "condition", "distance", "phase") + ylab("Average absolute trial distance") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "min_norm_distance", "phase") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "time", "phase") + ylab("Average absolute trial duration") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "min_norm_time", "phase")+ ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(walk_all, "condition", "errors", "phase")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Phase")
+```
+
+## PER BLOCK
+```{r warning=F, echo=F}
+make_graph(walk_all, "condition", "min_norm_distance", "exp_block_id") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Block")
+
+make_graph(walk_all, "condition", "min_norm_time", "exp_block_id") + ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Block")
+
+make_graph(walk_all, "condition", "errors", "exp_block_id")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Block")
+
+ggplot(walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average normalised trial distance") + xlab("Block") + scale_fill_discrete("condition")
+
+ggplot(walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Number of mistakes in office decision") + xlab("Block") + scale_fill_discrete("condition")
+
+```
+
+## Pointing
+```{r warning=F, echo=F}
+ggplot(sop_all[sop_all$time < 12, ], aes(x = condition, y = abs(error), fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing error in degrees") + xlab("Phase") + scale_fill_discrete("Condition")
+
+ggplot(sop_all[sop_all$time < 12, ], aes(x = phase, y = abs(error), color = factor(type))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average pointing error in degrees") + xlab("Phase") + scale_fill_discrete("Condition")
+
+ggplot(sop_all[sop_all$time < 12, ], aes(x = condition, y = time, fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing time") + xlab("Phase") + scale_fill_discrete("Condition")
+
+ggplot(sop_all[sop_all$time < 12, ], aes(x = phase, y = time, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average pointing time") + xlab("Phase") + scale_fill_discrete("Condition")
+
+```
+
+# Block measures
+
+```{r, echo = F}
+condition_all_sums <- walk_all %>% 
+  group_by(exp_block_id, id, condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T),
+            mean.distance = mean(min_norm_distance, na.rm = T),
+            mean.error = mean(errors, na.rm = T))
+
+block_measure <- function(df, value){
+  df_wide <- dcast(df, condition + id ~ exp_block_id, value.var = value)
+  colnames(df_wide) <- c("condition","id", "block1","block2","block3","block4","block5","block6")
+  df_wide %>% 
+    group_by(condition) %>%
+    summarise(block1.mean  = mean(block1, na.rm = T),
+              block3.mean = mean(block3, na.rm = T),
+              block4.mean = mean(block4, na.rm = T),
+              block43diff = sum(block4-block3, na.rm = T)/sum(block4+block3, na.rm = T),
+              block41diff = sum(block4-block1, na.rm = T)/sum(block4+block1, na.rm = T))
+}
+```
+Block 43 diff is as we discussed (block4 - block3)/(block4 + block3) and block41 is the forth and first. 
+
+There were several ways how I could calculate it. Eventually, the block 4 data are sums of errors per person and block and average path is the average normalised path for a block per person.  
+
+MEasure of overall sum of errors. Mean columns define mean sum of errors for all participants in that block
+```{r, warnings = F}
+df <- block_measure(condition_all_sums, "sum.errors")
+df
+ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean number of mistakes")
+
+ggplot(melt(df[,c(1,5:6)]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Block improvement")
+```
+
+Measure of mean distance. First three columns define mean normalised distance in each block.
+```{r, warnings = F}
+df <- block_measure(condition_all_sums, "mean.distance")
+df
+ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean number of mistakes")
+
+ggplot(melt(df[,c(1,5:6)]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Block improvement")
+```
