@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(ggplot2)
 library(dplyr)
+library(reshape2)
 source('../Scripts/analysis-helpers.R')
 sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
 walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
@@ -100,7 +101,7 @@ Block 43 diff is as we discussed (block4 - block3)/(block4 + block3) and block41
 There were several ways how I could calculate it. Eventually, the block 4 data are sums of errors per person and block and average path is the average normalised path for a block per person.  
 
 MEasure of overall sum of errors. Mean columns define mean sum of errors for all participants in that block
-```{r, warnings = F}
+```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "sum.errors")
 df
 ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean number of mistakes")
@@ -109,10 +110,10 @@ ggplot(melt(df[,c(1,5:6)]), aes(x = condition, y = value, fill = variable)) + ge
 ```
 
 Measure of mean distance. First three columns define mean normalised distance in each block.
-```{r, warnings = F}
+```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "mean.distance")
 df
-ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean number of mistakes")
+ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean normalised distance")
 
 ggplot(melt(df[,c(1,5:6)]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Block improvement")
 ```
