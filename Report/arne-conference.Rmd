@@ -96,9 +96,9 @@ block_measure <- function(df, value){
     summarise(block1.mean  = mean(block1, na.rm = T),
               block3.mean = mean(block3, na.rm = T),
               block4.mean = mean(block4, na.rm = T),
-              block34.diff = sum(block3-block4, na.rm = T)/sum(block4+block3, na.rm = T),
+              block34.diff = mean((block3-block4)/(block4+block3), na.rm = T),
               block34.se  = sqrt(var((block3-block4)/(block4+block3), na.rm = T)/sum(!is.na(block3-block4))),
-              block14.diff = sum(block1-block4, na.rm = T)/sum(block4+block1, na.rm = T),
+              block14.diff = mean((block1-block4)/(block1+block4), na.rm = T),
               block14.se = sqrt(var((block1-block4)/(block1+block4), na.rm = T)/sum(!is.na(block1-block4)))
   )
 }
@@ -117,7 +117,7 @@ ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) +
 ggplot(df, aes(x = condition, y = block34.diff, fill = condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), 
-                width=.2, position=position_dodge(.9)) 
+                width=.2, position=position_dodge(.9)) +
   ylab("Mean sum of errors improvement from block 3 to 4")
 
 ggplot(df, aes(x = condition, y = block14.diff, fill = condition)) + 
@@ -145,8 +145,6 @@ ggplot(df, aes(x = condition, y = block14.diff, fill = condition)) +
                 width=.2, position=position_dodge(.9)) +
   ylab("Mean normalised distance improvement from block 1 to 4")
 ```
-
-
 
 # Stats
 
@@ -200,4 +198,28 @@ This is simple mixed anova (for those three conditions) I know how to do in R. N
 ```{r}
 aov_block_distance <- aov(min_norm_distance~exp_block_id*condition, conference_walk_all)
 summary(aov_block_distance)
+```
+
+## Independent comparisons
+
+```{r, echo=F}
+df_wide <- dcast(condition_all_sums, condition + id ~ exp_block_id, value.var = "mean.distance")
+colnames(df_wide) <- c("condition","id", "block1","block2","block3","block4","block5","block6")
+df_wide$diff14 <- (df_wide$block1-df_wide$block4)/(df_wide$block1+df_wide$block3)
+```
+
+1 to 4 improvement comparison between VE-real and real-real
+```{r}
+t.test(df_wide$diff14[df_wide$condition=="ve-real"],df_wide$diff14[df_wide$condition=="real-real"])
+
+```
+
+1 to 4 improvement comparison between VR-real and real-real
+```{r}
+t.test(df_wide$diff14[df_wide$condition=="vr-real"],df_wide$diff14[df_wide$condition=="real-real"])  
+```
+
+1 to 4 improvement comparison between VR-real and VE-real
+```{r}
+t.test(df_wide$diff14[df_wide$condition=="vr-real"],df_wide$diff14[df_wide$condition=="ve-real"])
 ```
