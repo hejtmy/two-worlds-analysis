@@ -12,7 +12,7 @@ dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 save(settings, file = "settings.data")
-ls <- load_all(settings, dir, only_ok = F)
+ls <- load_all(settings, dir, only_ok = T)
 save(ls, file = "multi.data")
 #load(file = "multi.data")
 
@@ -43,13 +43,15 @@ walk_all <-  left_join(walk_all, conditions, by = c("id", "phase"))
 distance_offices_summary <- walk_all %>% 
   group_by(type, start, goal) %>% 
   summarise(mean.dist = mean(distance, na.rm = T), 
-           sd.dist = sd(distance, na.rm = T), 
-           min.dist = min(distance, na.rm = T), 
-           max.dist = max(distance, na.rm = T)) %>%
+            sd.dist = sd(distance, na.rm = T), 
+            min.dist = min(distance, na.rm = T), 
+            max.dist = max(distance, na.rm = T)) %>%
   arrange(start, goal)
 
-walk_all <- right_join(walk_all, distance_offices_summary[, c(1:3, 6)], by = c("type", "start", "goal"))
+walk_all <- right_join(walk_all, distance_offices_summary, by = c("type", "start", "goal"))
 walk_all$min_norm_distance <- walk_all$distance/walk_all$min.dist
+walk_all$norm_distance <- (walk_all$distance-walk_all$mean.dist)/walk_all$sd.dist
+
 
 # TIme normalisation
 time_offices_summary <- walk_all %>% 
@@ -61,8 +63,15 @@ time_offices_summary <- walk_all %>%
             max.time = max(time, na.rm = T)) %>%
   arrange(start, goal)
 
-walk_all <- right_join(walk_all, time_offices_summary[, c(1:3, 6)], by = c("type", "start", "goal"))
+walk_all <- right_join(walk_all, time_offices_summary, by = c("type", "start", "goal"))
 walk_all$min_norm_time <- walk_all$time/walk_all$min.time
+walk_all$norm_time <- (walk_all$time-walk_all$mean.time)/walk_all$sd.time
+
+drop.cols <- c('sd.dist', 'sd.time', 'mean.dist', "mean.time", 'min.dist', 'min.time', 
+               'max.dist', 'max.time', 'optimal_distance', 'na_values', 'na_values_phase')
+walk_all_new <- walk_all %>% select(-one_of(drop.cols))
+
+sop_all$abs_error <- abs(sop_all$error)
 
 write.table(sop_all, file = "sop.csv", sep=";")
-write.table(walk_all, file = "walk.csv", sep=";")
+write.table(walk_all_new, file = "walk.csv", sep=";")
