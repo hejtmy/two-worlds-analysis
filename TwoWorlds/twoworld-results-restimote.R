@@ -4,11 +4,9 @@ walk_results.restimote <- function(obj){
   return(walk_results.general(obj, df_results))
 }
 walk_trial_results.restimote <- function(obj, trialId){
-  log <- get_trial_log(obj, trialId)
-  log_true <- true_trial_log(obj, trialId, 20, radius = 5)
   ls <- list()
-  ls$time <- restimoter::get_trial_duration(obj, trialId, without_pauses = T)
-  ls$distance <- sum(log_true$distance)
+  ls$time <- get_trial_duration(obj, trialId, without_pauses = T)
+  ls$distance <- get_trial_distance(obj, trialId, true_log = T, benevolence = 20, radius = 5)
   ls$start <- get_trial_start_name.restimote(obj, trialId)
   ls$goal <- get_trial_goal_name.restimote(obj, trialId)
   ls$errors <- get_trial_errors.restimote(obj, trialId)
