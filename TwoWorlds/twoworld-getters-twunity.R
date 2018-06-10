@@ -1,6 +1,6 @@
 ### twunity ----
 get_trial_start_id.twunity <- function(obj, trialId){
-  if(trialId == 1) return(NULL)
+  if(trialId <= 1) return(NULL)
   return(get_trial_goal_id.twunity(obj, trialId - 1))
 }
 get_trial_start.twunity <- function(obj, trialId){
