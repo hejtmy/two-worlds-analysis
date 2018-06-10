@@ -37,7 +37,7 @@ get_trial_start_goal.twunity <- function(obj, trialId){
 }
 get_trial_errors.twunity <- function(obj, trialId){
   #gets_log
-  DIAMETER <- 0.52
+  DIAMETER <- 1
   n_errors <- ifelse(trialId == 1, -1, -2) #we always get to the start and end door
   ALL_DOORS_POSITIONS <- settings$door_positions #a bit problmatic, fethces stuff from the global env
    # we will get one correct hit at the goal start and end

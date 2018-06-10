@@ -1,7 +1,7 @@
 ---
-title: "Conference output"
+title: "Transfer report"
 author: "Lukáš 'hejtmy' Hejtmánek"
-date: "3 May 2018"
+date: "4 June 2018"
 output: html_document
 ---
 
@@ -37,16 +37,12 @@ make_graph(conference_walk_all, "condition", "errors", "phase")+ ylab("Average n
 ## PER BLOCK
 ```{r warning=F, echo=F}
 make_graph(conference_walk_all, "condition", "min_norm_distance", "exp_block_id") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Block")
-
 make_graph(conference_walk_all, "condition", "min_norm_time", "exp_block_id") + ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Block")
-
 make_graph(conference_walk_all, "condition", "errors", "exp_block_id")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Block")
-
 ggplot(conference_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
   ylab("Average normalised trial distance") + xlab("Block") + scale_fill_discrete("Condition")
-
 ggplot(conference_walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
@@ -211,7 +207,6 @@ df_wide$diff14 <- (df_wide$block1-df_wide$block4)/(df_wide$block1+df_wide$block3
 1 to 4 improvement comparison between VE-real and real-real
 ```{r}
 t.test(df_wide$diff14[df_wide$condition=="ve-real"],df_wide$diff14[df_wide$condition=="real-real"])
-
 ```
 
 1 to 4 improvement comparison between VR-real and real-real

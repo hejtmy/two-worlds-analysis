@@ -12,3 +12,8 @@ transform_unity_coordinates <- function(obj){
   obj <- resize_layout(obj, 1/4)
   return(obj)
 }
+
+smooth_unity_log <- function(obj){
+  obj <- brainvr.R::smooth_positions.brainvr(obj, "median", points = 201)
+  return(obj)
+}

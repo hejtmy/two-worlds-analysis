@@ -13,11 +13,15 @@ dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
 settings <- load_google_sheets()
 save(settings, file = "settings.data")
 ls <- load_all(settings, dir, only_ok = T)
-save(ls, file = "multi.data")
-#load(file = "multi.data")
+save(ls, file = "multi_smoothed_2.data")
+#load(file = "multi_smoothed.data")
 
 sop_all <- multi_sop_results(ls)
 walk_all <- multi_walk_results(ls)
+
+##renames all jesiccas
+walk_all <- walk_all %>% mutate(goal = replace(goal, goal=="Jesicca's office", "Jessica's office"),
+                                start = replace(start, start=="Jesicca's office", "Jessica's office"))
 
 ### Total trial ----
 walk_all$exp_trial_id <- walk_all$trial_id + (walk_all$phase-1)*18
@@ -52,7 +56,6 @@ walk_all <- right_join(walk_all, distance_offices_summary, by = c("type", "start
 walk_all$min_norm_distance <- walk_all$distance/walk_all$min.dist
 walk_all$norm_distance <- (walk_all$distance-walk_all$mean.dist)/walk_all$sd.dist
 
-
 # TIme normalisation
 time_offices_summary <- walk_all %>% 
   filter(time > 10) %>%
@@ -68,10 +71,10 @@ walk_all$min_norm_time <- walk_all$time/walk_all$min.time
 walk_all$norm_time <- (walk_all$time-walk_all$mean.time)/walk_all$sd.time
 
 drop.cols <- c('sd.dist', 'sd.time', 'mean.dist', "mean.time", 'min.dist', 'min.time', 
-               'max.dist', 'max.time', 'optimal_distance', 'na_values', 'na_values_phase')
+               'max.dist', 'max.time', 'optimal_distance')
 walk_all_new <- walk_all %>% select(-one_of(drop.cols))
 
 sop_all$abs_error <- abs(sop_all$error)
 
-write.table(sop_all, file = "sop.csv", sep=";")
-write.table(walk_all_new, file = "walk.csv", sep=";")
+write.table(sop_all, file = "sop_smoothed.csv", sep=";")
+write.table(walk_all_new, file = "walk_smoothed.csv", sep=";")

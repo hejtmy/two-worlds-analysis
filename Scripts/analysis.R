@@ -2,8 +2,8 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 source('Scripts/analysis-helpers.R')
-sop_all <- read.table("sop.csv", sep=";", header = T, stringsAsFactors = F)
-walk_all <- read.table("walk.csv", sep=";", header = T, stringsAsFactors = F)
+sop_all <- read.table("sop_new.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all <- read.table("walk_new.csv", sep=";", header = T, stringsAsFactors = F)
 
 # Descriptives ----
 df_missing <- walk_all %>% 
@@ -107,7 +107,10 @@ make_graph(walk_all, "condition", "min_norm_time", "phase")
 make_graph(walk_all, "condition", "errors", "phase")
 
 ### PER BLOCK ----
+
+make_graph(walk_all, "condition", "mean_norm_distance", "exp_block_id")
 make_graph(walk_all, "condition", "min_norm_distance", "exp_block_id")
+make_graph(walk_all, "condition", "norm_distance", "exp_block_id")
 make_graph(walk_all, "condition", "min_norm_time", "exp_block_id")
 make_graph(walk_all, "condition", "errors", "exp_block_id")
 

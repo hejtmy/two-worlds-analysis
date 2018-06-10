@@ -64,12 +64,15 @@ load_unity <- function(dir, walk_timestamp, sop_timestamp){
   walk <- preprocess_unity_log(walk, dir)
   sop <- preprocess_unity_log(sop, dir)
   
-  #messes up Y rotation axis - looking up and down
+  # messes up Y rotation axis - looking up and down
   walk <- transform_unity_coordinates(walk)
   sop <- transform_unity_coordinates(sop)
   
   walk$map_limits <- BUILDING_LIMITS
   sop$map_limits <- BUILDING_LIMITS
+  
+  # smooths walking
+  walk <- smooth_unity_log(walk)
   
   ls <- list(walk = walk, sop = sop)
   
