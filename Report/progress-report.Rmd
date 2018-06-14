@@ -16,8 +16,8 @@ source_folder <- function(path){
 }
 source_folder("../TwoWorlds/")
 
-sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
-walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+sop_all <- read.table("../sop_smoothed.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all <- read.table("../walk_smoothed.csv", sep=";", header = T, stringsAsFactors = F)
 #load("../multi.data")
 load("../settings.data")
 df_participants <- settings$participants

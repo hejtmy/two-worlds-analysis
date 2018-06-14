@@ -12,7 +12,9 @@ tw <- ls$tw42
 real <- tw$phase1
 vr <- tw$phase2
 
+vr_orig <- ls$tw42$phase2
+
 get_trial_distance(real, 1)
 plot_trial_path(real, 1)
 get_trial_distance(vr$walk, 1)
-get_trial_log(vr$walk, 1)
+plot_trial_path(vr_orig$walk, 1)

@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(ggplot2)
+library(ez)
 library(dplyr)
 library(reshape2)
 library(broom)
@@ -75,7 +76,6 @@ ggplot(conference_sop_all[conference_sop_all$time < 12,],aes(x = phase, y = time
 ```
 
 # Block measures
-
 ```{r, echo = F}
 condition_all_sums <- conference_walk_all %>% 
   group_by(exp_block_id, id, condition) %>% 
@@ -99,16 +99,15 @@ block_measure <- function(df, value){
   )
 }
 ```
-Block 43 diff is now flipped to (block4 - block3)/(block4 + block3) and block41 is the forth and first. 
 
-There were several ways how I could calculate it. Eventually, the block 4 data are sums of errors per person and block and average path is the average normalised path for a block per person.  
+## Sum of errors
 
 Measure of overall sum of errors. Mean columns define mean sum of errors for all participants in that block
 ```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "sum.errors")
 df
 ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + 
-  geom_bar(stat = 'identity', position="dodge") + ylab("Mean normalised distance")
+  geom_bar(stat = 'identity', position="dodge") + ylab("Mean sum of errors")
 
 ggplot(df, aes(x = condition, y = block34.diff, fill = condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
@@ -122,6 +121,8 @@ ggplot(df, aes(x = condition, y = block14.diff, fill = condition)) +
                 width=.2, position=position_dodge(.9)) +
   ylab("Mean sum of errors improvement from block 1 to 4")
 ```
+
+## Normalised distance
 
 Measure of mean distance. First three columns define mean normalised distance in each block.
 ```{r, echo=F, warnings = F}
@@ -188,14 +189,6 @@ And for number of errors
 block_t_test(conference_walk_all, 6, 1,"errors")
 ```
 
-## Anova
-This is simple mixed anova (for those three conditions) I know how to do in R. Not sure how to do contrasts and within add subject error variability, nor how to run post hocs. I expect Mike will be able to do that in his models for the paper.
-
-```{r}
-aov_block_distance <- aov(min_norm_distance~exp_block_id*condition, conference_walk_all)
-summary(aov_block_distance)
-```
-
 ## Independent comparisons
 
 ```{r, echo=F}
@@ -217,4 +210,101 @@ t.test(df_wide$diff14[df_wide$condition=="vr-real"],df_wide$diff14[df_wide$condi
 1 to 4 improvement comparison between VR-real and VE-real
 ```{r}
 t.test(df_wide$diff14[df_wide$condition=="vr-real"],df_wide$diff14[df_wide$condition=="ve-real"])
+```
+
+## Anova
+Simple between subjects anova
+```{r}
+aov_block_distance <- aov(min_norm_distance~exp_block_id*condition, conference_walk_all)
+summary(aov_block_distance)
+```
+
+```{r}
+ez_prepare_block <- function(df, blocks){
+  filtered_data <- df[df$exp_block_id %in% blocks, ]
+  filtered_data <- filtered_data[complete.cases(filtered_data),]
+  has_all <- filtered_data %>% group_by(id) %>% select(id, "exp_block_id") %>% unique() %>% count
+  has_all <- has_all %>% filter(n == 2)
+  filtered_data <- filtered_data %>% filter(id %in% has_all$id)
+  filtered_data$exp_block_id <- factor(filtered_data$exp_block_id)
+  return(filtered_data)
+}
+
+clean_walk_14 <- ez_prepare_block(conference_walk_all, c(1,4))
+clean_walk_34 <- ez_prepare_block(conference_walk_all, c(3,4))
+```
+
+### Normalised distance
+
+Within subjects anova for block 3-4 difference.
+
+```{r, warning = F, echo=F, message=F}
+aov_block_dist_34 <- ezANOVA(
+  data = clean_walk_34,
+  dv = min_norm_distance, 
+  wid = id,
+  within = exp_block_id,
+  between = condition, 
+  type = 3)
+aov_block_dist_34
+
+ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average normalised distance") + xlab("Experimental block") + scale_fill_discrete("Condition")
+```
+
+Within subjects anova for block 1-4 difference in minimal path.
+
+```{r, warning = F, echo=F, message=F}
+
+aov_block_dist_14 <- ezANOVA(
+  data = clean_walk_14,
+  dv = min_norm_distance, 
+  wid = id,
+  within = exp_block_id,
+  between = condition,
+  type = 3)
+aov_block_dist_14
+
+ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average normalised distance") + xlab("Experimental block") + scale_fill_discrete("Condition")
+```
+
+### NUmber of errors
+Within subjects anova for block 1-4 number of errors.
+
+```{r, warning = F, echo=F, message=F}
+aov_block_err_14 <- ezANOVA(
+  data = clean_walk_14,
+  dv = errors, 
+  wid = id,
+  within = exp_block_id,
+  between = condition,
+  type = 3)
+aov_block_err_14
+
+ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = errors, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average number of errors") + xlab("Experimental block") + scale_fill_discrete("Condition")
+```
+
+Within subjects anova for block 3-4 number of errors.
+```{r, warning = F, echo=F, message=F}
+aov_block_err_34 <- ezANOVA(
+  data = clean_walk_34,
+  dv = errors, 
+  wid = id,
+  within = exp_block_id,
+  between = condition,
+  type = 3)
+aov_block_err_34
+
+ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = errors, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Average number of errors") + xlab("Experimental block") + scale_fill_discrete("Condition")
 ```

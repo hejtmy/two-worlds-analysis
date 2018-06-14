@@ -33,7 +33,6 @@ get_pointed_angle.vr <- function(point_line){
   UNITY_SHIFT <- -90 # WEIRD thing that the controller actually was transformed by this amout, so we need to input it back
   pointed_angle <- navr::angle_to_360(point_line$Rotation.Controller.x) + UNITY_SHIFT
   return(pointed_angle)
-  
 }
 get_pointed_angle.ve <- function(point_line){
   navr::angle_to_360(point_line$Rotation.X)
