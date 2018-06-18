@@ -11,17 +11,23 @@ library(ez)
 library(dplyr)
 library(reshape2)
 library(broom)
-
+library(brainvr.R)
+library(restimoter)
+source("../Scripts/loading.R")
+source_folder("../TwoWorlds")
 source('../Scripts/analysis-helpers.R')
 sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
 walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
 walk_all$learning.condition <- walk_all$condition
-walk_all$learning.condition <- recode(walk_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR")
+walk_all$learning.condition <- recode(walk_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
 sop_all$learning.condition <- sop_all$condition
-sop_all$learning.condition <- recode(sop_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR")
+sop_all$testing.condition <- sop_all$condition
+sop_all$learning.condition <- recode(sop_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
+sop_all$testing.condition <- recode(sop_all$testing.condition, "real-real" = "Real", "ve-real" = "Real", "vr-real" = "Real", "real-vr" = "Treadmill VR", "vr-vr" = "Treadmill VR")
 
 conference_walk_all <- walk_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 conference_sop_all <- sop_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+load("../multi_smoothed.data")
 ```
 
 ```{r setup, include=F}
@@ -35,7 +41,33 @@ theme_set(theme_minimal())
 walk_all %>% group_by(condition) %>% summarise(N = n_distinct(id))
 ```
 
-## Walking ----
+# Visualisations
+
+
+# Walking visualisations
+VR
+
+```{r, echo=F}
+plot_walk_trial(ls$tw67$phase1, 1)
+```
+
+REal world
+```{r, echo=F}
+plot_walk_trial(ls$tw64$phase2, 17)
+```
+
+# Pointing visualisations
+VR
+```{r, echo=F}
+plot_all(ls$tw64$phase1, 1:6, plot_sop_point)
+plot_sop_point(ls$tw64$phase1, 3)
+```
+
+Real wolrd
+```{r, echo=F}
+plot_all(ls$tw64$phase2, 1:6, plot_sop_point)
+plot_sop_point(ls$tw64$phase2, 3)
+```
 
 ## Per phase separation
 ```{r warning=F, echo=F}
@@ -63,42 +95,45 @@ make_graph(conference_walk_all, "learning.condition", "errors", "phase")+
 ## PER BLOCK
 ```{r warning=F, echo=F}
 make_graph(conference_walk_all, "learning.condition", "distance", "exp_block_id") + 
-  ylab("Average absolute trial distance") + xlab("learning.condition") + 
-  scale_fill_manual(values=estimote_pal,"Block")
+  ylab("Average absolute trial distance") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
 
 make_graph(conference_walk_all, "learning.condition", "min_norm_distance", "exp_block_id") + 
-  ylab("Average normalised trial distance") + xlab("learning.condition") + 
-  scale_fill_manual(values=estimote_pal,"Block")
+  ylab("Average normalised trial distance") +  xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
 
 make_graph(conference_walk_all, "learning.condition", "time", "exp_block_id") + 
-  ylab("Average absolute trial duration") + xlab("learning.condition") + 
-  scale_fill_manual(values=estimote_pal,"Block")
+  ylab("Average absolute trial duration") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
 
 make_graph(conference_walk_all, "learning.condition", "min_norm_time", "exp_block_id") + 
-  ylab("Average normalised trial duration") + xlab("learning.condition") + 
-  scale_fill_manual(values=estimote_pal,"Block")
+  ylab("Average normalised trial duration") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
 
 make_graph(conference_walk_all, "learning.condition", "errors", "exp_block_id")+ 
-  ylab("Average number of errors") + xlab("learning.condition") + 
-  scale_fill_manual(values=estimote_pal, "Block")
+  ylab("Average number of errors") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
 
 ggplot(conference_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  geom_vline(xintercept = 3, linetype=4) +
   ylab("Average normalised trial distance") + xlab("Block") + 
-  scale_color_manual(values=estimote_pal,"Condition")
+  scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
 
 ggplot(conference_walk_all, aes(x = exp_trial_id, y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  ylab("Average normalised trial distance") + xlab("Block") + 
-  scale_color_manual(values=estimote_pal,"Condition")
+  geom_vline(xintercept = 18, linetype=4) +
+  ylab("Average normalised trial distance") + xlab("Block number") + 
+  scale_color_manual(values=estimote_pal, "Condition")
 
 ggplot(conference_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  ylab("Number of mistakes in office decision") + xlab("Block") + 
-  scale_color_manual(values=estimote_pal,"Condition")
+  geom_vline(xintercept = 3, linetype=4) +
+  ylab("Number of mistakes in office decision") + xlab("Block number") + 
+  scale_color_manual(values=estimote_pal, "Condition")
 
 ```
 
@@ -117,6 +152,37 @@ ggplot(sop_all, aes(x = phase, y = abs(error), color = factor(condition))) +
   scale_color_manual(values = estimote_pal, "Learning condition")
 
 ```
+
+## Average pointing in all conditions
+```{r, echo=F, warnings = F}
+ggplot(sop_all[sop_all$phase == 1, ], aes(x = condition, y = abs(error), fill=factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing error in degrees in the first phase") + xlab("Condition") + 
+  scale_fill_manual(values = estimote_pal, "Phase")
+
+ggplot(sop_all[sop_all$phase == 2, ], aes(x = condition, y = abs(error), fill=factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing error in degrees in second phase") + xlab("Condition") + 
+  scale_fill_manual(values = estimote_pal) + guides(fill=F)
+
+ggplot(sop_all[sop_all$phase == 1, ], aes(x = learning.condition, y = abs(error), fill=factor(learning.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing error in degrees in the first phase") + xlab("Condition") + 
+  scale_fill_manual(values = estimote_pal) + guides(fill=F)
+
+ggplot(sop_all[sop_all$phase == 2, ], aes(x = testing.condition, y = abs(error), fill=factor(testing.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average pointing error in degrees in second phase") + xlab("Condition") + 
+  scale_fill_manual(values = estimote_pal) + guides(fill=F)
+
+#t.test(abs(error) ~ learning.condition, sop_all[sop_all$phase == 1,])
+t.test(abs(error) ~ testing.condition, sop_all[sop_all$phase == 2,])
+```
+
 
 # Block measures
 ```{r, echo = F}
@@ -144,25 +210,26 @@ block_measure <- function(df, value){
 ```
 
 ## Sum of errors
-
 Measure of overall sum of errors. Mean columns define mean sum of errors for all participants in that block
 ```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "sum.errors")
 df
 ggplot(melt(df[,1:4]), aes(x = learning.condition, y = value, fill = variable)) + 
-  geom_bar(stat = 'identity', position="dodge") + ylab("Mean sum of errors")
+  geom_bar(stat = 'identity', position="dodge") + 
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean sum of errors") + xlab("Learning condition")  + guides(fill=F)
 
 ggplot(df, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
-  geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), 
-                width=.2, position=position_dodge(.9)) +
-  ylab("Mean sum of errors improvement from block 3 to 4")
+  geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean sum of errors improvement after switch")+ xlab("Learning condition") + guides(fill=F)
 
 ggplot(df, aes(x = learning.condition, y = block14.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
-  geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), 
-                width=.2, position=position_dodge(.9)) +
-  ylab("Mean sum of errors improvement from block 1 to 4")
+  geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean sum of errors improvement from block 1 to 4") + xlab("Learning condition")  + guides(fill=F)
 ```
 
 ## Normalised distance
@@ -171,25 +238,27 @@ Measure of mean distance. First three columns define mean normalised distance in
 ```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "mean.distance")
 df
-ggplot(melt(df[,1:4]), aes(x = learning.condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean normalised distance")
+ggplot(melt(df[,1:4]), aes(x = learning.condition, y = value, fill = variable)) + 
+  scale_fill_manual(values = estimote_pal) +
+  geom_bar(stat = 'identity', position="dodge") + ylab("Mean normalised distance")
 
 ggplot(df, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
-  geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), 
-                width=.2, position=position_dodge(.9)) +
-  ylab("Mean normalised distance improvement from block 3 to 4")
+  geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean normalised distance improvement from block 3 to 4") + xlab("Learning condition")  + guides(fill=F)
 
 ggplot(df, aes(x = learning.condition, y = block14.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
-  geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), 
-                width=.2, position=position_dodge(.9)) +
-  ylab("Mean normalised distance improvement from block 1 to 4")
+  geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean normalised distance improvement from block 1 to 4") + xlab("Learning condition")  + guides(fill=F)
 ```
 
 # Stats
 
 ## Block T tests
-
+Paired block comparisons for improvement in different condiutions
 ```{r, echo=F}
 block_t_test <- function(df, block1, block2, value){
   df <- df %>% filter(exp_block_id %in% c(block1,block2))
