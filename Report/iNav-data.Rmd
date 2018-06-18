@@ -15,8 +15,19 @@ library(broom)
 source('../Scripts/analysis-helpers.R')
 sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
 walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all$learning.condition <- walk_all$condition
+walk_all$learning.condition <- recode(walk_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR")
+sop_all$learning.condition <- sop_all$condition
+sop_all$learning.condition <- recode(sop_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR")
+
 conference_walk_all <- walk_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 conference_sop_all <- sop_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+```
+
+```{r setup, include=F}
+#green, violet, blue, yellow, pink, dark blue
+estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
+theme_set(theme_minimal())
 ```
 
 #Number of participants
@@ -28,67 +39,99 @@ walk_all %>% group_by(condition) %>% summarise(N = n_distinct(id))
 
 ## Per phase separation
 ```{r warning=F, echo=F}
-make_graph(conference_walk_all, "condition", "distance", "phase") + ylab("Average absolute trial distance") + xlab("condition") + scale_fill_discrete(name = "Phase")
-make_graph(conference_walk_all, "condition", "min_norm_distance", "phase") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Phase")
-make_graph(conference_walk_all, "condition", "time", "phase") + ylab("Average absolute trial duration") + xlab("condition") + scale_fill_discrete(name = "Phase")
-make_graph(conference_walk_all, "condition", "min_norm_time", "phase")+ ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Phase")
-make_graph(conference_walk_all, "condition", "errors", "phase")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Phase")
+make_graph(conference_walk_all, "learning.condition", "distance", "phase") + 
+  ylab("Average absolute trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
+
+make_graph(conference_walk_all, "learning.condition", "min_norm_distance", "phase") + 
+  ylab("Average normalised trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
+
+make_graph(conference_walk_all, "learning.condition", "time", "phase") + 
+  ylab("Average absolute trial duration") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
+
+make_graph(conference_walk_all, "learning.condition", "min_norm_time", "phase")+ 
+  ylab("Average normalised trial duration") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal, "Phase")
+
+make_graph(conference_walk_all, "learning.condition", "errors", "phase")+ 
+  ylab("Average number of errors") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
 ```
 
 ## PER BLOCK
 ```{r warning=F, echo=F}
-make_graph(conference_walk_all, "condition", "min_norm_distance", "exp_block_id") + ylab("Average normalised trial distance") + xlab("condition") + scale_fill_discrete(name = "Block")
-make_graph(conference_walk_all, "condition", "min_norm_time", "exp_block_id") + ylab("Average normalised trial duration") + xlab("condition") + scale_fill_discrete(name = "Block")
-make_graph(conference_walk_all, "condition", "errors", "exp_block_id")+ ylab("Average number of errors") + xlab("condition") + scale_fill_discrete(name = "Block")
-ggplot(conference_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(condition))) +
+make_graph(conference_walk_all, "learning.condition", "distance", "exp_block_id") + 
+  ylab("Average absolute trial distance") + xlab("learning.condition") + 
+  scale_fill_manual(values=estimote_pal,"Block")
+
+make_graph(conference_walk_all, "learning.condition", "min_norm_distance", "exp_block_id") + 
+  ylab("Average normalised trial distance") + xlab("learning.condition") + 
+  scale_fill_manual(values=estimote_pal,"Block")
+
+make_graph(conference_walk_all, "learning.condition", "time", "exp_block_id") + 
+  ylab("Average absolute trial duration") + xlab("learning.condition") + 
+  scale_fill_manual(values=estimote_pal,"Block")
+
+make_graph(conference_walk_all, "learning.condition", "min_norm_time", "exp_block_id") + 
+  ylab("Average normalised trial duration") + xlab("learning.condition") + 
+  scale_fill_manual(values=estimote_pal,"Block")
+
+make_graph(conference_walk_all, "learning.condition", "errors", "exp_block_id")+ 
+  ylab("Average number of errors") + xlab("learning.condition") + 
+  scale_fill_manual(values=estimote_pal, "Block")
+
+ggplot(conference_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  ylab("Average normalised trial distance") + xlab("Block") + scale_fill_discrete("Condition")
-ggplot(conference_walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
+  ylab("Average normalised trial distance") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Condition")
+
+ggplot(conference_walk_all, aes(x = exp_trial_id, y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  ylab("Number of mistakes in office decision") + xlab("Block") + scale_fill_discrete("Condition")
+  ylab("Average normalised trial distance") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Condition")
+
+ggplot(conference_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  ylab("Number of mistakes in office decision") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Condition")
 
 ```
 
 ## Pointing
-```{r warning=F, echo=F}
+```{r warning=F, echo=F, message=F}
 ggplot(sop_all, aes(x = condition, y = abs(error), fill=factor(phase))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
-  ylab("Average pointing error in degrees") + xlab("Condition") + scale_fill_discrete("Phase")
+  ylab("Average pointing error in degrees") + xlab("Condition") + 
+  scale_fill_manual(values = estimote_pal, "Phase")
 
 ggplot(sop_all, aes(x = phase, y = abs(error), color = factor(condition))) +
-  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
-  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  ylab("Average pointing error in degrees") + xlab("Phase") + scale_fill_discrete("Condition")
-
-ggplot(sop_all[sop_all$time < 12, ], aes(x = condition, y = time, fill=factor(phase))) +
-  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
-  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
-  ylab("Average pointing time") + xlab("Condition") + scale_fill_discrete("Phase")
-
-ggplot(sop_all[sop_all$time < 12,],aes(x = phase, y = time, color = factor(condition))) +
-  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
-  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  ylab("Average pointing time") + xlab("Phase") + scale_fill_discrete("Condition")
+  stat_summary(fun.data=mean_cl_normal, size=1, width = 0.1, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 2, geom="line") + 
+  ylab("Average pointing error in degrees") + xlab("Phase") + 
+  scale_color_manual(values = estimote_pal, "Learning condition")
 
 ```
 
 # Block measures
 ```{r, echo = F}
 condition_all_sums <- conference_walk_all %>% 
-  group_by(exp_block_id, id, condition) %>% 
+  group_by(exp_block_id, id, learning.condition) %>% 
   summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
             sum.errors = sum(errors, na.rm = T),
             mean.distance = mean(min_norm_distance, na.rm = T),
             mean.error = mean(errors, na.rm = T))
 
 block_measure <- function(df, value){
-  df_wide <- dcast(df, condition + id ~ exp_block_id, value.var = value)
-  colnames(df_wide) <- c("condition","id", "block1","block2","block3","block4","block5","block6")
+  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value)
+  colnames(df_wide) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
   df_wide %>% 
-    group_by(condition) %>%
+    group_by(learning.condition) %>%
     summarise(block1.mean  = mean(block1, na.rm = T),
               block3.mean = mean(block3, na.rm = T),
               block4.mean = mean(block4, na.rm = T),
@@ -106,16 +149,16 @@ Measure of overall sum of errors. Mean columns define mean sum of errors for all
 ```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "sum.errors")
 df
-ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + 
+ggplot(melt(df[,1:4]), aes(x = learning.condition, y = value, fill = variable)) + 
   geom_bar(stat = 'identity', position="dodge") + ylab("Mean sum of errors")
 
-ggplot(df, aes(x = condition, y = block34.diff, fill = condition)) + 
+ggplot(df, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), 
                 width=.2, position=position_dodge(.9)) +
   ylab("Mean sum of errors improvement from block 3 to 4")
 
-ggplot(df, aes(x = condition, y = block14.diff, fill = condition)) + 
+ggplot(df, aes(x = learning.condition, y = block14.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), 
                 width=.2, position=position_dodge(.9)) +
@@ -128,15 +171,15 @@ Measure of mean distance. First three columns define mean normalised distance in
 ```{r, echo=F, warnings = F}
 df <- block_measure(condition_all_sums, "mean.distance")
 df
-ggplot(melt(df[,1:4]), aes(x = condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean normalised distance")
+ggplot(melt(df[,1:4]), aes(x = learning.condition, y = value, fill = variable)) + geom_bar(stat = 'identity', position="dodge") + ylab("Mean normalised distance")
 
-ggplot(df, aes(x = condition, y = block34.diff, fill = condition)) + 
+ggplot(df, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), 
                 width=.2, position=position_dodge(.9)) +
   ylab("Mean normalised distance improvement from block 3 to 4")
 
-ggplot(df, aes(x = condition, y = block14.diff, fill = condition)) + 
+ggplot(df, aes(x = learning.condition, y = block14.diff, fill = learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), 
                 width=.2, position=position_dodge(.9)) +
@@ -147,7 +190,7 @@ ggplot(df, aes(x = condition, y = block14.diff, fill = condition)) +
 
 ## Block T tests
 
-```{r, echo =F}
+```{r, echo=F}
 block_t_test <- function(df, block1, block2, value){
   df <- df %>% filter(exp_block_id %in% c(block1,block2))
   mean.na <- function(data){return(mean(data, na.rm = T))}
@@ -155,71 +198,88 @@ block_t_test <- function(df, block1, block2, value){
   colnames(df_wide) <- c("condition","id", "block1","block2")
   df_wide %>% group_by(condition) %>% do(tidy(t.test(.$block1, .$block2, paired = T)))
 }
-
 ```
 
 ### Block 3-4
 Paired t tests between min normalised distance difference in blocks 3 and 4.
-```{r}
+```{r, echo=F}
 block_t_test(conference_walk_all, 4, 3,"min_norm_distance")
 ```
 
 And for number of errors
-```{r}
+```{r, echo=F}
 block_t_test(conference_walk_all, 4, 3,"errors")
 ```
 
-### Block 1 and 4
+### Block 1-4
 Paired t tests between min normalised distance difference in blocks 1 and 4.
-```{r}
+```{r, echo=F}
 block_t_test(conference_walk_all, 4, 1,"min_norm_distance")
 ```
 And for number of errors
-```{r}
+```{r, echo=F}
 block_t_test(conference_walk_all, 4, 1,"errors")
 ```
 
-### Block 1 and 6
+### Block 1-6
 Paired t tests between min normalised distance difference in blocks 1 and 6.
-```{r}
+```{r, echo=F}
 block_t_test(conference_walk_all, 6, 1,"min_norm_distance")
 ```
 And for number of errors
-```{r}
+```{r, echo=F}
 block_t_test(conference_walk_all, 6, 1,"errors")
 ```
 
-## Independent comparisons
+## Independent block improvement comparisons between conditions
 
 ```{r, echo=F}
-df_wide <- dcast(condition_all_sums, condition + id ~ exp_block_id, value.var = "mean.distance")
-colnames(df_wide) <- c("condition","id", "block1","block2","block3","block4","block5","block6")
-df_wide$diff14 <- (df_wide$block1-df_wide$block4)/(df_wide$block1+df_wide$block3)
+df_wide <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
+colnames(df_wide) <- c("learning.condition","id", "block1","block2","block3","block4","block5","block6")
+df_wide$diff41 <- (df_wide$block4-df_wide$block1)/(df_wide$block1+df_wide$block3)
+df_wide$diff43<- (df_wide$block4-df_wide$block3)/(df_wide$block4+df_wide$block3)
 ```
 
-1 to 4 improvement comparison between VE-real and real-real
-```{r}
-t.test(df_wide$diff14[df_wide$condition=="ve-real"],df_wide$diff14[df_wide$condition=="real-real"])
+### Block 1-4 improvement
+VE-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff41[df_wide$learning.condition=="Desktop"],df_wide$diff41[df_wide$learning.condition=="Real"])
 ```
 
-1 to 4 improvement comparison between VR-real and real-real
-```{r}
-t.test(df_wide$diff14[df_wide$condition=="vr-real"],df_wide$diff14[df_wide$condition=="real-real"])  
+VR-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff41[df_wide$learning.condition=="Treadmill VR"],df_wide$diff41[df_wide$learning.condition=="Real"])  
 ```
 
-1 to 4 improvement comparison between VR-real and VE-real
-```{r}
-t.test(df_wide$diff14[df_wide$condition=="vr-real"],df_wide$diff14[df_wide$condition=="ve-real"])
+VR-real and VE-real
+```{r, echo=F}
+t.test(df_wide$diff41[df_wide$learning.condition=="Treadmill VR"],df_wide$diff41[df_wide$learning.condition=="Desktop"])
+```
+
+### Block 3-4 improvement
+VE-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff43[df_wide$learning.condition=="Desktop"], df_wide$diff43[df_wide$learning.condition=="Real"])
+```
+
+VR-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff43[df_wide$learning.condition=="Treadmill VR"], df_wide$diff43[df_wide$learning.condition=="Real"])  
+```
+
+VR-real and VE-real
+```{r, echo=F}
+t.test(df_wide$diff43[df_wide$learning.condition=="Treadmill VR"], df_wide$diff43[df_wide$learning.condition=="Desktop"])
 ```
 
 ## Anova
 Simple between subjects anova
-```{r}
-aov_block_distance <- aov(min_norm_distance~exp_block_id*condition, conference_walk_all)
+```{r, echo=F}
+aov_block_distance <- aov(min_norm_distance~exp_block_id*learning.condition, conference_walk_all)
 summary(aov_block_distance)
 ```
 
-```{r}
+```{r, echo=F}
 ez_prepare_block <- function(df, blocks){
   filtered_data <- df[df$exp_block_id %in% blocks, ]
   filtered_data <- filtered_data[complete.cases(filtered_data),]
@@ -244,11 +304,11 @@ aov_block_dist_34 <- ezANOVA(
   dv = min_norm_distance, 
   wid = id,
   within = exp_block_id,
-  between = condition, 
+  between = learning.condition, 
   type = 3)
 aov_block_dist_34
 
-ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(condition))) +
+ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
   ylab("Average normalised distance") + xlab("Experimental block") + scale_fill_discrete("Condition")
@@ -257,17 +317,16 @@ ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = min_norm_distance, c
 Within subjects anova for block 1-4 difference in minimal path.
 
 ```{r, warning = F, echo=F, message=F}
-
 aov_block_dist_14 <- ezANOVA(
   data = clean_walk_14,
   dv = min_norm_distance, 
   wid = id,
   within = exp_block_id,
-  between = condition,
+  between = learning.condition,
   type = 3)
 aov_block_dist_14
 
-ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(condition))) +
+ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
   ylab("Average normalised distance") + xlab("Experimental block") + scale_fill_discrete("Condition")
@@ -282,11 +341,11 @@ aov_block_err_14 <- ezANOVA(
   dv = errors, 
   wid = id,
   within = exp_block_id,
-  between = condition,
+  between = learning.condition,
   type = 3)
 aov_block_err_14
 
-ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = errors, color = factor(condition))) +
+ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = errors, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
   ylab("Average number of errors") + xlab("Experimental block") + scale_fill_discrete("Condition")
