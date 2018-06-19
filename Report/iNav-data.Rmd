@@ -28,9 +28,7 @@ sop_all$testing.condition <- recode(sop_all$testing.condition, "real-real" = "Re
 conference_walk_all <- walk_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 conference_sop_all <- sop_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 load("../multi_smoothed.data")
-```
 
-```{r setup, include=F}
 #green, violet, blue, yellow, pink, dark blue
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
 theme_set(theme_minimal())
@@ -300,7 +298,7 @@ And for number of errors
 block_t_test(conference_walk_all, 6, 1,"errors")
 ```
 
-## Independent block improvement comparisons between conditions
+## Independent block improvement comparisons between conditions for distance
 
 ```{r, echo=F}
 df_wide <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
@@ -326,7 +324,7 @@ t.test(df_wide$diff41[df_wide$learning.condition=="Treadmill VR"],df_wide$diff41
 ```
 
 ### Block 3-4 improvement
-VE-real and real-real
+Desktop to real
 ```{r, echo=F}
 t.test(df_wide$diff43[df_wide$learning.condition=="Desktop"], df_wide$diff43[df_wide$learning.condition=="Real"])
 ```
@@ -340,6 +338,50 @@ VR-real and VE-real
 ```{r, echo=F}
 t.test(df_wide$diff43[df_wide$learning.condition=="Treadmill VR"], df_wide$diff43[df_wide$learning.condition=="Desktop"])
 ```
+
+
+## Independent block improvement comparisons between conditions for number of errors
+
+```{r, echo=F}
+df_wide <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
+colnames(df_wide) <- c("learning.condition","id", "block1","block2","block3","block4","block5","block6")
+df_wide$diff41 <- (df_wide$block4-df_wide$block1)/(df_wide$block1+df_wide$block3)
+df_wide$diff43<- (df_wide$block4-df_wide$block3)/(df_wide$block4+df_wide$block3)
+```
+
+### Block 1-4 improvement
+VE-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff41[df_wide$learning.condition=="Desktop"],df_wide$diff41[df_wide$learning.condition=="Real"])
+```
+
+VR-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff41[df_wide$learning.condition=="Treadmill VR"],df_wide$diff41[df_wide$learning.condition=="Real"])  
+```
+
+VR-real and VE-real
+```{r, echo=F}
+t.test(df_wide$diff41[df_wide$learning.condition=="Treadmill VR"],df_wide$diff41[df_wide$learning.condition=="Desktop"])
+```
+
+### Block 3-4 improvement
+Desktop to real
+```{r, echo=F}
+t.test(df_wide$diff43[df_wide$learning.condition=="Desktop"], df_wide$diff43[df_wide$learning.condition=="Real"])
+```
+
+VR-real and real-real
+```{r, echo=F}
+t.test(df_wide$diff43[df_wide$learning.condition=="Treadmill VR"], df_wide$diff43[df_wide$learning.condition=="Real"])  
+```
+
+VR-real and VE-real
+```{r, echo=F}
+t.test(df_wide$diff43[df_wide$learning.condition=="Treadmill VR"], df_wide$diff43[df_wide$learning.condition=="Desktop"])
+```
+
+
 
 ## Anova
 Simple between subjects anova
