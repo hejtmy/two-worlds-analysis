@@ -28,7 +28,7 @@ sop_all$testing.condition <- recode(sop_all$testing.condition, "real-real" = "Re
 
 conference_walk_all <- walk_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 conference_sop_all <- sop_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
-load("../multi_smoothed.data")
+load("../multi.data")
 
 #green, violet, blue, yellow, pink, dark blue
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
