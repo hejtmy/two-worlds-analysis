@@ -60,9 +60,9 @@ block_measure <- function(df, value){
 
 ```
 
-Unless stated otherwise, I ran all tests on the normalised distance and time statistics. Errors and pointing information is not normalised, as they are the same in all conditions. 
+I ran all tests on the normalised distance, errors are not normalised, as they are the same in all conditions. 
 
-I only selected those "important" comparisons - therefore Desktop to Real, Treadmill VR to real and Real to real. Anovas and other comparisons are run only on these.
+I only selected those "important" comparisons - therefore Desktop to Real world, Treadmill VR to real world and Real world to real world. Anovas and other comparisons are run only on these. Learning conditions (block 1-3) are the different modalities, and blocks 3-4 are all real world testing.
 
 ## Descriptives
 In normalised distance we can see that people in different conditions start fairly at the same level of performance (difference between learnign conditions is not significant `r apa_print(aov(min_norm_distance ~ learning.condition, conference_walk_all[conference_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)
@@ -167,7 +167,7 @@ ggplot(df_distance, aes(x = learning.condition, y = block14.diff, fill = learnin
 ```
 
 ### Errors
-Unlike for distance, anova reveals significant difference in number of errors improvement from block 1 to block 4 between different learning conditions (`r apa_print(aov(block14 ~ learning.condition, df_wide_errors))$statistic$learning_condition`). 
+Unlike for distance, anova reveals significant difference between learning conditions in number of errors improvement from block 1 to block 4 (`r apa_print(aov(block14 ~ learning.condition, df_wide_errors))$statistic$learning_condition`). 
 
 Runnign Tukey's post hoc on the distance shows that this is originating from the difference between Desktop and the Real world, with Treadmill not being significantly different from either of them.
 
@@ -260,8 +260,14 @@ ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = errors, color = fact
   scale_color_manual(values = estimote_pal, "Learning condition")
 ```
 
-
 ## Summary
-We see effect of learning condition (blocks 1-3) on performance in block 4. We also see 
+We see effect of learning condition (blocks 1-3) on performance in block 4.
 
-Participant's performance in distance from block 3-4 gets slightly worse after the switch, but their number of errors decrease. It can mean that they know which door are correct, but they are unsure in how to get to them, showing some level of memory transfer, but not necessarily spatial knowledge transfer.
+We see positive improvement in distance from block 1 to 4 in all conditions and this improvement is not significantly different across learning groups. We see similar improvement in number of errors, but Desktop improves significantly worse than real world training.
+
+Participant's performance in distance from block 3-4 gets slightly worse after the switch distance-wise (but not significanly), but their number of errors decrease across all conditions. It can mean that they know which door are correct, but they are unsure in how to get to them, showing some level of memory transfer, but not necessarily spatial knowledge transfer.
+
+We can see marginally significant difference in block 3-4 distance improvement acrosss learning conditions, with desktop doing the worst but not significantly different from the rest. Within subject anova for distance improvement in blocks 3-4 shows interaction between learning condition and experimental block - only desktop gets "worse" after the switch of environment. 
+
+But we can see clear error rate improvement differences across conditions - all participants improved, but desktop learning shows least amount of improvement from block 3-4, participants doing significantly worse than those with real world training and marginally worse than those with Treadmill training.
+
