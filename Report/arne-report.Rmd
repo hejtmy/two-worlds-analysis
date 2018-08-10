@@ -1,0 +1,206 @@
+---
+title: "Arne report"
+author: "Lukáš Hejtmánek"
+date: "9 August 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(ez)
+library(Hmisc)
+library(dplyr)
+library(reshape2)
+library(broom)
+library(knitr)
+library(brainvr.R)
+library(restimoter)
+library(papaja)
+
+source("../Scripts/loading.R")
+source_folder("../TwoWorlds")
+source('../Scripts/analysis-helpers.R')
+sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all$learning.condition <- walk_all$condition
+walk_all$learning.condition <- recode(walk_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
+sop_all$learning.condition <- sop_all$condition
+sop_all$testing.condition <- sop_all$condition
+sop_all$learning.condition <- recode(sop_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
+sop_all$testing.condition <- recode(sop_all$testing.condition, "real-real" = "Real", "ve-real" = "Real", "vr-real" = "Real", "real-vr" = "Treadmill VR", "vr-vr" = "Treadmill VR")
+
+conference_walk_all <- walk_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+conference_sop_all <- sop_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+
+#green, violet, blue, yellow, pink, dark blue
+estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
+theme_set(theme_minimal())
+
+condition_all_sums <- conference_walk_all %>% 
+  group_by(exp_block_id, id, learning.condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T),
+            mean.distance = mean(min_norm_distance, na.rm = T),
+            mean.error = mean(errors, na.rm = T))
+
+block_measure <- function(df, value){
+  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value)
+  colnames(df_wide) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+  df_wide %>% 
+    group_by(learning.condition) %>%
+    summarise(block1.mean  = mean(block1, na.rm = T),
+              block3.mean = mean(block3, na.rm = T),
+              block4.mean = mean(block4, na.rm = T),
+              block34.diff = mean((block3-block4)/(block4+block3), na.rm = T),
+              block34.se  = sqrt(var((block3-block4)/(block4+block3), na.rm = T)/sum(!is.na(block3-block4))),
+              block14.diff = mean((block1-block4)/(block1+block4), na.rm = T),
+              block14.se = sqrt(var((block1-block4)/(block1+block4), na.rm = T)/sum(!is.na(block1-block4)))
+  )
+}
+
+```
+
+Unless stated otherwise, I ran all tests on the normalised distance and time statistics. Errors and pointing information is not normalised, as they are the same in all conditions. 
+
+I only selected those "important" comparisons - therefore Desktop to Real, Treadmill VR to real and Real to real. Anovas and other comparisons are run only on these.
+
+## Descriptives
+In normalised distance we can see similar starting point (not significant starting difference `r apa_print(aov(min_norm_distance ~ learning.condition, conference_walk_all[conference_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)
+
+```{r, echo=F, warning=F}
+make_graph(conference_walk_all, "learning.condition", "min_norm_distance", "exp_block_id") + 
+  ylab("Average normalised trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Block ID")
+
+ggplot(conference_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(learning.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  geom_vline(xintercept = 3.5, linetype=4) +
+  ylab("Average normalised trial distance") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
+```
+
+There is difference in starting times in all conditions in the first block (`r apa_print(aov(min_norm_time ~ learning.condition, conference_walk_all[conference_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)). Probably due to learning issues with the treadmill. Threre is no significant difference in desktop and real (`r apa_print(t.test(min_norm_time ~ learning.condition, conference_walk_all[conference_walk_all$exp_block_id == 1 & conference_walk_all$learning.condition %in% c("Desktop", "Real"), ]))$statistic`))
+
+```{r, echo=F}
+make_graph(conference_walk_all, "learning.condition", "min_norm_time", "exp_block_id")+ 
+  ylab("Average normalised trial duration") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal, "Block ID")
+```
+
+And we don't have any significant difference in number of errors in the first block (`r apa_print(aov(errors ~ learning.condition, conference_walk_all[conference_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)).
+
+```{r, echo=F}
+make_graph(conference_walk_all, "learning.condition", "errors", "exp_block_id")+ 
+  ylab("Average number of errors") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal," Block ID")
+
+ggplot(conference_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  geom_vline(xintercept = 3.5, linetype=4) +
+  ylab("Number of mistakes in office decision") + xlab("Block number") + 
+  scale_color_manual(values=estimote_pal, "Condition")
+```
+
+We can clearly see differences in the progression of the learnign, but as you pointed out many times, as they are not linear, we could benefit from non linear modeling. I hope Mike and professor Ferer will help us with that. 
+
+But we can look at either pure changes between block 3-4 or 1-4 or those calculations that you proposed as a (block4-block3)/(block3+block4) measurements.
+
+```{r, echo=F}
+df_wide_errors <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
+df_wide_distance <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
+colnames(df_wide_errors) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+
+df_wide_errors$block14 <- df_wide_errors$block1-df_wide_errors$block4
+df_wide_errors$block34 <- df_wide_errors$block3-df_wide_errors$block4
+df_wide_distance$block14 <- df_wide_distance$block1-df_wide_distance$block4
+df_wide_distance$block34 <- df_wide_distance$block3-df_wide_distance$block4
+
+df_errors <- block_measure(condition_all_sums, "sum.errors")
+df_distance <- block_measure(condition_all_sums, "mean.distance")
+
+block_t_test <- function(df, block1, block2, value){
+  df <- df %>% filter(exp_block_id %in% c(block1,block2))
+  mean.na <- function(data){return(mean(data, na.rm = T))}
+  df_wide <- dcast(df, condition + id ~ exp_block_id, value.var = value, fun.aggregate = mean.na)
+  colnames(df_wide) <- c("condition","id", "block1","block2")
+  df_wide %>% group_by(condition) %>% do(tidy(t.test(.$block1, .$block2, paired = T)))
+}
+```
+
+## Block improvement from block 1 to block 4
+
+### Distance
+We can see that all conditions improved from the first to forth block in both distance walked and errors in decisions. Paired t-tests show that both Treadmill and Real learning conditions led to improved performance from 1-4, but not Desktop. All conditions show improvemt in number of errors.
+
+```{r, echo=F}
+df_dist <- block_t_test(conference_walk_all, 1, 4,"min_norm_distance")[,c(1,4)]
+df_error <- block_t_test(conference_walk_all, 1, 4,"errors")[,c(1,4)]
+df14 <- merge(df_dist, df_error, by = "condition")
+colnames(df14) <- c("condition", "p-value distance improvement", "p-value errors improvement")
+kable(df14)
+```
+
+But anova shows no significant difference in the improvement between groups for distance (`r apa_print(aov(block14 ~ learning.condition, df_wide_distance))$statistic$learning_condition`)  nor errors (`r apa_print(aov(block14 ~ learning.condition, df_wide_errors))$statistic$learning_condition`). This might be due to quite large variability in the sample.
+
+```{r, echo=F}
+ggplot(df_distance, aes(x = learning.condition, y = block14.diff, fill = learning.condition)) + 
+  geom_bar(stat = 'identity', position="dodge") + 
+  geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean normalised distance improvement from block 1 to 4") + xlab("Learning condition")  + guides(fill=F)
+```
+
+### Errors
+```{r, echo=F}
+ggplot(df_errors, aes(x = learning.condition, y = block14.diff, fill = learning.condition)) + 
+  geom_bar(stat = 'identity', position="dodge") + 
+  geom_errorbar(aes(ymin=block14.diff-block14.se, ymax=block14.diff+block14.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean sum of errors improvement from block 1 to 4") + xlab("Learning condition")  + guides(fill=F)
+```
+
+## Block improvement from block 3 to block 4
+
+We can see that everybody (including Real to Real condition) gets a little bit worse from 3 to 4. But this "decrease of performance" is not significant when computed using paired t-tests except marginally worse in the desktop version. All conditions show imprvement in the number of errors in paired t-tests.
+
+```{r, echo=F}
+df_dist <- block_t_test(conference_walk_all, 3, 4,"min_norm_distance")[,c(1,4)]
+df_error <- block_t_test(conference_walk_all, 3, 4,"errors")[,c(1,4)]
+df34 <- merge(df_dist, df_error, by = "condition")
+colnames(df34) <- c("condition", "p-value distance improvement", "p-value errors improvement")
+kable(df34)
+```
+
+Comparing the block improvement in different conditions using anovas, we see significant difference in the improvement between groups for distance (`r apa_print(aov(block34 ~ learning.condition, df_wide_distance))$statistic$learning_condition`)  and for errors (`r apa_print(aov(block34 ~ learning.condition, df_wide_errors))$statistic$learning_condition`).
+
+Runnign Tukey's post hoc on the distance shows marginally significant difference between Desktop from the other two conditions for distance.
+
+```{r}
+kable(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_distance), conf.level=0.95)$learning.condition)
+```
+
+And si
+```{r}
+kable(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95)$learning.condition)
+```
+
+### Distance
+```{r, echo=F}
+ggplot(df_distance, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
+  geom_bar(stat = 'identity', position="dodge") + 
+  geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean normalised distance improvement from block 3 to 4") + xlab("Learning condition")  + guides(fill=F)
+```
+
+### Errors
+```{r, echo=F}
+ggplot(df_errors, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
+  geom_bar(stat = 'identity', position="dodge") + 
+  geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), width=.2, position=position_dodge(.9)) +
+  scale_fill_manual(values = estimote_pal) +
+  ylab("Mean sum of errors improvement after switch")+ xlab("Learning condition") + guides(fill=F)
+```
