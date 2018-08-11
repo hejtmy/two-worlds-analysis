@@ -13,8 +13,6 @@ library(dplyr)
 library(reshape2)
 library(broom)
 library(knitr)
-library(brainvr.R)
-library(restimoter)
 library(papaja)
 
 source("../Scripts/loading.R")
