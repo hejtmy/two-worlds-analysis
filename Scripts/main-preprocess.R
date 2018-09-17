@@ -28,8 +28,8 @@ walk_all <- walk_all %>% mutate(goal = replace(goal, goal=="Jesicca's office", "
 walk_all$exp_trial_id <- walk_all$trial_id + (walk_all$phase-1)*18
 walk_all$exp_block_id <- walk_all$block_id + (walk_all$phase-1)*3
 
-sop_all$exp_trial_id <- sop_all$trial_id + (sop_all$phase-1)*18
-sop_all$exp_block_id <- sop_all$block_id + (sop_all$phase-1)*3
+sop_all$exp_trial_id <- sop_all$trial_id + (sop_all$phase-1)*12
+sop_all$exp_block_id <- sop_all$block_id + (sop_all$phase-1)*2
 
 ### Conditions ----
 conditions <- data.frame(id = settings$participants$Code,
@@ -77,6 +77,7 @@ walk_all_new <- walk_all %>% select(-one_of(drop.cols))
 
 sop_all$abs_error <- abs(sop_all$error)
 
-write.table(sop_all, file = "sop_smoothed.csv", sep=";")
-write.table(walk_all_new, file = "walk_smoothed_errors_06.csv", sep=";")
+write.table(sop_all, file = "sop_smoothed.csv", sep=";", row.names = F)
+write.table(walk_all_new, file = "walk_smoothed_errors_06.csv", sep=";", row.names = F)
 
+write.table(walk_all, file = "walk.csv", sep=";", row.names = F)
