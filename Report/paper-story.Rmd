@@ -46,12 +46,11 @@ block_measure <- function(df, value){
  
 ## Hypotheses
 1. There will be some transfer in all learning conditions.
-2. Transfer will be higher in the real world learning condition than in desktop treadmill condition.
+2. Transfer will be higher in the real world learning condition than in desktop condition.
 3. Transfer will be higher in the real world learning condition than in VR treadmill condition.
 4. Transfer will be higher in the VR treadmill condition that in the desktop condition.
 
-- transfer is operationalised as a change in performance in navigational tasks following the environment/modality switch
-- navigational performance change can be measured in different ways
+- transfer is operationalised as a change in performance in navigational tasks following the environment/modality switch.
 
 Specific tests (hypothesis in parenthesis)
 - Overrall average walking performance in phase 1 vs phase 2 
@@ -114,8 +113,17 @@ ggplot(sub_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.c
 
 ## Specific predictions testing
 
-### Performance in block 4 is better than in block 1 and 2
+### Performance in block 4 is better than in block 1
 If we assume some level of transfer, than the average or individual performance in block 4 should be better in all conditions than in block 1 or potentially in block 2. I don't test for block 3 because that immediately compares the switch performance. 
+```{r, echo=F,message=F}
+make_graph(sub_walk_all[sub_walk_all$exp_block_id %in% c(1,4),], "learning.condition", "min_norm_distance", "exp_block_id") + 
+  ylab("Average normalised trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Block ID")
+make_graph(sub_walk_all[sub_walk_all$exp_block_id %in% c(1,4),], "learning.condition", "errors", "exp_block_id") + 
+  ylab("Average number of errors") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Block ID")
+```
+
 ```{r, echo=F}
 df_dist <- block_t_test(sub_walk_all, 1, 4,"min_norm_distance")[,c(1,4)]
 df_error <- block_t_test(sub_walk_all, 1, 4,"errors")[,c(1,4)]
@@ -123,30 +131,68 @@ df14 <- merge(df_dist, df_error, by = "learning.condition")
 colnames(df14) <- c("learning condition", "p-value distance improvement", "p-value errors improvement")
 kable(df14, caption="Paired T test comparing infividual performance improvement from block 1-4 in different conditions")
 ```
-We see taht both real world and treadmill VR learning leads to improvement from block 1 to block 4 in both errors and path travelled. But desktop only in number of errors and marginally in distance improvement.
 
-### Overrall average walking performance in phase 1 vs phase 2
-Given that all participants had 3 blocks of trials in the second phase done in the real world, We can assume, if one learning method leads to better transfer than another
-```{r, echo=F}
+We see that both real world and treadmill VR learning leads to improvement from block 1 to block 4 in both errors and path travelled. But desktop only in number of errors and marginally in distance improvement.
 
+### Overrall average walking and error performance in phase 1 vs phase 2
+Given that all participants had 3 blocks of trials in the second phase done in the real world, We can assume, if one learning method leads to better transfer than another, than the performance improvement between phases could be different.
+```{r, echo=F, warning=F}
+make_graph(sub_walk_all, "learning.condition", "min_norm_distance", "phase") + 
+  ylab("Average normalised trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
+make_graph(sub_walk_all, "learning.condition", "errors", "phase")+ 
+  ylab("Average number of errors") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
 ```
 
+Anova shows a significant effect of phase and condition on overall performance, but not of their interaction.
+```{r, echo=F}
+apa_print(aov(min_norm_distance ~ phase*learning.condition, sub_walk_all))
+pair_t_norm_distance_phase_2 <- pairwise.t.test(sub_walk_all$min_norm_distance, sub_walk_all$learning.condition, p.adj = "holm")
+```
+Looking solely at the performance differences in the second phase differs significantly between groups (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]))$statistic$learning_condition`). Tukey test shows significant difference between real adn a desktop versions
+
+```{r, echo=F}
+kable(TukeyHSD(x=aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]), conf.level=0.95)$learning.condition[, c(1,4)])
+```
 
 ### Overrall average pointing performance in phase 1 vs phase 2
-```{r, echo=F}
-
-```
-### Average walking perfomrance in block 3 vs 4 
-(block directly before vs directly after the switch)
-```{r, echo=F}
-
+```{r, echo=F, warning=F}
+make_graph(sub_sop_all, "learning.condition", "abs_error", "phase") + 
+  ylab("Average normalised trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Phase")
 ```
 
-### Average walkkig perfomance in block 1 vs 4 
-(starting baseline vs switch)
+Anova shows significant effect of both phase, learning condition and their interaction on pointing performance.
 ```{r, echo=F}
-
+kable(apa_print(aov(abs_error ~ phase*learning.condition, sub_sop_all))$table)
 ```
+
+### Average walking perfomrance in block 3 vs 4
+
+Looking directly at the performance after the switch, we can see if there is a sudden drop in performance. We can study this both suing individual paired t.tests as well as non paired t-tests. Looking at the graphs we see differences in the level to which people have learned the environemtn in the 3rd block.  
+```{r, echo=F, message=F}
+make_graph(sub_walk_all[sub_walk_all$exp_block_id %in% c(3,4),], "learning.condition", "min_norm_distance", "exp_block_id") + 
+  ylab("Average normalised trial distance") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Block ID")
+make_graph(sub_walk_all[sub_walk_all$exp_block_id %in% c(3,4),], "learning.condition", "errors", "exp_block_id") + 
+  ylab("Average number of errors") + xlab("condition") + 
+  scale_fill_manual(values=estimote_pal,"Block ID")
+```
+
+Anova doesn¨t show shows a significant difference in the block 3 (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 3,]))$statistic$learning_condition`), but there is a significant difference between path performance in the block 4 (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`).
+
+There is significant difference in the number of errors in both block 3 (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 3,]))$statistic$learning_condition`), and the block 4 (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`).
+
+Running pairwise t-tests to see performance change from block 3 to 4 gives the following results.
+```{r, echo=F}
+df_dist <- block_t_test(sub_walk_all, 3, 4,"min_norm_distance")[,c(1,4)]
+df_error <- block_t_test(sub_walk_all, 3, 4,"errors")[,c(1,4)]
+df34 <- merge(df_dist, df_error, by = "learning.condition")
+colnames(df34) <- c("learning condition", "p-value distance improvement", "p-value errors improvement")
+kable(df34, caption="Paired T test comparing infividual performance improvement from block 3-4 in different conditions")
+```
+WE can see that all participants improved in the errors made, but neigher group is significantly worse between block 3 and 4 in the path travelled (although participants learning on desktop perform slightly worse in 4th block, but the significance is only marginal)
 
 ### Personal walking performance change in block 3 vs 4 
 (calculated as an average of individuals (block3-block4)/(block3+block4))
@@ -180,7 +226,6 @@ POtential followups
 ```{r, echo=F}
 
 ```
-
 But I can look at either pure changes between block 3-4 or 1-4 or those calculations that you proposed as a (block4-block3)/(block3+block4) measurements.
 
 ```{r, echo=F}
@@ -196,24 +241,6 @@ df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(d
 
 df_errors <- block_measure(condition_all_sums, "sum.errors")
 df_distance <- block_measure(condition_all_sums, "mean.distance")
-
-block_t_test <- function(df, block1, block2, value){
-  df <- df %>% filter(exp_block_id %in% c(block1,block2))
-  mean.na <- function(data){return(mean(data, na.rm = T))}
-  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value, fun.aggregate = mean.na)
-  colnames(df_wide) <- c("learning.condition","id", "block1","block2")
-  df_wide %>% group_by(learning.condition) %>% do(tidy(t.test(.$block1, .$block2, paired = T)))
-}
-
-ez_prepare_block <- function(df, blocks){
-  filtered_data <- df[df$exp_block_id %in% blocks, ]
-  filtered_data <- filtered_data[complete.cases(filtered_data),]
-  has_all <- filtered_data %>% group_by(id) %>% select(id, "exp_block_id") %>% unique() %>% count
-  has_all <- has_all %>% filter(n == 2)
-  filtered_data <- filtered_data %>% filter(id %in% has_all$id)
-  filtered_data$exp_block_id <- factor(filtered_data$exp_block_id)
-  return(filtered_data)
-}
 
 clean_walk_14 <- ez_prepare_block(sub_walk_all, c(1,4))
 clean_walk_34 <- ez_prepare_block(sub_walk_all, c(3,4))
@@ -334,4 +361,5 @@ Participant's performance in distance from block 3-4 gets slightly worse after t
 We can see marginally significant difference in block 3-4 distance improvement acrosss learning conditions, with desktop doing the worst but not significantly different from the rest. Within subject anova for distance improvement in blocks 3-4 shows interaction between learning condition and experimental block - only desktop gets "worse" after the switch of environment. 
 
 But we can see clear error rate improvement differences across conditions - all participants improved, but desktop learning shows least amount of improvement from block 3-4, participants doing significantly worse than those with real world training and marginally worse than those with Treadmill training.
+
 
