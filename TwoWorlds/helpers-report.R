@@ -16,3 +16,10 @@ block_t_test <- function(df, block1, block2, value, paired = T){
   df_out$p.value <- apa_p(df_out$p.value)
   return(df_out)
 }
+
+tukey_report <- function(tukey){
+  df <- as.data.frame(tukey)
+  colnames(df) <- c("diff", "p-value")
+  df$`p-value` <- apa_p(df$`p-value`)
+  return(df)
+}
