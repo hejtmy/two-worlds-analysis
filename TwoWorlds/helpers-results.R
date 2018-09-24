@@ -17,3 +17,5 @@ ez_prepare_block <- function(df, blocks){
   filtered_data$exp_block_id <- factor(filtered_data$exp_block_id)
   return(filtered_data)
 }
+
+mean.na <- function(data){return(mean(data, na.rm = T))}

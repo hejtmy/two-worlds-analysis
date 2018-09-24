@@ -17,6 +17,16 @@ block_t_test <- function(df, block1, block2, value, paired = T){
   return(df_out)
 }
 
+block_correlation <- function(df, block1, block2, value){
+  df <- df %>% filter(exp_block_id %in% c(block1,block2))
+  mean.na <- function(data){return(mean(data, na.rm = T))}
+  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value, fun.aggregate = mean.na)
+  colnames(df_wide) <- c("learning.condition","id", "block1","block2")
+  df_out <- df_wide %>% group_by(learning.condition) %>% do(tidy(cor(.$block1, .$block2)))
+  df_out$x <- round(df_out$x, 2)
+  return(df_out)
+}
+
 tukey_report <- function(tukey){
   df <- as.data.frame(tukey)
   colnames(df) <- c("diff", "p-value")
