@@ -13,6 +13,9 @@ library(dplyr)
 library(reshape2)
 library(broom)
 library(knitr)
+library(ez)
+library(lme4)
+library(car)
 library(papaja)
 
 source("../Scripts/paper-prepare.R")
@@ -58,7 +61,7 @@ colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","bl
 
 - transfer is operationalised as a change in performance in navigational tasks following the environment/modality switch.
 
-Specific tests (hypothesis in parenthesis)
+Specific tests
 - Overrall average walking performance in phase 1 vs phase 2 
 - Performance in block 4 vs performance in block 1 and 2 
 
@@ -66,7 +69,8 @@ Specific tests (hypothesis in parenthesis)
 - Average walking perfomrance in block 3 vs 4 (block directly before vs directly after the switch)
 - Personal walking performance change in block 3 vs 4 (calculated as an average of individuals (block3-block4)/(block3+block4))
 - Personal walking performance change in block 1 vs 4 (calculated as an average of individuals (block1-block4)/(block3+block4))
-- level of correlation of personal performance in block 1,2,3 and 4 - higher transfer should show higher correlation in these comparisons
+- Learning modality has an effect on the learning curve (slope)
+- Level of correlation of personal performance in block 1,2,3 and 4 - higher transfer should show higher correlation in these comparisons
 - Difference in performance between groups in blocks 5 and 6 (e.g. not immediately after the switch, but after all groups have been subjected the real world environment for some time)
 - Difference in performance between groups in block 4-6 with inclusion of VR-VR group nad real-VR group (to see if the final performance is subjected to the necessity of a real world experience, or not and to see if the swith has detrimental effect on real-VR as well).
 
@@ -77,6 +81,7 @@ Specific tests (hypothesis in parenthesis)
 I ran all tests on the normalised distance, errors are not normalised, as they are the same in all conditions. 
 
 I only selected those "important" comparisons - therefore Desktop to Real world, Treadmill VR to real world and Real world to real world. Anovas and other comparisons are run only on these. Learning conditions (block 1-3) are the different modalities, and blocks 4-6 are all real world testing.
+
 
 ## Descriptives
 In normalised distance we can see that people in different conditions start fairly at the same level of performance (difference between learning conditions is not significant `r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`). Nor there is significant difference between all 5 starting groups `r apa_print(aov(min_norm_distance ~ condition, walk_all[walk_all$exp_block_id == 1, ]))$statistic$condition`.
@@ -117,9 +122,11 @@ ggplot(sub_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.c
   scale_color_manual(values=estimote_pal, "Condition")
 ```
 
+
 ## Specific predictions testing
 
 ### Performance in block 4 is better than in block 1
+
 If we assume some level of transfer, than the average or individual performance in block 4 should be better in all conditions than in block 1 or potentially in block 2. I don't test for block 3 because that immediately compares the switch performance. 
 ```{r, echo=F,message=F}
 make_graph(sub_walk_all[sub_walk_all$exp_block_id %in% c(1,4),], "learning.condition", "min_norm_distance", "exp_block_id") + 
@@ -151,18 +158,19 @@ make_graph(sub_walk_all, "learning.condition", "errors", "phase")+
   scale_fill_manual(values=estimote_pal,"Phase")
 ```
 
-Anova shows a significant effect of phase and condition on overall performance, but not of their interaction.
+Within subject anova shows a significant effect of phase and condition on overall performance, but not of their interaction.
 ```{r, echo=F}
-kable(apa_print(aov(min_norm_distance ~ phase*learning.condition, sub_walk_all))$table)
+fit_dist_phase <- lmer(min_norm_distance ~ phase*learning.condition + (1 | id/phase), data = sub_walk_all)
+kable(mixed_table_report(fit_dist_phase))
 pair_t_norm_distance_phase_2 <- pairwise.t.test(sub_walk_all$min_norm_distance, sub_walk_all$learning.condition, p.adj = "holm")
 ```
+
 Performance in the second phase differs significantly between groups (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]))$statistic$learning_condition`), suggesting that the learnign modality has an effect on the overall performance. Tukey test shows significant difference between real adn a desktop versions. although this can be only because of bad performance in block 4 after switch, not due to blocks 5 and 6 (will test later.)
 
 ```{r, echo=F}
 df_temp <- TukeyHSD(x=aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]), conf.level=0.95)$learning.condition[, c(1,4)]
 kable(tukey_report(df_temp))
 ```
-
 
 ### Overrall average pointing performance in phase 1 vs phase 2
 The issue with comparing pointing is that people point after learning condition and then only after being subjected to the new condition for 18 trials. Which means that each participant has experienced the real world for half an hour before pointing. As we see laterr, the biggest difference in transfer seems to occur between blocks 3-4, with most participants achieving same performance by the block 6. That means that the comparison of pointing is not very informative.
@@ -174,12 +182,14 @@ make_graph(sub_sop_all, "learning.condition", "abs_error", "phase") +
 ```
 
 Anova shows significant effect of both phase, learning condition and their interaction on pointing performance. Probably due to the fact that participants pointed less acurately on the treadmill and evn less on the desktop, but all then achieved same performance by the end of the 6th block.
+
 ```{r, echo=F}
-kable(apa_print(aov(abs_error ~ phase*learning.condition, sub_sop_all))$table)
+fit_angle_phase <- lmer(abs_error ~ phase*learning.condition + (1 | id/phase), data = sub_sop_all)
+kable(mixed_table_report(fit_dist_phase))
 ```
 
 
-### Average walking perfomrance in block 3 vs 4
+### Average walking performance in block 3 vs 4
 
 Looking directly at the performance after the switch, we can see if there is a sudden drop in path length desktop condition. We can study this using paired t.tests as well as non paired t-tests. Looking at the graphs we see differences in the level to which people have learned the environemtn in the 3rd block.  
 
@@ -196,7 +206,19 @@ Anova doesn't show shows a significant difference between groups in the block 3 
 
 There is significant difference in the number of errors in both block 3 (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 3,]))$statistic$learning_condition`), and the block 4 (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`)., with treadmill and desktop performing worse than real world.
 
-Running pairwise t-tests to see performance change from block 3 to 4 gives the following results.
+Within subject anova shows significant effect of both block and its interaction on distance walked.
+```{r, echo=F}
+fit_dist_34 <- lmer(min_norm_distance ~ exp_block_id*learning.condition + (1 | id/phase), data = sub_walk_all[sub_walk_all$exp_block_id %in% c(3,4),])
+kable(mixed_table_report(fit_dist_34))
+```
+
+And significant effect all both conditoin, block and their interaction on the number of errors.
+```{r, echo=F}
+fit_dist_34 <- lmer(errors ~ exp_block_id*learning.condition + (1 | id/phase), data = sub_walk_all[sub_walk_all$exp_block_id %in% c(3,4),])
+kable(mixed_table_report(fit_dist_34))
+```
+
+Running separate pairwise t-tests to see individual performance change from block 3 to 4 gives the following results.
 ```{r, echo=F}
 df_dist <- block_t_test(sub_walk_all, 3, 4,"min_norm_distance")[,c(1,4)]
 df_error <- block_t_test(sub_walk_all, 3, 4,"errors")[,c(1,4)]
@@ -206,6 +228,7 @@ kable(df34, caption="Paired T test comparing infividual performance improvement 
 ```
 
 WE can see that all participants improved in the errors made, but neigher group is significantly worse between block 3 and 4 in the path travelled (although participants learning on desktop perform slightly worse in 4th block, but the significance is only marginal)
+
 
 ### Personal walking performance change in block 3 vs 4 
 
@@ -277,6 +300,7 @@ ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = errors, color = fact
   ylab("Average number of errors") + xlab("Experimental block") + 
   scale_color_manual(values = estimote_pal, "Learning condition")
 ```
+
 ### Personal walking performance change in block 1 vs 4 
 (calculated as an average of individuals (block1-block4)/(block3+block4))
 ```{r, echo=F}
@@ -310,7 +334,11 @@ ggplot(df_errors, aes(x = learning.condition, y = block14.diff, fill = learning.
   ylab("Mean sum of errors improvement from block 1 to 4") + xlab("Learning condition")  + guides(fill=F)
 ```
 
-### level of correlation of personal performance in block 1,2,3 and 4
+
+### Learning modality has an effect on the learning curve (slope)
+I hope mike or professor Ferer will help with this
+
+### Level of correlation of personal performance in block 1,2,3 and 4
 
 - higher transfer should show higher correlation in these comparisons
 ```{r, echo=F}
@@ -318,18 +346,23 @@ ggplot(df_errors, aes(x = learning.condition, y = block14.diff, fill = learning.
 ```
 
 POtential followups
-### difference in performance between groups in blocks 5 and 6 
+
+### Difference in performance between groups in blocks 5 and 6 
 
 (e.g. not immediately after the switch, but after all groups have been subjected the real world environment for some time)
 ```{r, echo=F}
 
 ```
-### difference in performance between groups in block 4-6 with inclusion of VR-VR group nad real-VR group 
+
+
+
+### Difference in performance between groups in block 4-6 with inclusion of VR-VR group and real-VR group 
 
 (to see if the final performance is subjected to the necessity of a real world experience, or not and to see if the swith has detrimental effect on real-VR as well).
 ```{r, echo=F}
 
 ```
+
 
 ## Summary
 We see effect of learning condition (blocks 1-3) on performance in block 4.

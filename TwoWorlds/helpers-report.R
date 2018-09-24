@@ -23,3 +23,10 @@ tukey_report <- function(tukey){
   df$`p-value` <- apa_p(df$`p-value`)
   return(df)
 }
+
+# NEeds fitted lme model
+mixed_table_report <- function(fit_lme){
+  aov_result <- as.data.frame(car::Anova(fit_lme, type = "III"))
+  aov_result[,3] <- apa_p(aov_result[,3])
+  return(aov_result)
+} 
