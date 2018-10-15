@@ -1,0 +1,40 @@
+---
+title: "R Notebook"
+output: github_document
+---
+
+
+```{r setup}
+#load the participant data
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(reshape2)
+library(googlesheets)
+source('../Scripts/paper-prepare.R')
+settings <- load_google_sheets()
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+```
+
+## Dropout ratings
+```{r}
+finished <- overview %>% group_by(condition) %>% count(finished)
+finished <- dcast(finished, condition~finished)
+finished$percent <- round(finished$yes/(finished$yes+finished$no), 2)
+kable(finished)
+
+is_ok <- overview %>% filter(finished=="yes") %>% group_by(condition) %>% count(is_ok)
+is_ok <- dcast(is_ok, condition~is_ok)
+is_ok$percent <- round(is_ok$yes/(is_ok$yes+is_ok$no), 2)
+kable(is_ok)
+```
+A total of `r sum(finished$no)` participants didn't finish due to motion sickness, with about 50% not finishing the VR to VR condition.
+
+## Female/male
+
+## Age
+
+## Descriptives for the VR/real/desktop - time and path traveled
