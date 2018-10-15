@@ -1,3 +1,4 @@
+library(dplyr)
 source("../Scripts/loading.R")
 source_folder("../TwoWorlds")
 source('../Scripts/analysis-helpers.R')

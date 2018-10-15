@@ -27,7 +27,6 @@ summary(aov_distance_condition)
 aov_time_condition <- aov(time~condition*phase, data = walk_all)
 summary(aov_time_condition)
 
-
 ## Arne ----
 #' for each dependent measure, (block 4 - block 3) / (block 4+block3) 
 #' so we can compare transfer for ve vs vr vs reality (ie all 5 conditions)

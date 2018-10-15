@@ -7,8 +7,7 @@ library(dplyr)
 library(reshape2)
 library(googlesheets)
 source("Scripts/loading.R")
-dir <- "D:/OneDrive/Vyzkum/Davis/Transfer/Data/"
-dir <- "C:/Users/hejtm/OneDrive/Vyzkum/Davis/Transfer/Data/"
+dir <- "M:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 
 settings <- load_google_sheets()
 save(settings, file = "settings.data")
@@ -18,7 +17,6 @@ save(ls, file = "multi_smoothed_2.data")
 
 sop_all <- multi_sop_results(ls)
 walk_all <- multi_walk_results(ls)
-
 
 ##renames all jesiccas
 walk_all <- walk_all %>% mutate(goal = replace(goal, goal=="Jesicca's office", "Jessica's office"),
@@ -78,6 +76,4 @@ walk_all_new <- walk_all %>% select(-one_of(drop.cols))
 sop_all$abs_error <- abs(sop_all$error)
 
 write.table(sop_all, file = "sop_smoothed.csv", sep=";", row.names = F)
-write.table(walk_all_new, file = "walk_smoothed_errors_06.csv", sep=";", row.names = F)
-
-write.table(walk_all, file = "walk.csv", sep=";", row.names = F)
+write.table(walk_all_new, file = "walk_smoothed.csv", sep=";", row.names = F)
