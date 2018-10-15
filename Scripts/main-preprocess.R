@@ -12,7 +12,7 @@ dir <- "M:/OneDrive/Vyzkum/Davis/Transfer/Data/"
 settings <- load_google_sheets()
 save(settings, file = "settings.data")
 ls <- load_all(settings, dir, only_ok = T)
-save(ls, file = "multi_smoothed_2.data")
+save(ls, file = "multi_smoothed.data")
 #load(file = "multi_smoothed.data")
 
 sop_all <- multi_sop_results(ls)
