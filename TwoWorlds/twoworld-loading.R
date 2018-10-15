@@ -139,9 +139,16 @@ load_google_sheets <- function(){
   tw_participants <- fetch_sheet('TW-Participants', 'Overview')
   tw_participants <- tw_participants$Overview
   ls$participants <- merge(tw_participants, tw_questionnaire, by = 'Code')
-  
-  colnames(ls$participants)[18:20] <- c("age", "weight", "hours_sleep")
-  colnames(ls$participants)[44:45] <- c("sex", "ethnicity")
+  colnames(ls$participants)[18:45] <- c("age", "weight", "hours_sleep", 
+                                        "last_eaten", "video_game_experience", 
+                                        "vr_experience", "motion_sickness", 
+                                        "dizzy_history", "stress_level", "stressors", 
+                                        "general_discomfort", "fatigue", "headache", 
+                                        "eye_strain", "focus_difficulty", "salivation", 
+                                        "sweating", "nausea", "concentrate_difficulty", 
+                                        "full_head", "blurred_vision", "dizzy_eyes_open", 
+                                        "dizzy_eyes_closed", "vertigo", 
+                                        "stomach_awareness", "burping", "sex", "ethnicity")
   
   return(ls)
 }
