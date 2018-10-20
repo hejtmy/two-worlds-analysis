@@ -35,12 +35,17 @@ kable(is_ok)
 A total of `r sum(finished$no)` participants didn't finish due to motion sickness, with about 50% not finishing the VR to VR condition.
 
 ## Female/male
+```{r, echo=F}
+kable(df_participants %>% filter(finished=="yes") %>% group_by(condition, sex) %>% count)
+```
 
 # Report
-A total of `r nrow(df_participants)` (M = `r round(mean(df_participants$age, na.rm=T),1)`, SD = `r round(sd(df_participants$age, na.rm=T), 1)`) undergraduate students at UC Davis particiapted in the study in exchange for a study credit. Each students was randomly assigned a condition and a randomised set of goals. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no)` were removed due to a technical failure of the real world tracking systen. Only `r finished[finished$condition == "vr-real","percent"] * 100` percent the students being able to finish VR to Real world condition.
+A total of `r sum(overview$is_ok == "yes", na.rm=T)` (M = `r round(mean(df_participants[df_participants$finished == "yes",]$age, na.rm=T),1)`, SD = `r round(sd(df_participants[df_participants$finished == "yes",]$age, na.rm=T), 1)`) undergraduate students at UC Davis particiapted in the study in exchange for a study credit. Each students was randomly assigned a condition and a randomised set of goals. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no)` were removed due to a technical failure of the real world tracking systen. Only `r finished[finished$condition == "vr-real","percent"] * 100` percent the students being able to finish VR to Real world condition.
 
 ## Descriptives for the VR/real/desktop - time and path traveled
 
 ```{r}
-kable(walk_all %>% group_by(type, exp_block_id) %>% summarize(mean_dist = mean(distance, na.rm=T), mean_time = mean(time, na.rm=T)))
+df_desc <- walk_all %>% group_by(type, exp_block_id) %>% summarize(mean_dist = mean(distance, na.rm=T), mean_time = mean(time, na.rm=T))
+ggplot(df_desc, aes(exp_block_id, mean_dist, fill=type)) + geom_bar(stat="identity", position = "dodge")
+ggplot(df_desc, aes(exp_block_id, mean_time, fill=type)) + geom_bar(stat="identity", position = "dodge")
 ```

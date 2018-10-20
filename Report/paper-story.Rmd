@@ -142,7 +142,7 @@ df_dist <- block_t_test(sub_walk_all, 1, 4,"min_norm_distance")[,c(1,4)]
 df_error <- block_t_test(sub_walk_all, 1, 4,"errors")[,c(1,4)]
 df14 <- merge(df_dist, df_error, by = "learning.condition")
 colnames(df14) <- c("learning condition", "p-value distance improvement", "p-value errors improvement")
-kable(df14, caption="Paired T test comparing infividual performance improvement from block 1-4 in different conditions")
+kable(df14, caption="Paired T test comparing individual performance improvement from block 1-4 in different conditions")
 ```
 
 We see that both real world and treadmill VR learning leads to improvement from block 1 to block 4 in both errors and path travelled. But desktop only in number of errors and marginally in distance improvement. All this suggests transfer is happening across all learning conditions.

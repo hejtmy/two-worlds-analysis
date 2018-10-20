@@ -1,0 +1,93 @@
+---
+title: "R Notebook"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+#needs lme and car in the top because of the recode
+library(car)
+library(lme4)
+library(ggplot2)
+library(ez)
+library(Hmisc)
+library(dplyr)
+library(reshape2)
+library(broom)
+library(knitr)
+library(papaja)
+library(googlesheets)
+
+source("../Scripts/paper-prepare.R")
+source("helpers/block-t-test-improvement.R")
+source("helpers/block-t-test.R")
+source("helpers/block-measure.R")
+
+settings <- load_google_sheets()
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+
+#green, violet, blue, yellow, pink, dark blue
+estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
+theme_set(theme_minimal())
+
+condition_all_sums <- sub_walk_all %>% 
+  group_by(exp_block_id, id, learning.condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T),
+            mean.distance = mean(min_norm_distance, na.rm = T),
+            mean.error = mean(errors, na.rm = T))
+
+
+df_errors <- block_measure(condition_all_sums, "sum.errors")
+df_distance <- block_measure(condition_all_sums, "mean.distance")
+
+df_wide_errors <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
+df_wide_distance <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
+colnames(df_wide_errors) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+
+knitr::opts_chunk$set(echo=F, warning = F, message = F)
+
+```
+
+# Methods
+
+## Measures
+We calculated participants’ walked distance in the building, time spent in each task and number of incorrectly visited doors. The conditions were not perfectly comparable in their measured distance and time, with the VR trials taking a little bit longer in both time and distance than the real world condition. We therefore min-normalised the distance traveled and the time for each task and environment  by dividing the measure by any participant's performance for that trial. We calculated all statistics on these normalised measures. 
+
+There was no difference between conditions at the start of the experiment in normalised distance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`), nor in number errors (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`), but there is a significant difference in normalised time (`r apa_print(aov(min_norm_time ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)), due to VR taking a longer times to get used to (and therefore having longer normalised trial times at the start).
+
+## Participants
+```{r}
+finished <- overview %>% group_by(condition) %>% count(finished)
+finished <- dcast(finished, condition~finished)
+finished$percent <- round(finished$yes/(finished$yes+finished$no), 2)
+is_ok <- overview %>% filter(finished=="yes") %>% group_by(condition) %>% count(is_ok)
+is_ok <- dcast(is_ok, condition~is_ok)
+is_ok$percent <- round(is_ok$yes/(is_ok$yes+is_ok$no), 2)
+```
+A total of `r sum(overview$is_ok == "yes", na.rm=T)` (M = `r round(mean(df_participants[df_participants$finished == "yes",]$age, na.rm=T),1)`, SD = `r round(sd(df_participants[df_participants$finished == "yes",]$age, na.rm=T), 1)`) undergraduate students at UC Davis particiapted in the study in exchange for a study credit. Each students was randomly assigned a condition and a randomised set of goals. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no)` were removed due to a technical failure of the real world tracking systen. Only `r finished[finished$condition == "vr-real","percent"] * 100` percent the students being able to finish VR to Real world condition.
+
+# Results
+
+First we wanted to assess that there is going to be some level of transfer in all conditions. All conditions (except desktop in distance) show better performance after the switch (see table XXX), suggesting some level of transfer from either learnign condition.
+
+```{r,echo=F}
+df <- data.frame(condition=rep("",3),dist=rep("",3), err=rep("",3), stringsAsFactors = F)
+df_dist <- block_t_test_improvement(sub_walk_all, 1, 4,"min_norm_distance")
+df_error <- block_t_test_improvement(sub_walk_all, 1, 4,"errors")
+for(i in 1:length(names(df_dist))){
+  name <- names(df_dist)[i]
+  df[i,"condition"] <- name
+  df[i, "dist"] <- apa_print(df_dist[[name]])$full_result
+  df[i, "err"] <- apa_print(df_error[[name]])$full_result
+}
+
+
+colnames(df) <- c("Learning condition", "Distance improvement", "Errors improvement")
+kable(df, caption="Paired T test comparing individual performance improvement from block 1-4 in different conditions")
+```
