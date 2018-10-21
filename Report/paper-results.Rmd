@@ -77,8 +77,7 @@ A total of `r sum(overview$is_ok == "yes", na.rm=T)` (M = `r round(mean(df_parti
 
 # Results
 
-First we wanted to assess that there is going to be some level of transfer in all conditions. If we would assume no transfer to happen, we should observe same performance in the real world testing in 1st, 2nd and 3rd block after the switch to be similar in performance as the 1st, 2nd and 3rd block in the real world learning group. But all conditions (except desktop in distance) show better performance after the switch (see table XXX) than in the first trial, suggesting some level of transfer from all learning conditions.  This is not the case with distance improvement in the desktop learning group.
-
+First we wanted to assess that there is going to be some level of transfer in all conditions. If we would assume no transfer to happen, we should observe same performance in the real world testing in 1st, 2nd and 3rd block after the switch to be similar in performance as the 1st, 2nd and 3rd block in the real world learning group. But all conditions (except desktop in distance) show better performance after the switch (see table XXX) than in the first trial, suggesting some level of transfer happening in all learning conditions.
 ```{r}
 df <- data.frame(condition=rep("",3),dist=rep("",3), err=rep("",3), stringsAsFactors = F)
 df_dist <- block_t_test_improvement(sub_walk_all, 1, 4,"min_norm_distance")
@@ -90,10 +89,11 @@ for(i in 1:length(names(df_dist))){
   df[i, "err"] <- apa_print(df_error[[name]])$full_result
 }
 colnames(df) <- c("Learning condition", "Distance improvement", "Errors improvement")
+df$`Learning condition` <- dplyr::recode(df$`Learning condition`, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
 kable(df, caption="Paired T test comparing individual performance improvement from block 1-4 in different conditions")
 ```
 
-Looking at the progression in distance improvements and error improvements, we can see that all conditions show improvement over the experiment progression which is only hindered by the switch in the desktop learning condition (see fig. XXX and fig. XXX), but otherwise we see constant improvement unobstructed by the environemnt switch.
+Looking at the progression in distance improvements and error improvements over the course of the experiment, we can see that all conditions show progressive improvement which is only hindered by the switch in the desktop learning condition (see fig. XXX and fig. XXX), but in the Treadmill condition we see constant improvement unobstructed by the environmrnt switch.
 ```{r}
 ggplot(sub_walk_all, aes(learning.condition, min_norm_distance, fill=factor(exp_block_id))) +
   stat_summary(fun.data=mean_cl_normal, position=position_dodge(0.95), geom="errorbar") + 
@@ -108,60 +108,65 @@ ggplot(sub_walk_all, aes(learning.condition, errors, fill=factor(exp_block_id)))
   scale_fill_manual(values=estimote_pal,"Block ID") + guides(fill=F)
 ```
 
-Participant's performance in the first pre-switch phase shows different rates of learning rate for errors for our learning conditions (see table XX). There is no significant difference between different modalities in distance performance before the switch `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$full_result`, but the performance across groups differs in errors `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$full_result`.
+Participant's performance in the first pre-switch phase shows different rates of learning rate (see table XX). There is no significant difference between different modalities in distance performance before the switch `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$full_result`, but the performance across groups differs in errors `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$full_result`.
 
 ```{r}
 learning_slopes_distance <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,])
-
 tab_distance <- mixed_table_report(learning_slopes_distance)
 
 learning_slopes_errors <- lmer(errors ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,])
+tab_errors <- mixed_table_report(learning_slopes_errors)
 
-tab_errors <- mixed_table_report(learning_slopes_distance)
 tab <- merge(tab_distance[,c(3,4)], tab_errors[,c(3,4)], by = "names")
-colnames(tab) <- c("Predictor", "Significance for distance improvement", "Significance for error improvement")
 tab$names <- c("Intercept", "Block number", "Learning condition", "Block - Learning condition interaction")
+colnames(tab) <- c("Predictor", "Significance for distance improvement", "Significance for error improvement")
 kable(tab)
 #ggplot(sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,], aes(exp_block_id, min_norm_distance, color=learning.condition)) + geom_point() + geom_smooth(method="lm", se=F)
-
 #ggplot(sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,], aes(exp_block_id, errors, color=learning.condition)) + geom_point() + geom_smooth(method="lm", se=F)
 
 ```
 
 ### After modality switch performance change
-Anova doesn't show shows a significant difference between groups in the block 3 (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 3,]))$statistic$learning_condition`), but there is a significant difference between distance performance in the block 4 (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`).
+Anova doesn't show a significant difference between groups in the pre-switch block (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 3,]))$statistic$learning_condition`), but there is a significant difference between distance performance in the post-switch block (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`).
 
-After the switch, we can see a significant difference between distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world.
+After the modality switch, we can see a significant difference between distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This difference among conditions post-switch is still apparent in the 2nd block after the switch in number of errors `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 5)))$full_result` and marginally in distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 5)))$full_result`, but disappears in the last testing block for both errors `r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 6)))$full_result` and distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 6)))$full_result`.
 
-Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from phase 1 to pahase 2 (See table XXX )
+
+Mixed effect models with individual random effect also show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX ).
 
 ```{r}
 learning_slopes_distance <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = only_blocks(sub_walk_all, 3:4))
-
 tab_distance <- mixed_table_report(learning_slopes_distance)
 
 learning_slopes_errors <- lmer(errors ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = only_blocks(sub_walk_all, 3:4))
+tab_errors <- mixed_table_report(learning_slopes_errors)
 
-tab_errors <- mixed_table_report(learning_slopes_distance)
 tab <- merge(tab_distance[,c(3,4)], tab_errors[,c(3,4)], by = "names")
-colnames(tab) <- c("Predictor", "Significance for distance improvement", "Significance for error improvement")
 tab$names <- c("Intercept", "Block number", "Learning condition", "Block - Learning condition interaction")
+colnames(tab) <- c("Predictor", "Significance for distance improvement", "Significance for error improvement")
 kable(tab)
 ```
 
-Running separate pairwise t-tests to see individual performance change from block 3 to 4 gives the following results.
+Running separate pairwise t-tests to see individual performance change from pre-switch to post-switch block, we see significant improvement in errors made across all conditions, and marginally significant worsening in distance performance in the desktop condition.
 ```{r, echo=F}
-df_dist <- block_t_test(sub_walk_all, 3, 4,"min_norm_distance")[,c(1,4)]
-df_error <- block_t_test(sub_walk_all, 3, 4,"errors")[,c(1,4)]
-df34 <- merge(df_dist, df_error, by = "condition")
-colnames(df34) <- c("learning condition", "p-value distance improvement", "p-value errors improvement")
-kable(df34, caption="Paired T test comparing infividual performance improvement from block 3-4 in different conditions")
+df <- data.frame(condition=rep("",3),dist=rep("",3), err=rep("",3), stringsAsFactors = F)
+df_dist <- block_t_test_improvement(sub_walk_all, 3, 4,"min_norm_distance")
+df_error <- block_t_test_improvement(sub_walk_all, 3, 4,"errors")
+for(i in 1:length(names(df_dist))){
+  name <- names(df_dist)[i]
+  df[i,"condition"] <- name
+  df[i, "dist"] <- apa_print(df_dist[[name]])$full_result
+  df[i, "err"] <- apa_print(df_error[[name]])$full_result
+}
+colnames(df) <- c("Learning condition", "Distance improvement", "Errors improvement")
+df$`Learning condition` <- dplyr::recode(df$`Learning condition`, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
+kable(df, caption="Paired T test comparing individual performance improvement from pre switch block to post-switch block in different conditions")
 ```
 
-We can see that all participants improved in the errors made, but neigher group is significantly worse between block 3 and 4 in the path travelled (although participants learning on desktop perform slightly worse in 4th block, but the significance is only marginal)
+We can see that all participants improved in the errors made, but neigher group is significantly worse in the post-switch block in the path travelled (although participants who learned on the desktop performed slightly worse, but the significance is only marginal).
 
 ### Personal 
-To assess the level of performance change form directly before and after the switch, we calculated personal improvement as (block3-block4)/(block3+block4)´.
+To assess the level of performance change form directly before and after the switch, we calculated a score personal improvement as (block3-block4)/(block3+block4)´. This allowed us to directly comapre the percentual improvement or deterioration from pre-switch block to the post-switch one.
 
 ```{r, echo=F}
 ggplot(df_distance, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
@@ -177,9 +182,16 @@ ggplot(df_errors, aes(x = learning.condition, y = block34.diff, fill = learning.
   ylab("Mean sum of errors improvement after switch")+ xlab("Learning condition") + guides(fill=F)
 ```
 
-Comparing the block perfomance change in different conditions using anovas, we see marginally significant difference in the improvement between groups for distance (`r apa_print(aov(block34 ~ learning.condition, df_wide_distance))$statistic$learning_condition`), but we see significant differences in error rate improvement (`r apa_print(aov(block34 ~ learning.condition, df_wide_errors))$statistic$learning_condition`). This is consistent with the mixed models which poited at interaction between block and learning condition.
+Comparing the perfomance change in different conditions using anovas, we see marginally significant difference between groups in the distance improvement (`r apa_print(aov(block34 ~ learning.condition, df_wide_distance))$statistic$learning_condition`), but significant differences in error rate improvement (`r apa_print(aov(block34 ~ learning.condition, df_wide_errors))$statistic$learning_condition`). This is consistent with the mixed model result which poited at interaction between block and learning condition.
 
 Tukey post-hoc tests show significant difference between error rate improvement between the group that leardned in the real world and that which learned on the desktop.
 ```{r, echo=F}
 kable(tukey_report(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95)$learning.condition[, c(1,4)]))
 ```
+
+
+### Something about pointing?
+
+
+## Summary
+We can see different rates of learning speed across different conditions, with significan differences between groups in their performance after the first phase witt the real world learning group performing the best, but only significanly different from group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment.
