@@ -95,17 +95,19 @@ kable(df, caption="Paired T test comparing individual performance improvement fr
 
 Looking at the progression in distance improvements and error improvements over the course of the experiment, we can see that all conditions show progressive improvement which is only hindered by the switch in the desktop learning condition (see fig. XXX and fig. XXX), but in the Treadmill condition we see constant improvement unobstructed by the environmrnt switch.
 ```{r}
-ggplot(sub_walk_all, aes(learning.condition, min_norm_distance, fill=factor(exp_block_id))) +
-  stat_summary(fun.data=mean_cl_normal, position=position_dodge(0.95), geom="errorbar") + 
-  stat_summary(fun.y=mean, position=position_dodge(width=0.95), geom="bar") +
-  ylab("Average normalised trial distance") + xlab("Learning condition") + 
-  scale_fill_manual(values=estimote_pal,"Block ID") + guides(fill=F)
+ggplot(sub_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(learning.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.5, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1.25, geom="line") + 
+  geom_vline(xintercept = 3.5, linetype=4) +
+  ylab("Average normalised trial distance") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Learning condition") + guides(fill=F)
 
-ggplot(sub_walk_all, aes(learning.condition, errors, fill=factor(exp_block_id))) +
-  stat_summary(fun.data=mean_cl_normal, position=position_dodge(0.95), geom="errorbar") + 
-  stat_summary(fun.y=mean, position=position_dodge(width=0.95), geom="bar") +
-  ylab("Average number of errors") + xlab("Learning condition") + 
-  scale_fill_manual(values=estimote_pal,"Block ID") + guides(fill=F)
+ggplot(sub_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.5, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1.25, geom="line") + 
+  geom_vline(xintercept = 3.5, linetype=4) +
+  ylab("Number of mistakes in office decision") + xlab("Block number") + 
+  scale_color_manual(values=estimote_pal, "Learning condition")
 ```
 
 Participant's performance in the first pre-switch phase shows different rates of learning rate (see table XX). There is no significant difference between different modalities in distance performance before the switch `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$full_result`, but the performance across groups differs in errors `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$full_result`.
