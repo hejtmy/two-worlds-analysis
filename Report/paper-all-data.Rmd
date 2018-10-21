@@ -108,32 +108,6 @@ ggplot(sop_all, aes(x = phase, y = abs(error), color = factor(condition))) +
   scale_color_manual(values = estimote_pal, "Learning condition")
 
 ```
-
-# Block measures
-```{r, echo = F}
-condition_all_sums <- sub_walk_all %>% 
-  group_by(exp_block_id, id, learning.condition) %>% 
-  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
-            sum.errors = sum(errors, na.rm = T),
-            mean.distance = mean(min_norm_distance, na.rm = T),
-            mean.error = mean(errors, na.rm = T))
-
-block_measure <- function(df, value){
-  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value)
-  colnames(df_wide) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
-  df_wide %>% 
-    group_by(learning.condition) %>%
-    summarise(block1.mean  = mean(block1, na.rm = T),
-              block3.mean = mean(block3, na.rm = T),
-              block4.mean = mean(block4, na.rm = T),
-              block34.diff = mean((block3-block4)/(block4+block3), na.rm = T),
-              block34.se  = sqrt(var((block3-block4)/(block4+block3), na.rm = T)/sum(!is.na(block3-block4))),
-              block14.diff = mean((block1-block4)/(block1+block4), na.rm = T),
-              block14.se = sqrt(var((block1-block4)/(block1+block4), na.rm = T)/sum(!is.na(block1-block4)))
-  )
-}
-```
-
 ## Sum of errors
 
 Measure of overall sum of errors. Mean columns define mean sum of errors for all participants in that block
@@ -223,7 +197,6 @@ Paired t tests between min normalised distance difference in blocks 1 and 6.
 kable(block_t_test(sub_walk_all, 6, 1,"min_norm_distance"))
 ```
 
-
 And for number of errors
 
 ```{r, echo=F}
@@ -263,7 +236,7 @@ kable(report_independent_comparisons(df_wide, "diff43"))
 
 ```{r, echo=F}
 df_wide <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
-colnames(df_wide) <- c("learning.condition","id", "block1","block2","block3","block4","block5","block6")
+colnames(df_wide) <- c("learning.condition", "id", "block1", "block2", "block3", "block4", "block5", "block6")
 df_wide$diff41 <- (df_wide$block4-df_wide$block1)/(df_wide$block1+df_wide$block3)
 df_wide$diff43<- (df_wide$block4-df_wide$block3)/(df_wide$block4+df_wide$block3)
 ```
@@ -312,6 +285,7 @@ aov_block_dist_34 <- ezANOVA(
   within = exp_block_id,
   between = learning.condition, 
   type = 3)
+
 kable(aov_block_dist_34)
 
 ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(learning.condition))) +
@@ -330,6 +304,7 @@ aov_block_dist_14 <- ezANOVA(
   within = exp_block_id,
   between = learning.condition,
   type = 3)
+
 kable(aov_block_dist_14)
 
 ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = min_norm_distance, color = factor(learning.condition))) +
@@ -349,6 +324,7 @@ aov_block_err_14 <- ezANOVA(
   within = exp_block_id,
   between = learning.condition,
   type = 3)
+
 kable(aov_block_err_14)
 
 ggplot(clean_walk_14, aes(x = as.numeric(exp_block_id), y = errors, color = factor(learning.condition))) +
@@ -366,10 +342,29 @@ aov_block_err_34 <- ezANOVA(
   within = exp_block_id,
   between = condition,
   type = 3)
+
 kable(aov_block_err_34)
 
 ggplot(clean_walk_34, aes(x = as.numeric(exp_block_id), y = errors, color = factor(condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
   ylab("Average number of errors") + xlab("Experimental block") + scale_fill_discrete("Condition")
+```
+
+
+## Office specific learning
+```{r, warning=F}
+df_corr_err <- data.frame(learning.condition=c("Desktop", "Real", "Treadmill VR"), stringsAsFactors = F)
+df_corr_dist <- data.frame(learning.condition=c("Desktop", "Real", "Treadmill VR"), stringsAsFactors = F)
+for(i in 1:5){
+  df_err <- block_correlation(sub_walk_all, i,i+1, "errors", learning.condition + id + goal ~ exp_block_id, columns=c("learning.condition","id", "goal"))
+  colnames(df_err) <- c("learning.condition", paste0("block", i+1))
+  df_corr_err <- merge(df_corr_err, data.frame(df_err), by="learning.condition")
+  
+  df_dist <- block_correlation(sub_walk_all, i,i+1, "min_norm_distance", learning.condition + id + goal ~ exp_block_id, columns=c("learning.condition","id", "goal"))
+  colnames(df_dist) <- c("learning.condition", paste0("block", i+1))
+  df_corr_dist <- merge(df_corr_dist, data.frame(df_dist), by="learning.condition")
+}
+df_corr_err
+df_corr_dist
 ```

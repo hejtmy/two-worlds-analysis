@@ -19,6 +19,8 @@ library(knitr)
 library(papaja)
 
 source("../Scripts/paper-prepare.R")
+source("helpers/block-measure.R")
+source("helpers/block-t-test.R")
 #green, violet, blue, yellow, pink, dark blue
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
 theme_set(theme_minimal())
@@ -30,20 +32,6 @@ condition_all_sums <- sub_walk_all %>%
             mean.distance = mean(min_norm_distance, na.rm = T),
             mean.error = mean(errors, na.rm = T))
 
-block_measure <- function(df, value){
-  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value)
-  colnames(df_wide) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
-  df_wide %>% 
-    group_by(learning.condition) %>%
-    summarise(block1.mean  = mean(block1, na.rm = T),
-              block3.mean = mean(block3, na.rm = T),
-              block4.mean = mean(block4, na.rm = T),
-              block34.diff = mean((block3-block4)/(block4+block3), na.rm = T),
-              block34.se  = sqrt(var((block3-block4)/(block4+block3), na.rm = T)/sum(!is.na(block3-block4))),
-              block14.diff = mean((block1-block4)/(block1+block4), na.rm = T),
-              block14.se = sqrt(var((block1-block4)/(block1+block4), na.rm = T)/sum(!is.na(block1-block4)))
-  )
-}
 df_errors <- block_measure(condition_all_sums, "sum.errors")
 df_distance <- block_measure(condition_all_sums, "mean.distance")
 
@@ -140,8 +128,8 @@ make_graph(sub_walk_all[sub_walk_all$exp_block_id %in% c(1,4),], "learning.condi
 ```{r, echo=F}
 df_dist <- block_t_test(sub_walk_all, 1, 4,"min_norm_distance")[,c(1,4)]
 df_error <- block_t_test(sub_walk_all, 1, 4,"errors")[,c(1,4)]
-df14 <- merge(df_dist, df_error, by = "learning.condition")
-colnames(df14) <- c("learning condition", "p-value distance improvement", "p-value errors improvement")
+df14 <- merge(df_dist, df_error, by = "condition")
+colnames(df14) <- c("condition", "p-value distance improvement", "p-value errors improvement")
 kable(df14, caption="Paired T test comparing individual performance improvement from block 1-4 in different conditions")
 ```
 
@@ -188,6 +176,22 @@ fit_angle_phase <- lmer(abs_error ~ phase*learning.condition + (1 | id/phase), d
 kable(mixed_table_report(fit_angle_phase))
 ```
 
+### Different rate of learning in blocks 1-3
+Running the mixed models to see if thre is a different linear learning rate in learning blocks (1-3), we can see that there is a significant interaction in learning condition and block for errors, but not fordistance.
+```{r}
+learning_slopes_distance <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,])
+kable(mixed_table_report(learning_slopes_distance))
+
+learning_slopes_errors <- lmer(errors ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,])
+
+kable(mixed_table_report(learning_slopes_errors))
+
+ggplot(sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,], aes(exp_block_id, min_norm_distance, color=learning.condition)) + 
+  geom_point() + geom_smooth(method="lm", se=F)
+
+ggplot(sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,], aes(exp_block_id, errors, color=learning.condition)) + 
+  geom_point() + geom_smooth(method="lm", se=F)
+```
 
 ### Comparing walking performance in block 3 vs 4
 
@@ -212,7 +216,7 @@ fit_dist_34 <- lmer(min_norm_distance ~ exp_block_id*learning.condition + (1 | i
 kable(mixed_table_report(fit_dist_34))
 ```
 
-And significant effect all both conditoin, block and their interaction on the number of errors.
+And significant effect all both condition, block and their interaction on the number of errors.
 ```{r, echo=F}
 fit_dist_34 <- lmer(errors ~ exp_block_id*learning.condition + (1 | id/exp_block_id), data = sub_walk_all[sub_walk_all$exp_block_id %in% c(3,4),])
 kable(mixed_table_report(fit_dist_34))
@@ -222,13 +226,12 @@ Running separate pairwise t-tests to see individual performance change from bloc
 ```{r, echo=F}
 df_dist <- block_t_test(sub_walk_all, 3, 4,"min_norm_distance")[,c(1,4)]
 df_error <- block_t_test(sub_walk_all, 3, 4,"errors")[,c(1,4)]
-df34 <- merge(df_dist, df_error, by = "learning.condition")
-colnames(df34) <- c("learning condition", "p-value distance improvement", "p-value errors improvement")
+df34 <- merge(df_dist, df_error, by = "condition")
+colnames(df34) <- c("condition", "p-value distance improvement", "p-value errors improvement")
 kable(df34, caption="Paired T test comparing infividual performance improvement from block 3-4 in different conditions")
 ```
 
 WE can see that all participants improved in the errors made, but neigher group is significantly worse between block 3 and 4 in the path travelled (although participants learning on desktop perform slightly worse in 4th block, but the significance is only marginal)
-
 
 ### Personal walking performance change in block 3 vs 4 
 

@@ -7,25 +7,6 @@ apa_p <- function(values){
   }
   return(output)
 }
-block_t_test <- function(df, block1, block2, value, paired = T){
-  df <- df %>% filter(exp_block_id %in% c(block1,block2))
-  mean.na <- function(data){return(mean(data, na.rm = T))}
-  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value, fun.aggregate = mean.na)
-  colnames(df_wide) <- c("learning.condition","id", "block1","block2")
-  df_out <- df_wide %>% group_by(learning.condition) %>% do(tidy(t.test(.$block1, .$block2, paired = paired)))
-  df_out$p.value <- apa_p(df_out$p.value)
-  return(df_out)
-}
-
-block_correlation <- function(df, block1, block2, value){
-  df <- df %>% filter(exp_block_id %in% c(block1,block2))
-  mean.na <- function(data){return(mean(data, na.rm = T))}
-  df_wide <- dcast(df, learning.condition + id ~ exp_block_id, value.var = value, fun.aggregate = mean.na)
-  colnames(df_wide) <- c("learning.condition","id", "block1","block2")
-  df_out <- df_wide %>% group_by(learning.condition) %>% do(tidy(cor(.$block1, .$block2)))
-  df_out$x <- round(df_out$x, 2)
-  return(df_out)
-}
 
 tukey_report <- function(tukey){
   df <- as.data.frame(tukey)
@@ -38,5 +19,11 @@ tukey_report <- function(tukey){
 mixed_table_report <- function(fit_lme){
   aov_result <- as.data.frame(car::Anova(fit_lme, type = "III"))
   aov_result[,3] <- apa_p(aov_result[,3])
+  aov_result$names <- rownames(aov_result)
+  rownames(aov_result) <- NULL
   return(aov_result)
 } 
+
+only_blocks <- function(df, ...){
+  return(df[df$exp_block_id %in% c(...),])
+}
