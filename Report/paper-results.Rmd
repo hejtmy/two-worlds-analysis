@@ -35,6 +35,9 @@ overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-rea
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
 theme_set(theme_minimal())
 
+### Try running it without outliers
+sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+
 condition_all_sums <- sub_walk_all %>% 
   group_by(exp_block_id, id, learning.condition) %>% 
   summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
@@ -62,7 +65,7 @@ knitr::opts_chunk$set(echo=F, warning = F, message = F)
 ## Measures
 We calculated participants’ walked distance in the building, time spent in each task and number of incorrectly visited doors. The conditions were not perfectly comparable in their measured distance and time, with the VR trials taking a little bit longer in both time and distance than the real world condition. We therefore min-normalised the distance traveled and the time for each task and environment  by dividing the measure by any participant's performance for that trial. We calculated all statistics on these normalised measures. 
 
-There was no difference between conditions at the start of the experiment in normalised distance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`), nor in number errors (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`), but there is a significant difference in normalised time (`r apa_print(aov(min_norm_time ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)), due to VR taking longer times to get used to (and therefore having longer normalised trial times at the start).
+There was no difference between conditions at the start of the experiment in normalised distance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`), nor in number errors (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`), but there is a significant difference in normalised time (`r apa_print(aov(min_norm_time ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$statistic$learning_condition`)), due to VR taking longer times to get used to (and therefore having longer normalised trial times at the start). We removed distance measurements larger than 3 standard deviations from the mean.
 
 ## Participants
 ```{r}
@@ -77,7 +80,7 @@ A total of `r sum(overview$is_ok == "yes", na.rm=T)` (M = `r round(mean(df_parti
 
 # Results
 
-First we wanted to assess that there is going to be some level of transfer in all conditions. If we would assume no transfer to happen, we should observe same performance in the real world testing in 1st, 2nd and 3rd block after the switch to be similar in performance as the 1st, 2nd and 3rd block in the real world learning group. But all conditions (except desktop in distance) show better performance after the switch (see table XXX) than in the first trial, suggesting some level of transfer happening in all learning conditions.
+First we wanted to assess that there is going to be some level of transfer in all conditions. If we would assume no transfer to happen, we should observe same performance in the real world testing in 1st, 2nd and 3rd block after the switch to be similar in performance as the 1st, 2nd and 3rd block in the real world learning group. But all conditions show better performance after the switch (see table XXX) than in the first trial, suggesting some level of transfer happening in all learning conditions.
 ```{r}
 df <- data.frame(condition=rep("",3),dist=rep("",3), err=rep("",3), stringsAsFactors = F)
 df_dist <- block_t_test_improvement(sub_walk_all, 1, 4,"min_norm_distance")
@@ -93,7 +96,7 @@ df$`Learning condition` <- dplyr::recode(df$`Learning condition`, "real-real" = 
 kable(df, caption="Paired T test comparing individual performance improvement from block 1-4 in different conditions")
 ```
 
-Looking at the progression in distance improvements and error improvements over the course of the experiment, we can see that all conditions show progressive improvement which is only hindered by the switch in the desktop learning condition (see fig. XXX and fig. XXX), but in the Treadmill condition we see constant improvement unobstructed by the environmrnt switch.
+Looking at the progression in distance improvements and error improvements over the course of the experiment, we can see that all conditions show progressive improvement which is only hindered by the switch in the desktop learning condition (see fig. XXX and fig. XXX), but in the Treadmill condition we see constant improvement unobstructed by the environment switch.
 ```{r}
 ggplot(sub_walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(learning.condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.5, geom="errorbar") + 
@@ -111,6 +114,8 @@ ggplot(sub_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.c
 ```
 
 Participant's performance in the first pre-switch phase shows different rates of learning rate, demonstrated by an interaction between block bumber and learning condition for error rate performance (see table XX). 
+
+**this is a mixed model with id/block id random term. Significance was measuyred with Anova from car package, but I read it is not a good way to measure significance and we shouldn't even use significance in mixed models. I'll check on past cognition papers to see how and if they do it.**
 
 ```{r}
 learning_slopes_distance <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = sub_walk_all[sub_walk_all$exp_block_id %in% 1:3,])
@@ -131,9 +136,9 @@ kable(tab)
 
 
 ### After modality switch performance change
-We found no significant difference between different modalities in distance performance before the switch (although are marginally significnat suggetsting there might be some difference) `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`, but the error rate in the pre-switch block differs across groups `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`.
+We found significant difference between different modalities  in the pre-switch block in distance performance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`, and the error rate as well `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`.
 
-After the modality switch, we can see a significant difference between distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This difference post-switch is still apparent in the 2nd block after the switch (block 5) in error rate `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic` and marginally in distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic`. In the last testing block (block 6), we found no differences among the groups in either error rate `r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic` nor distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic`.
+After the modality switch, we can see a significant difference between groups in distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This between group difference is still present in the 2nd block of the second phase (block 5) in error rate `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic` and marginally in distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic`. In the last testing block (block 6), we found no differences among the groups in either error rate `r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic` nor distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic`.
 
 Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX ).
 
@@ -193,14 +198,31 @@ kable(tukey_report(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors),
 ```
 
 ### Improvement from the pre-switch block to the final block
-Assuming the performance platoes around the 6the block, looking at participants performance in the pre-switch block and the last block we can deduce what margin of improvement is still possible. We see that participants learning in the real world no longer improve in error rate `r apa_print(block_t_test_improvement(sub_walk_all, 4, 6, "errors")[["real-real"]])$statistic`, but they are continuously imrpoving in distance performance `r apa_print(block_t_test_improvement(sub_walk_all, 4, 6, "min_norm_distance")[["real-real"]])$statistic`. 
+Assuming the performance platoes around the 6the block, looking at participants performance in the pre-switch block and the last block we can deduce what margin of improvement is still possible. We see that participants learning in the real world no longer improve in error rate after the 3rd block `r apa_print(block_t_test_improvement(sub_walk_all, 4, 6, "errors")[["real-real"]])$statistic`, but they are continuously improving in distance performance `r apa_print(block_t_test_improvement(sub_walk_all, 4, 6, "min_norm_distance")[["real-real"]])$statistic`. 
+
+*Not sure about the mixed models here. I think they are OK, but I haven't published anything with them before*
+
+Looking at the linear mixed model prediction for the distnace and error improvement in the second phase (post-switch), we can see that both learning condition and 
+
+```{r}
+learning_slopes_distance <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = only_blocks(sub_walk_all[sub_walk_all$min_norm_distance < 10, ], 4:6))
+tab_distance <- mixed_table_report(learning_slopes_distance)
+
+learning_slopes_errors <- lmer(errors ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = only_blocks(sub_walk_all[sub_walk_all$min_norm_distance < 10, ], 4:6))
+tab_errors <- mixed_table_report(learning_slopes_errors)
+
+tab <- merge(tab_distance[,c(3,4)], tab_errors[,c(3,4)], by = "names")
+tab$names <- c("Intercept", "Block number", "Learning condition", "Block - Learning condition interaction")
+colnames(tab) <- c("Predictor", "Significance for distance improvement", "Significance for error improvement")
+kable(tab)
+```
 
 
 ### Something about pointing?
 
 
 ## Summary
-We can see different rates of learning speed across different conditions, with significan differences between groups in their performance after the first phase with the real world learning group performing the best, but only significanly different from group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment. All groups get to the same level of performance after the three blocks post switch in the real world, not differing in errors made nor distance. But we also observed that whilst real world training leads to almost perfect performance in the 3rd block, not differing from the last block in error rate and only slightly in distance, it takes another three blocks of learning in the real world for the groups which learned on the treadmill or the desktop to achieve same performance. 
+We can see different rates of learning speed across different conditions, with significant differences between groups in their performance in the post-switch block. Participants learning in the real world are performing the best after the switch, but only significanly different from the group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment. All groups get to the same level of performance after the three blocks post-switch moving in the real world, not differing in errors made nor in distance in the last block. But we also observed that whilst real world training leads to almost perfect performance in the pre-switch block, not differing from the last block in error rate and only slightly in distance. It takes another 3 blocks in the real world for the groups which learned on the treadmill or the desktop to achieve same performance, again pointing to qualitative difference between different modalities.
 
 *I am unsure if it is worth adding the rest of the dataset in (the VR - VR and real - VR groups), but the performance of Treadmill VR groups in the distance traveled gets exactly to the same level as the real world performance in the 6th block (so the VR - VR group performs the same after the 6 blocks as VR - real and real - VR). Which is nice comparison to the results we get here about the distance performance in the real world being almost perfect in the 3rd block and the rest of the groups slowly "getting there".*
 
