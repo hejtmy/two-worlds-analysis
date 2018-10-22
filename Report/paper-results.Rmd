@@ -197,7 +197,7 @@ Assuming the performance platoes around the 6the block, looking at participants 
 
 
 ### Something about pointing?
-Overall, we found
+
 
 ## Summary
 We can see different rates of learning speed across different conditions, with significan differences between groups in their performance after the first phase with the real world learning group performing the best, but only significanly different from group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment. All groups get to the same level of performance after the three blocks post switch in the real world, not differing in errors made nor distance. But we also observed that whilst real world training leads to almost perfect performance in the 3rd block, not differing from the last block in error rate and only slightly in distance, it takes another three blocks of learning in the real world for the groups which learned on the treadmill or the desktop to achieve same performance. 
@@ -206,4 +206,4 @@ We can see different rates of learning speed across different conditions, with s
 
 *The VR groups still demonstrate larger error difference in the 4-6th block, making more errors overall than the real world groups (about 2 errors per trial more). I believe it can be explained by either social difference - participants not wanting to "ask as much" in the real world, or accidental walking into a door due to treadmill control issues. Also, particiapnts told me that the VR is more "inviting" to test all the doors that are being passed (just in case), because it is more tiring to get back to one in case of a mistake. Anyway, not sure it it warranties adding more groups to the study, but at least the data are consistent and distance performance gets to the same level even in the VR*
 
-We found difference 
+We found difference in relative improvement rate 

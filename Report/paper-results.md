@@ -81,7 +81,7 @@ Tukey post-hoc tests show significant difference between error rate improvement 
 
 ### Improvement from the pre-switch block to the final block
 
-Looking at participants performance in the pre-switch block and the last block, we can deduce what margin of improvement is possible. We see that participants learning in the real world don't improve significantly more in number or errors *t*(21)=1.26, *p* = .223 but they are continuously imrpoving in distance performance *t*(21)=2.22, *p* = .037.
+Assuming the performance platoes around the 6the block, looking at participants performance in the pre-switch block and the last block we can deduce what margin of improvement is still possible. We see that participants learning in the real world no longer improve in error rate *t*(21)=1.26, *p* = .223, but they are continuously imrpoving in distance performance *t*(21)=2.22, *p* = .037.
 
 ### Something about pointing?
 
@@ -94,4 +94,4 @@ We can see different rates of learning speed across different conditions, with s
 
 *The VR groups still demonstrate larger error difference in the 4-6th block, making more errors overall than the real world groups (about 2 errors per trial more). I believe it can be explained by either social difference - participants not wanting to "ask as much" in the real world, or accidental walking into a door due to treadmill control issues. Also, particiapnts told me that the VR is more "inviting" to test all the doors that are being passed (just in case), because it is more tiring to get back to one in case of a mistake. Anyway, not sure it it warranties adding more groups to the study, but at least the data are consistent and distance performance gets to the same level even in the VR*
 
-We found difference
+We found difference in relative improvement rate
