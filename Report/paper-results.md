@@ -29,7 +29,7 @@ First we wanted to assess that there is going to be some level of transfer in al
 
 Looking at the progression in distance improvements and error improvements over the course of the experiment, we can see that all conditions show progressive improvement which is only hindered by the switch in the desktop learning condition (see fig. XXX and fig. XXX), but in the Treadmill condition we see constant improvement unobstructed by the environmrnt switch. ![](paper-results_files/figure-markdown_github/unnamed-chunk-3-1.png)![](paper-results_files/figure-markdown_github/unnamed-chunk-3-2.png)
 
-Participant's performance in the first pre-switch phase shows different rates of learning rate (see table XX). There is no significant difference between different modalities in distance performance before the switch *F*(2, 321)=2.88, *M**S**E* = 4.24, *p* = .058, $\\hat{\\eta}^2\_G = .018$, but the performance across groups differs in errors *F*(2, 363)=32.63, *M**S**E* = 22.37, *p* &lt; .001, $\\hat{\\eta}^2\_G = .152$.
+Participant's performance in the first pre-switch phase shows different rates of learning rate, demonstrated by an interaction between block bumber and learning condition for error rate performance (see table XX).
 
 | Predictor                              | Significance for distance improvement | Significance for error improvement |
 |:---------------------------------------|:--------------------------------------|:-----------------------------------|
@@ -40,11 +40,11 @@ Participant's performance in the first pre-switch phase shows different rates of
 
 ### After modality switch performance change
 
-Anova doesn't show a significant difference between groups in the pre-switch block (*F*(2, 321)=2.88, *M**S**E* = 4.24, *p* = .058), but there is a significant difference between distance performance in the post-switch block (*F*(2, 295)=3.86, *M**S**E* = 5.50, *p* = .022).
+We found no significant difference between different modalities in distance performance before the switch (although are marginally significnat suggetsting there might be some difference) *F*(2, 321)=2.88, *M**S**E* = 4.24, *p* = .058, but the error rate in the pre-switch block differs across groups *F*(2, 363)=32.63, *M**S**E* = 22.37, *p* &lt; .001.
 
-After the modality switch, we can see a significant difference between distance performance (*F*(2, 295)=3.86, *M**S**E* = 5.50, *p* = .022) and errors as well (*F*(2, 363)=13.15, *M**S**E* = 19.79, *p* &lt; .001), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This difference among conditions post-switch is still apparent in the 2nd block after the switch in number of errors *F*(2, 363)=6.75, *M**S**E* = 6.86, *p* = .001, $\\hat{\\eta}^2\_G = .036$ and marginally in distance *F*(2, 256)=2.87, *M**S**E* = 0.37, *p* = .058, $\\hat{\\eta}^2\_G = .022$, but disappears in the last testing block for both errors *F*(2, 363)=1.67, *M**S**E* = 3.33, *p* = .191, $\\hat{\\eta}^2\_G = .009$ and distance *F*(2, 258)=1.95, *M**S**E* = 0.28, *p* = .144, $\\hat{\\eta}^2\_G = .015$.
+After the modality switch, we can see a significant difference between distance performance (*F*(2, 295)=3.86, *M**S**E* = 5.50, *p* = .022) and errors as well (*F*(2, 363)=13.15, *M**S**E* = 19.79, *p* &lt; .001), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This difference post-switch is still apparent in the 2nd block after the switch (block 5) in error rate *F*(2, 363)=6.75, *M**S**E* = 6.86, *p* = .001 and marginally in distance *F*(2, 256)=2.87, *M**S**E* = 0.37, *p* = .058. In the last testing block (block 6), we found no differences among the groups in either error rate *F*(2, 363)=1.67, *M**S**E* = 3.33, *p* = .191 nor distance *F*(2, 258)=1.95, *M**S**E* = 0.28, *p* = .144.
 
-Mixed effect models with individual random effect also show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX ).
+Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX ).
 
 | Predictor                              | Significance for distance improvement | Significance for error improvement |
 |:---------------------------------------|:--------------------------------------|:-----------------------------------|
@@ -61,17 +61,17 @@ Running separate pairwise t-tests to see individual performance change from pre-
 | Desktop            | *M*<sub>*d*</sub> = −1.13, 95% CI \[ − 2.29, 0.02\], *t*(18)= − 2.06, *p* = .054 | *M*<sub>*d*</sub> = 1.35, 95% CI \[0.19, 2.52\], *t*(18)=2.44, *p* = .025    |
 | Treadmill VR       | *M*<sub>*d*</sub> = −0.03, 95% CI \[ − 0.59, 0.53\], *t*(19)= − 0.11, *p* = .910 | *M*<sub>*d*</sub> = 3.34, 95% CI \[2.17, 4.51\], *t*(19)=5.97, *p* &lt; .001 |
 
-We can see that all participants improved in the errors made, but neigher group is significantly worse in the post-switch block in the path travelled (although participants who learned on the desktop performed slightly worse, but the significance is only marginal).
+We can see that all participants improved in the errors made, but neigher group is significantly worse in the post-switch block in the path travelled (although participants who learned on the desktop performed slightly worse, the significance is only marginal).
 
-### Personal
+### Performance change
 
-To assess the level of performance change form directly before and after the switch, we calculated a score personal improvement as (block3-block4)/(block3+block4)´. This allowed us to directly comapre the percentual improvement or deterioration from pre-switch block to the post-switch one.
+To assess the level of performance change form directly before and after the switch, we calculated a personal improvement score as (block3-block4)/(block3+block4)´. This allowed us to directly comapre the percentual improvement or deterioration from pre-switch block to the post-switch one.
 
 ![](paper-results_files/figure-markdown_github/unnamed-chunk-7-1.png)![](paper-results_files/figure-markdown_github/unnamed-chunk-7-2.png)
 
-Comparing the perfomance change in different conditions using anovas, we see marginally significant difference between groups in the distance improvement (*F*(2, 58)=2.77, *M**S**E* = 0.06, *p* = .071), but significant differences in error rate improvement (*F*(2, 49)=6.72, *M**S**E* = 0.13, *p* = .003). This is consistent with the mixed model result which poited at interaction between block and learning condition.
+Comparing the perfomance change in different conditions using ANOVA, we see marginally significant difference between groups in the distance improvement (*F*(2, 58)=2.77, *M**S**E* = 0.06, *p* = .071), but significant differences in error rate improvement (*F*(2, 49)=6.72, *M**S**E* = 0.13, *p* = .003). This is consistent with the mixed model result which poited at interaction between block and learning condition.
 
-Tukey post-hoc tests show significant difference between error rate improvement between the group that leardned in the real world and that which learned on the desktop.
+Tukey post-hoc tests show significant difference between error rate improvement between the group that learned in the real world and that which learned on the desktop.
 
 |                      |        diff| p-value     |
 |----------------------|-----------:|:------------|
@@ -79,9 +79,19 @@ Tukey post-hoc tests show significant difference between error rate improvement 
 | Treadmill VR-Desktop |   0.2298740| p = 0.12    |
 | Treadmill VR-Real    |  -0.2411379| p = 0.15    |
 
+### Improvement from the pre-switch block to the final block
+
+Looking at participants performance in the pre-switch block and the last block, we can deduce what margin of improvement is possible. We see that participants learning in the real world don't improve significantly more in number or errors *t*(21)=1.26, *p* = .223 but they are continuously imrpoving in distance performance *t*(21)=2.22, *p* = .037.
+
 ### Something about pointing?
 
 Summary
 -------
 
-We can see different rates of learning speed across different conditions, with significan differences between groups in their performance after the first phase witt the real world learning group performing the best, but only significanly different from group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment.
+We can see different rates of learning speed across different conditions, with significan differences between groups in their performance after the first phase with the real world learning group performing the best, but only significanly different from group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment. All groups get to the same level of performance after the three blocks post switch in the real world, not differing in errors made nor distance. But we also observed that whilst real world training leads to almost perfect performance in the 3rd block, not differing from the last block in error rate and only slightly in distance, it takes another three blocks of learning in the real world for the groups which learned on the treadmill or the desktop to achieve same performance.
+
+*I am unsure if it is worth adding the rest of the dataset in (the VR - VR and real - VR groups), but the performance of Treadmill VR groups in the distance traveled gets exactly to the same level as the real world performance in the 6th block (so the VR - VR group performs the same after the 6 blocks as VR - real and real - VR). Which is nice comparison to the results we get here about the distance performance in the real world being almost perfect in the 3rd block and the rest of the groups slowly "getting there".*
+
+*The VR groups still demonstrate larger error difference in the 4-6th block, making more errors overall than the real world groups (about 2 errors per trial more). I believe it can be explained by either social difference - participants not wanting to "ask as much" in the real world, or accidental walking into a door due to treadmill control issues. Also, particiapnts told me that the VR is more "inviting" to test all the doors that are being passed (just in case), because it is more tiring to get back to one in case of a mistake. Anyway, not sure it it warranties adding more groups to the study, but at least the data are consistent and distance performance gets to the same level even in the VR*
+
+We found difference
