@@ -134,13 +134,18 @@ kable(tab)
 ```
 
 
-
 ### After modality switch performance change
-We found significant difference between different modalities  in the pre-switch block in distance performance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`, and the error rate as well `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`.
+We found significant difference between different modalities  in the pre-switch block in distance performance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`, and the error rate as well `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`. 
+
+**Running the tukey on these???**
+There was also a difference between conditions in their pointing performance at the end of the first phase (`r apa_print(aov(abs_error ~ learning.condition, data = sub_sop_all))$statistic$learning_condition`), with both Treadmill VR group and the Desktop group performend significantly worse than the group in the real world.
+```{r}
+TukeyHSD(aov(abs_error ~ learning.condition, data = sub_sop_all))
+```
 
 After the modality switch, we can see a significant difference between groups in distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This between group difference is still present in the 2nd block of the second phase (block 5) in error rate `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic` and marginally in distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic`. In the last testing block (block 6), we found no differences among the groups in either error rate `r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic` nor distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic`.
 
-Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX ).
+Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX).
 
 ```{r}
 learning_slopes_distance <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = only_blocks(sub_walk_all, 3:4))
@@ -194,7 +199,7 @@ Comparing the perfomance change in different conditions using ANOVA, we see marg
 
 Tukey post-hoc tests show significant difference between error rate improvement between the group that learned in the real world and that which learned on the desktop.
 ```{r, echo=F}
-kable(tukey_report(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95)$learning.condition[, c(1,4)]))
+kable(tukey_report_table(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95), "learning.condition"))
 ```
 
 ### Improvement from the pre-switch block to the final block
@@ -219,7 +224,16 @@ kable(tab)
 
 
 ### Something about pointing?
+```{r}
+err_phase <- lmer(abs_error ~ phase*learning.condition + (1 | id/phase), data = sub_sop_all)
+car::Anova(err_phase, type = "III")
 
+ggplot(sub_sop_all, aes(phase, abs_error, color = learning.condition)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.5, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1.25, geom="line")
+
+aov(abs_error ~ learning.condition, data = sub_sop_all)
+```
 
 ## Summary
 We can see different rates of learning speed across different conditions, with significant differences between groups in their performance in the post-switch block. Participants learning in the real world are performing the best after the switch, but only significanly different from the group learning on the desktop. All conditions show some level of transfer, demonstrated both by general improvement from the first block to the fourth, as well as decreased errors in desktop and treadmill VR group after the switch to the real environment. All groups get to the same level of performance after the three blocks post-switch moving in the real world, not differing in errors made nor in distance in the last block. But we also observed that whilst real world training leads to almost perfect performance in the pre-switch block, not differing from the last block in error rate and only slightly in distance. It takes another 3 blocks in the real world for the groups which learned on the treadmill or the desktop to achieve same performance, again pointing to qualitative difference between different modalities.

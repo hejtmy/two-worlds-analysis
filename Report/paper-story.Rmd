@@ -156,8 +156,8 @@ pair_t_norm_distance_phase_2 <- pairwise.t.test(sub_walk_all$min_norm_distance, 
 Performance in the second phase differs significantly between groups (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]))$statistic$learning_condition`), suggesting that the learnign modality has an effect on the overall performance. Tukey test shows significant difference between real adn a desktop versions. although this can be only because of bad performance in block 4 after switch, not due to blocks 5 and 6 (will test later.)
 
 ```{r, echo=F}
-df_temp <- TukeyHSD(x=aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]), conf.level=0.95)$learning.condition[, c(1,4)]
-kable(tukey_report(df_temp))
+df_temp <- TukeyHSD(x=aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$phase == 2,]), conf.level=0.95)
+kable(tukey_report_table(df_temp,"learning.condition"))
 ```
 
 ### Overrall average pointing performance in phase 1 vs phase 2
@@ -264,7 +264,7 @@ We can see significant differences between different conditions in error rate im
 
 Post hoc tests show significant difference between Real and Desktop and marginally for Treadmill and Desktop.
 ```{r, echo=F}
-kable(tukey_report(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95)$learning.condition[, c(1,4)]))
+kable(tukey_report_table(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95),"learning.condition"))
 ```
 
 ```{r, echo=F}
@@ -307,7 +307,7 @@ But it reveals significant difference between learning conditions in number of e
 Runnign Tukey's post hoc on the distance shows that this is originating from the difference between Desktop and the Real world, with Treadmill not being significantly different from either of them.
 
 ```{r, echo=F}
-kable(tukey_report(TukeyHSD(x=aov(block14 ~ learning.condition, df_wide_errors), conf.level=0.95)$learning.condition[, c(1,4)]))
+kable(tukey_report_table(TukeyHSD(x=aov(block14 ~ learning.condition, df_wide_errors), conf.level=0.95),"learning.condition"))
 ```
 
 ```{r, echo=F}

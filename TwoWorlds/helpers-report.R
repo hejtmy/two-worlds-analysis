@@ -8,11 +8,23 @@ apa_p <- function(values){
   return(output)
 }
 
-tukey_report <- function(tukey){
-  df <- as.data.frame(tukey)
-  colnames(df) <- c("diff", "p-value")
+tukey_report_table <- function(tukey, predictor=NULL){
+  if(is.null(predictor)){
+    df <-  tukey[[1]]
+  } else {
+    df <- tukey[[predictor]]
+  }
+  df <- as.data.frame(df)
+  colnames(df) <- c("diff", "lwr", "upr", "p-value")
   df$`p-value` <- apa_p(df$`p-value`)
-  return(df)
+  return(df[, c(1,4)])
+}
+
+tukey_report <- function(tukey, condition,delta_name = "difference", predictor = NULL){
+  df <- tukey_report_table(tukey, predictor)
+  line <- df[condition,]
+  report <- paste0('$\\Delta$', delta_name,' = ', round(line$diff, 2), ', ', line$`p-value`)
+  return(report)
 }
 
 # NEeds fitted lme model
