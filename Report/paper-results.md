@@ -44,9 +44,13 @@ Participant's performance in the first pre-switch phase shows different rates of
 
 We found significant difference between different modalities in the pre-switch block in distance performance *F*(2, 315)=4.18, *M**S**E* = 3.54, *p* = .016, and the error rate as well *F*(2, 363)=32.63, *M**S**E* = 22.37, *p* &lt; .001.
 
-After the modality switch, we can see a significant difference between groups in distance performance (*F*(2, 289)=4.04, *M**S**E* = 2.94, *p* = .019) and errors as well (*F*(2, 363)=13.15, *M**S**E* = 19.79, *p* &lt; .001), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This between group difference is still present in the 2nd block of the second phase (block 5) in error rate *F*(2, 363)=6.75, *M**S**E* = 6.86, *p* = .001 and marginally in distance *F*(2, 253)=5.74, *M**S**E* = 0.18, *p* = .004. In the last testing block (block 6), we found no differences among the groups in either error rate *F*(2, 363)=1.67, *M**S**E* = 3.33, *p* = .191 nor distance *F*(2, 255)=3.21, *M**S**E* = 0.10, *p* = .042.
+**Running the tukey on these???**
 
-Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX ).
+There was also a difference between conditions in their pointing performance at the end of the first phase (*F*(2, 729)=17.78, *M**S**E* = 1, 412.53, *p* &lt; .001), with real group performing significantly better than the Treadmill VR group *Δ*error = 13.3, p &lt; .001 and the Desktop group *Δ*error = -19.69, p &lt; .001.
+
+After the modality switch, we can see a significant difference between groups in distance performance (*F*(2, 289)=4.04, *M**S**E* = 2.94, *p* = .019) and errors as well (*F*(2, 363)=13.15, *M**S**E* = 19.79, *p* &lt; .001), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This between group difference is still present in the 2nd block of the second phase (block 5) in error rate *F*(2, 363)=6.75, *M**S**E* = 6.86, *p* = .001 and marginally in distance *F*(2, 253)=5.74, *M**S**E* = 0.18, *p* = .004. In the last testing block (block 6), we found no differences among the groups in either error rate *F*(2, 363)=1.67, *M**S**E* = 3.33, *p* = .191, nor pointing performance *F*(2, 726)=1.56, *M**S**E* = 982.05, *p* = .210) but we still see small difference in distance performance *F*(2, 255)=3.21, *M**S**E* = 0.10, *p* = .042.
+
+Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX).
 
 | Predictor                              | Significance for distance improvement | Significance for error improvement |
 |:---------------------------------------|:--------------------------------------|:-----------------------------------|
@@ -69,7 +73,7 @@ We can see that all participants improved in the errors made, but neigher group 
 
 To assess the level of performance change form directly before and after the switch, we calculated a personal improvement score as (block3-block4)/(block3+block4)´. This allowed us to directly comapre the percentual improvement or deterioration from pre-switch block to the post-switch one.
 
-![](paper-results_files/figure-markdown_github/unnamed-chunk-7-1.png)![](paper-results_files/figure-markdown_github/unnamed-chunk-7-2.png)
+![](paper-results_files/figure-markdown_github/unnamed-chunk-8-1.png)![](paper-results_files/figure-markdown_github/unnamed-chunk-8-2.png)
 
 Comparing the perfomance change in different conditions using ANOVA, we see marginally significant difference between groups in the distance improvement (*F*(2, 58)=1.64, *M**S**E* = 0.06, *p* = .202), but significant differences in error rate improvement (*F*(2, 49)=6.72, *M**S**E* = 0.13, *p* = .003). This is consistent with the mixed model result which poited at interaction between block and learning condition.
 
@@ -97,6 +101,8 @@ Looking at the linear mixed model prediction for the distnace and error improvem
 | Block - Learning condition interaction | p &lt; .0.05                          | p &lt; .001                        |
 
 ### Something about pointing?
+
+![](paper-results_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 Summary
 -------

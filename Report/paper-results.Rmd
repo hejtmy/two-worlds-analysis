@@ -138,12 +138,12 @@ kable(tab)
 We found significant difference between different modalities  in the pre-switch block in distance performance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`, and the error rate as well `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`. 
 
 **Running the tukey on these???**
-There was also a difference between conditions in their pointing performance at the end of the first phase (`r apa_print(aov(abs_error ~ learning.condition, data = sub_sop_all))$statistic$learning_condition`), with both Treadmill VR group and the Desktop group performend significantly worse than the group in the real world.
 ```{r}
-TukeyHSD(aov(abs_error ~ learning.condition, data = sub_sop_all))
+aov_point_phase1 <- aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 1,])
 ```
+There was also a difference between conditions in their pointing performance at the end of the first phase (`r apa_print(aov_point_phase1)$statistic$learning_condition`), with real group performing significantly better than the Treadmill VR group `r tukey_report(TukeyHSD(aov_point_phase1), condition = "Treadmill VR-Real", delta_name = "error")` and the Desktop group `r tukey_report(TukeyHSD(aov_point_phase1), condition = "Real-Desktop", delta_name = "error")`.
 
-After the modality switch, we can see a significant difference between groups in distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This between group difference is still present in the 2nd block of the second phase (block 5) in error rate `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic` and marginally in distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic`. In the last testing block (block 6), we found no differences among the groups in either error rate `r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic` nor distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic`.
+After the modality switch, we can see a significant difference between groups in distance performance (`r apa_print(aov(min_norm_distance ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`) and errors as well (`r apa_print(aov(errors ~ learning.condition, sub_walk_all[sub_walk_all$exp_block_id == 4,]))$statistic$learning_condition`), with groups learning on the treadmill or desktop performing worse than those learning in the real world. This between group difference is still present in the 2nd block of the second phase (block 5) in error rate `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic` and marginally in distance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 5)))$statistic`. In the last testing block (block 6), we found no differences among the groups in either error rate `r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic`, nor pointing performance `r apa_print(aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 2,]))$statistic$learning_condition`) but we still see small difference in distance performance `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 6)))$statistic`.
 
 Mixed effect models with individual random effect show significant effect of the of the learning condition on rate of improvement from pre-switch to post-switch block (See table XXX).
 
@@ -202,6 +202,7 @@ Tukey post-hoc tests show significant difference between error rate improvement 
 kable(tukey_report_table(TukeyHSD(x=aov(block34 ~ learning.condition, df_wide_errors), conf.level=0.95), "learning.condition"))
 ```
 
+
 ### Improvement from the pre-switch block to the final block
 Assuming the performance platoes around the 6the block, looking at participants performance in the pre-switch block and the last block we can deduce what margin of improvement is still possible. We see that participants learning in the real world no longer improve in error rate after the 3rd block `r apa_print(block_t_test_improvement(sub_walk_all, 4, 6, "errors")[["real-real"]])$statistic`, but they are continuously improving in distance performance `r apa_print(block_t_test_improvement(sub_walk_all, 4, 6, "min_norm_distance")[["real-real"]])$statistic`. 
 
@@ -224,7 +225,7 @@ kable(tab)
 
 
 ### Something about pointing?
-```{r}
+```{r, echo=F, results='hide'}
 err_phase <- lmer(abs_error ~ phase*learning.condition + (1 | id/phase), data = sub_sop_all)
 car::Anova(err_phase, type = "III")
 
