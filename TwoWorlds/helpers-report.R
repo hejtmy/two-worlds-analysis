@@ -37,5 +37,17 @@ mixed_table_report <- function(fit_lme){
 } 
 
 only_blocks <- function(df, ...){
-  return(df[df$exp_block_id %in% c(...),])
+  df <- df[df$exp_block_id %in% c(...),]
+  return(df)
+}
+
+only_condition <- function(df, condition){
+  df <- df[df$learning.condition == condition, ]
+  return(df)
+}
+
+only_condition_blocks <- function(df, condition, ...){
+  df <- only_condition(df, condition)
+  df <- only_blocks(df, ...)
+  return(df)
 }
