@@ -1,0 +1,86 @@
+---
+title: "Transfer report"
+author: "Lukáš Hejtmánek"
+date: "9 August 2018"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+#needs lme and car in the top because of the recode
+library(car)
+library(lme4)
+library(lmerTest)
+library(ggplot2)
+library(ez)
+library(Hmisc)
+library(dplyr)
+library(reshape2)
+library(broom)
+library(knitr)
+library(papaja)
+library(googlesheets)
+
+source("../Scripts/paper-prepare.R")
+source("helpers/block-t-test-improvement.R")
+source("helpers/block-t-test.R")
+source("helpers/block-measure.R")
+
+settings <- load_google_sheets()
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+
+#green, violet, blue, yellow, pink, dark blue
+estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
+theme_set(theme_minimal())
+
+### Try running it without outliers
+sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+
+condition_all_sums <- sub_walk_all %>% 
+  group_by(exp_block_id, id, learning.condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T),
+            mean.distance = mean(min_norm_distance, na.rm = T),
+            mean.error = mean(errors, na.rm = T))
+
+
+df_errors <- block_measure(condition_all_sums, "sum.errors")
+df_distance <- block_measure(condition_all_sums, "mean.distance")
+
+df_wide_errors <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
+df_wide_distance <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
+colnames(df_wide_errors) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+df_wide_errors$block34 <- (df_wide_errors$block3-df_wide_errors$block4)/(df_wide_errors$block3+df_wide_errors$block4)
+df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(df_wide_distance$block3+df_wide_distance$block4)
+
+knitr::opts_chunk$set(echo=F, warning = F, message = F)
+
+sub_walk_all_factor <- sub_walk_all
+sub_walk_all_factor$exp_block_id <- factor(sub_walk_all_factor$exp_block_id)
+sub_walk_all_factor$id <- factor(sub_walk_all_factor$id)
+sub_walk_all_factor$learning.condition <- factor(sub_walk_all_factor$learning.condition)
+```
+
+```{r}
+fit_mm_dist_block <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id), data = ez_data)
+summary(fit_mm_dist_block)
+anova(fit_mm_dist_block, type=3)
+
+ez_data <- ez_prepare_block(sub_walk_all_factor, c(1,4))
+ez_fit <- ezANOVA(ez_data, 
+        dv = min_norm_distance,
+        wid = id,
+        within = exp_block_id,
+        between = learning.condition,
+        return_aov = T,
+        type = 3)
+```
+
+We hypothesized that the degree of transfer to the real-world building would vary as a function of immersion. As a first test of this issue, we wished to determine whether all modalities resulted in some degree of transfer. Data for distance walked and number of door visitation errors were each entered into a 3 (Learning Condition: real, desktop, treadmill VR) × 2 (Block: block 1, block 4) mixed-model analysis of variance (ANOVA). For distance walked, there was a main effect for Learning Condition, `r apa_print(ez_fit$aov)$statistic$learning_condition`. There was a also a main effect for Block, `r apa_print(ez_fit$aov)$statistic$learning_condition`. The Learning Condition by Block interaction effect did not reach significance `r apa_print(ez_fit$aov)$statistic$learning_condition_exp_block_id`. Follow-up comparisons showed that for walked distance all three modalities showed an improvement from block 1 (first exposure to the modality) to block 4 (first exposure to the real building for immersed/impoverished conditions, fourth exposure for real-world). Descriptive and inferential statistics for these comparisons are shown in Table X and Table X+1 for distance and errors, respectively.
+
+For visitation errors, there was a (was no) main effect for Learning Condition, F(DFn, DFd) = ##.##, p = .###. There was a (was no) main effect for Block, F(DFn, DFd) = ##.##, p = .###. The Learning Condition by Block interaction effect was significant (did not reach significance), F(DFn, DFd) = ##.##, p = .###. Follow-up comparisons showed that all three modalities showed an improvement in visitation errors from block 1 (first exposure to the modality) to block 4 (first exposure to the real building for immersed/impoverished conditions, fourth exposure for real-world). Descriptive and inferential statistics for these comparisons are shown in Table X+1.

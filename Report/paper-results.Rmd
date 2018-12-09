@@ -70,7 +70,8 @@ knitr::opts_chunk$set(echo=F, warning = F, message = F)
 #load(file='tw102.data')
 #plot_walk_trial(tw102$phase2,12)
 #plot_walk_trial(tw102$phase1,12)
-``
+```
+
 ## Measures
 We calculated participants’ walked distance in the building, time spent in each task, number of incorrectly visited doors during walking trials and pointing precision during pointing trials. The conditions were not perfectly comparable in measured distance and time, with the VR trials taking a little bit longer in both time and distance than the real world condition. We therefore min-normalised the distance traveled and the time for each task and environment by dividing the measure by any participant's best performance for that trial (therefore the result of 2 in min-normalised distance would mean the participant traveled double the distance than was necessary). We calculated all statistics on these normalised measures.
 
@@ -118,7 +119,7 @@ ggplot(sub_walk_all, aes(x = exp_block_id, y = errors, color = factor(learning.c
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.5, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1.25, geom="line") + 
   geom_vline(xintercept = 3.5, linetype=4) +
-  ylab("Number of mistakes in office decision") + xlab("Block number") + 
+  ylab("Visitation errors") + xlab("Block number") + 
   scale_color_manual(values=estimote_pal, "Learning condition")
 ```
 
