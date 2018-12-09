@@ -7,10 +7,15 @@ ez_prepare <- function(filtered_data, by){
   return(filtered_data)
 }
 
-
-ez_prepare_block <- function(df, blocks){
+### Removes all cases where there is missing data in blocks
+ez_prepare_block <- function(df, blocks, variable=NULL){
   filtered_data <- df[df$exp_block_id %in% blocks, ]
-  filtered_data <- filtered_data[complete.cases(filtered_data),]
+  if(is.null(variable)){
+    filtered_data <- filtered_data[complete.cases(filtered_data),]
+  } else {
+    filtered_data <- filtered_data[!is.na(filtered_data[,variable]),]
+  }
+  
   has_all <- filtered_data %>% group_by(id) %>% select(id, "exp_block_id") %>% unique() %>% count
   has_all <- has_all %>% filter(n == 2)
   filtered_data <- filtered_data %>% filter(id %in% has_all$id)
