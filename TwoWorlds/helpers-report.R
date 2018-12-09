@@ -41,8 +41,8 @@ only_blocks <- function(df, ...){
   return(df)
 }
 
-only_condition <- function(df, condition){
-  df <- df[df$learning.condition == condition, ]
+only_conditions <- function(df, conditions){
+  df <- df[df$learning.condition %in% conditions, ]
   return(df)
 }
 
