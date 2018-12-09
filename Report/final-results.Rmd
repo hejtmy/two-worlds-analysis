@@ -134,10 +134,6 @@ Figure X. Performance of each learning condition across time is shown for averag
 
 ## Quantifying what happens before transfer
 To better understand the effect of modality (i.e., real world vs. treadmill VR vs. desktop), we assessed the change in walked distance and visitation errors prior to transfer. 
-```{r}
-point_data_1 <- sub_sop_all[sub_sop_all$phase == 1,]
-aov_point_phase1 <- aov(abs_error ~ learning.condition, data = point_data_1)
-```
 
 Mixed-effect models revealed a main effect of block on distance performance, suggesting that participants improved their paths in all three conditions, F(DFn, DFd) = ##.##, p = .###. The interaction effect with modality was not significant , F(DFn, DFd) = ##.##, p = .###, suggesting that learning rate did not differ as a function of modality. In contrast, for visitation errors, we again found a main effect of block but, importantly, a block X modality interaction effect. This finding suggested that visitation errors improved differently as a function of modality.
 
@@ -145,7 +141,12 @@ Mixed-effect models revealed a main effect of block on distance performance, sug
 
 For the last block of learning (block 3), we conducted separate one-way ANOVAs to compare learning conditions for walked distance and visitation errors. There were a main effects of for both walked distance, `r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`, and visitation errors, `r  apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 3)))$statistic`).
 
-We also observed significant differences between conditions in pointing performance at the end of the first phase, `r apa_print(aov_point_phase1)$statistic$learning_condition`.  Specifically, participants in the real-world learning group  performed significantly better compared to both the immersive VR group `r m_sd_report(only_condition(point_data_1, "Real")$abs_error)`, t(df) = ##.##, p < .001) and the desktop group (`r m_sd_report(only_condition(point_data_1, "Desktop")$abs_error)`), t(df) = ##.##, p < .001). Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
+```{r}
+point_data_1 <- sub_sop_all[sub_sop_all$phase == 1,]
+aov_point_phase1 <- aov(abs_error ~ learning.condition, data = point_data_1)
+```
+
+We also observed significant differences between conditions in pointing performance at the end of the first phase, `r apa_print(aov_point_phase1)$statistic$learning_condition`.  Specifically, participants in the real-world learning group  (`r m_sd_report(only_conditions(point_data_1, "Real")$abs_error)`) performed significantly better compared to both the immersive VR group (`r m_sd_report(only_conditions(point_data_1, "Treadmill VR")$abs_error)`), `r apa_print(t.test(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Treadmill VR'))))$statistic`, and the desktop group (`r m_sd_report(only_conditions(point_data_1, "Desktop")$abs_error)`), `r apa_print(t.test(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Desktop'))))$statistic`. Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
 
 ## Quantifying what happens after/during?  transfer
 We next considered the effects of transferring from either the treadmill or desktop to the real-world building compared with continuing to navigate the real-world building. We did this by directly comparing walked distance and visitation errors on block 3 (the last block before the transfer phase) with the first block of the transfer phase (block 4). Data for distance walked and number of door visitation errors were each entered into a 3 (Learning Condition: real, desktop, treadmill VR) × 2 (Block: block 1, block 4) mixed-model ANOVA. For visitation errors, there was a (was no) main effect for Learning Condition, F(DFn, DFd) = ##.##, p = .###. There was a (was no) main effect for Block, F(DFn, DFd) = ##.##, p = .###. The Learning Condition by Block interaction effect was significant (did not reach significance), F(DFn, DFd) = ##.##, p = .###. For walked distance, there was no main effect of Learning Condition, F(DFn, DFd) = ##.##, p = .###, or Block, F(DFn, DFd) = ##.##, p = .###, and the interaction also failed to reach significance, , F(DFn, DFd) = ##.##, p = .### (See table XXX).
