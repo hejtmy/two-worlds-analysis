@@ -143,7 +143,6 @@ kable(tab)
 
 ```
 
-
 ### Performance change after modality switch
 ```{r}
 aov_point_phase1 <- aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 1,])
