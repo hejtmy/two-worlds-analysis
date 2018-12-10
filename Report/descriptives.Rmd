@@ -18,6 +18,8 @@ df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-
 overview <- settings$versions
 overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
 overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+
+all <- df_participants %>% left_join(overview, by="Code")
 ```
 
 ## Dropout ratings
@@ -36,11 +38,13 @@ A total of `r sum(finished$no)` participants didn't finish due to motion sicknes
 
 ## Female/male
 ```{r, echo=F}
-kable(df_participants %>% filter(finished=="yes") %>% group_by(condition, sex) %>% count)
+kable(df_participants %>% right_join(overview, by='Code') %>% filter(is_ok=="yes") %>% group_by(condition, sex) %>% count)
 ```
 
 # Report
-A total of `r sum(overview$is_ok == "yes", na.rm=T)` (M = `r round(mean(df_participants[df_participants$finished == "yes",]$age, na.rm=T),1)`, SD = `r round(sd(df_participants[df_participants$finished == "yes",]$age, na.rm=T), 1)`) undergraduate students at UC Davis particiapted in the study in exchange for a study credit. Each students was randomly assigned a condition and a randomised set of goals. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no)` were removed due to a technical failure of the real world tracking systen. Only `r finished[finished$condition == "vr-real","percent"] * 100` percent the students being able to finish VR to Real world condition.
+A total of `r sum(overview$finished == "yes", na.rm=T)` undergraduate students at UC Davis particiapted in the study in exchange for a course credit. Each participant was randomly assigned a condition and a randomized set of goals before arrival. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no)` were removed due to a technical failure of the real world tracking systen. 
+
+Eighteen participants didn't finish due to motion sickness and three were removed due to a technical problems with the real world tracking system. This resulted in a final sample size of `r sum(overview$is_ok == "yes", na.rm=T)` participants (M = `r round(mean(df_participants[df_participants$is_ok == "yes",]$age, na.rm=T),1)`, SD = `r round(sd(df_participants[df_participants$finished == "yes",]$age, na.rm=T), 1)`) () with a mean age of ## used for all reported analyses.All procedures were approved by the UC Davis Institutional Review Board (IRB    ). 
 
 ## Descriptives for the VR/real/desktop - time and path traveled
 

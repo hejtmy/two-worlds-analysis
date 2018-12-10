@@ -13,3 +13,6 @@ sop_all$testing.condition <- dplyr::recode(sop_all$testing.condition, "real-real
 
 sub_walk_all <- walk_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 sub_sop_all <- sop_all %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+
+sub_walk_all_2 <- walk_all %>% filter(condition %in% c("vr-vr", "real-vr"))
+sub_sop_all_2 <- sop_all %>% filter(condition %in% c("vr-vr", "real-vr"))

@@ -102,7 +102,7 @@ ggplot(walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
   geom_vline(xintercept = 3.5, linetype=4) +
-  ylab("Average normalised trial distance") + xlab("Block") + 
+  ylab("Average visitation errors") + xlab("Block") + 
   scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
 
 ```

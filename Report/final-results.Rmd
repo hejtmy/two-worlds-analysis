@@ -25,13 +25,13 @@ source("helpers/block-t-test-improvement.R")
 source("helpers/block-t-test.R")
 source("helpers/block-measure.R")
 
-#settings <- load_google_sheets()
-#df_participants <- settings$participants
-#df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
-#df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
-#overview <- settings$versions
-#overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
-#overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+settings <- load_google_sheets()
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 
 #green, violet, blue, yellow, pink, dark blue
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
@@ -47,7 +47,6 @@ condition_all_sums <- sub_walk_all %>%
             mean.distance = mean(min_norm_distance, na.rm = T),
             mean.error = mean(errors, na.rm = T))
 
-
 df_errors <- block_measure(condition_all_sums, "sum.errors")
 df_distance <- block_measure(condition_all_sums, "mean.distance")
 
@@ -58,13 +57,27 @@ colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","bl
 df_wide_errors$block34 <- (df_wide_errors$block3-df_wide_errors$block4)/(df_wide_errors$block3+df_wide_errors$block4)
 df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(df_wide_distance$block3+df_wide_distance$block4)
 
-knitr::opts_chunk$set(echo=F, warning = F, message = F)
-
 sub_walk_all_factor <- sub_walk_all
 sub_walk_all_factor$exp_block_id <- factor(sub_walk_all_factor$exp_block_id)
 sub_walk_all_factor$id <- factor(sub_walk_all_factor$id)
 sub_walk_all_factor$learning.condition <- factor(sub_walk_all_factor$learning.condition)
+
+knitr::opts_chunk$set(echo=F, warning = F, message = F)
 ```
+
+## Participants
+```{r}
+# need revising 
+# is_ok == data well measured
+# finished == did finsih, regardless of potentially missing real world data
+finished <- overview %>% group_by(condition) %>% count(finished)
+finished <- dcast(finished, condition~finished)
+finished$percent <- round(finished$yes/(finished$yes+finished$no), 2)
+is_ok <- overview %>% filter(finished=="yes") %>% group_by(condition) %>% count(is_ok)
+is_ok <- dcast(is_ok, condition~is_ok)
+is_ok$percent <- round(is_ok$yes/(is_ok$yes+is_ok$no), 2)
+```
+A total of `r sum(overview$is_ok == "yes", na.rm=T) + sum(finished$no)` undergraduate students at UC Davis (M = `r round(mean(df_participants[df_participants$finished == "yes",]$age, na.rm=T),1)`, SD = `r round(sd(df_participants[df_participants$finished == "yes",]$age, na.rm=T), 1)`) particiapted in the study in exchange for a study credit. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no)` were removed due to a technical failure of the real world tracking systen. Only `r finished[finished$condition == "vr-real","percent"] * 100` percent the students being able to finish Treadmill VR learning condition. 
 
 ```{r}
 ez_data<- ez_prepare_block(sub_walk_all_factor, c(1,4), 'min_norm_distance')
@@ -263,7 +276,7 @@ ez_fit_errors <- ezANOVA(
 
 As an additional assay of transfer, we wished to determine whether learning post modality switch was faster in the group that had been exposed to the real-world in the learning blocks compared to the VR groups. Comparing walked distance and visitation errors across between blocks 4 and 6 by running repeated measures ANOVA, we found a significant effect of learning condition on distance,`r apa_print(ez_fit_distance$aov)$statistic$learning_condition` and visitation errors `r apa_print(ez_fit_errors$aov)$statistic$learning_condition`. We also wound significant interaction effect between learning condition and block for both distance `r apa_print(ez_fit_distance$aov)$statistic$learning_condition` and visitation errors `r apa_print(ez_fit_errors$aov)$statistic$learning_condition`.
 
-Looking at the improvement in visitations errors from block 4 to block 6 in separate learning conditions using t-tests, we can assess that only Desktop group (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Desktop'), c(4,6))))$statistic`) and Treadmill VR group (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Treadmill VR'), c(4,6))))$statistic`) have improved, whereas group learned in the real world did not improve any more in the transfer phase (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Real'), c(4,6))))$statistic`). In fact, the real world group retains its visitation errors performance even from the last learning phase block does not significantly improve in visitation errors until the end (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Real'), c(3,6))))$statistic`).  
+Looking at the improvement in visitations errors from block 4 to block 6 in separate learning conditions using t-tests, we can assess that only Desktop group (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Desktop'), c(4,6))))$statistic`) and Treadmill VR group (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Treadmill VR'), c(4,6))))$statistic`) have improved, whereas group learned in the real world did not improve any more in the transfer phase (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Real'), c(4,6))))$statistic`). 
 
 The story is similar with distance performance, with both Desktop (`r apa_print(t.test(min_norm_distance ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Desktop'), c(4,6))))$statistic`) and Treadmill VR (`r apa_print(t.test(min_norm_distance ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Treadmill VR'), c(4,6))))$statistic`) improve from the 4th to the 6th block, but so does the real world learning group (`r apa_print(t.test(min_norm_distance ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Real'), c(4,6))))$statistic`).
 
@@ -275,9 +288,101 @@ To attempt to address this issue, we compared the three different modalities, na
 
 
 ## Experiment 1b: Comparing transfer from desktop to real and treadmill to desktop
+```{r}
+### Try running it without outliers
+sub_walk_all_2[!is.na(sub_walk_all_2$norm_distance) & sub_walk_all_2$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+
+sub_walk_all_2_factor <- sub_walk_all_2
+sub_walk_all_2_factor$exp_block_id <- factor(sub_walk_all_2_factor$exp_block_id)
+sub_walk_all_2_factor$id <- factor(sub_walk_all_2_factor$id)
+sub_walk_all_2_factor$learning.condition <- factor(sub_walk_all_2_factor$learning.condition)
+```
 
 Based on our findings above, we might predict that transferring knowledge from desktop to the real world was most difficult for subjects, with the immersive group somewhere in between. We also found, that despite the groups differ at the end of the learning phase, their performance is the same after three blocks in the transfer phase. It is unclear, whether this equalisation of performance is solely due to exposure to the real world, and wihout it participants could never perform perfectly, or if the tradmill VR modality could achieve the same performance as the real world training, but it only needs more time. 
 
 To test this idea, we added two more conditions. One group learned the UC Center for Neuroscience building on the treadmill VR while the second group learned in the real world, but both were tested in the tradmill VR in the transfer phase. This allowed us to assess if the treadmill VR can achieve the same performance given additional time and also investigate the process of opposite transfer.
 
-### participants
+### Participants
+```{r}
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+df_participants <- df_participants %>% filter(condition %in% c("real-vr", "vr-vr"))
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- overview %>% filter(condition %in% c("real-vr", "vr-vr"))
+all_participant <- df_participants %>% left_join(overview, by="Code")
+
+finished <- overview %>% group_by(condition) %>% count(finished)
+finished <- dcast(finished, condition~finished)
+finished$percent <- round(finished$yes/(finished$yes+finished$no), 2)
+is_ok <- overview %>% filter(finished=="yes") %>% group_by(condition) %>% count(is_ok)
+is_ok <- dcast(is_ok, condition~is_ok)
+is_ok$percent <- round(is_ok$yes/(is_ok$yes+is_ok$no), 2)
+```
+A total of `r sum(overview$is_ok == "yes", na.rm=T) + sum(finished$no)` undergraduate students at UC Davis particiapted in the second experiment. `r sum(finished$no)` participants didn't finish due to motion sickness and `r sum(is_ok$no, na.rm=T)` were removed due to a technical failure of the real world tracking system. Analyses were then conducted on a final set of `r sum(overview$is_ok == "yes", na.rm=T) ` (14 female) with mean age of `r round(mean(all_participant[all_participant$is_ok == "yes",]$age, na.rm=T),1)` (SD = `r round(sd(all_participant[all_participant$is_ok == "yes",]$age, na.rm=T), 1)`).
+
+```{r}
+kable(finished)
+all_participant %>% filter(is_ok=="yes") %>% group_by(sex) %>% count(sex)
+```
+
+## Quantifying performance in the last block
+First we assessed difference between the two learning conditions in the last block performance usint t-tests. The conditions did not differ in the walking performance (`r apa_print(t.test(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all_2, c(6))))$statistic`) nor visiting errors (`r apa_print(t.test(errors ~ learning.condition, only_blocks(sub_walk_all_2, c(6))))$statistic`), therefore showing that both treadmill VR and real world learning leads to the same performance in the VR.
+
+
+## Comparing to previous conditions
+Running a one-way ANOVA togeher together with other conditions from the first experiment (real to real, Vr - real and desktop to real), shows a significant effect of condition on final walking performance (`r apa_print(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))$statistic`), but Tukey post hoc tests failed to find any significant differences due to correction for multiple comparisons. Looking at the final walking performance in the Table XXX, we can see that the differences between conditions are truly negligible. Interestingly, we found no significant difference between the conditions when we analysed absolute distance, rather than normalised (`r apa_print(aov(distance ~ condition, only_blocks(walk_all, c(6))))$statistic`). This means that all aprticipants walked the same distance in the end on average, regardless of them being tested on a treadmill or in the real building. We also found no difference between any of the conditions in their final pointing performance, `r apa_print(aov(abs_error ~ condition, sop_all[sop_all$phase==2,]))$statistic`.
+
+```{r}
+df <- only_blocks(walk_all, c(6)) %>% group_by(condition) %>% summarize(dist = mean(min_norm_distance, na.rm=T), errors= mean(errors, na.rm=T))
+kable(df, caption='Average performance in all conditions in the last block in visitation errors and walking disntace', digits=2)
+```
+
+A different story is in comparing the visitation errors across conditions in the last block, where one-way ANOVA shows significant difference (`r apa_print(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))$statistic`) and Tukey's post hoc tests demonstrates significant differences between all conditions that differs in transfer phase modality, e.g. participants in the real world always perform better than participants on the treadmill VR. Looking at the table XXX, we can clearly see that conditions with transfer phase happening in VR, despite having comparable walked distance, have higher number of visitation errors. We think that this may have emerged from two different sources: firstly, it can point to higher difficulty in recognizing proper doors because of lesser visual accuracy in the VR, where all doors look similar unlike real doors which may demonstrate unique signs of wear or use. The second reason for the increased number of visitation errors in VR conditions can be explained by the lesser "social impact" of wrong choice. Whereas in the real conditions, participants had to actively inquire the experimenter, there was technically no penalty for "trying out" wrong door in the VR.
+
+```{r}
+ggplot(walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  geom_vline(xintercept = 3.5, linetype=4) +
+  ylab("Average normalised trial distance") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
+
+ggplot(walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  geom_vline(xintercept = 3.5, linetype=4) +
+  ylab("Average visitation errors") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
+```
+
+### Quantifying transfer
+```{r}
+ez_data <- ez_prepare_block(sub_walk_all_2_factor, c(3,4), 'min_norm_distance')
+fit_mm_dist_block <- lmer(min_norm_distance ~ learning.condition*exp_block_id + (1 | id/exp_block_id), data = only_blocks(sub_walk_all, 3:4))
+ez_fit_distance <- ezANOVA(
+        ez_data, 
+        dv = min_norm_distance,
+        wid = id,
+        within = exp_block_id,
+        between = learning.condition,
+        return_aov = T,
+        type = 3)
+
+ez_data <- ez_prepare_block(sub_walk_all_factor, c(3,4), 'errors')
+ez_fit_errors <- ezANOVA(
+        ez_data, 
+        dv = errors,
+        wid = id,
+        within = exp_block_id,
+        between = learning.condition,
+        return_aov = T,
+        type = 3)
+```
+
+Assessing the effects of trasfering from the real world to the Treadmill VR, we ran 2 (Learning condition: real vs treadmill VR) x 2 (block 3 vs blcok 4) ANOVA on data for distance walked and visitation errors. There was no effect of block `r apa_print(ez_fit_distance$aov)$statistic$learning_condition` nor learning condition (`r apa_print(ez_fit_distance$aov)$statistic$learning_condition`) on distance walked and we observed no interaction effects (`r apa_print(ez_fit_distance$aov)$statistic$learning_condition_exp_block_id`). But we found significant interaction effect between block and learning condition in visitation errors, `r apa_print(ez_fit_errors$aov)$statistic$learning_condition_exp_block_id`. 
+
+Pairwise t-tests comparing change in error rate from 3rd to 4th block show, that the group learning on the treadmill VR does show significant difference (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all_2, 'Treadmill VR', 3:4)))$statistic`) as it effectively didn't change the environment, but the group switching to the VR from the real world demonstrates increase in visitations errors from block 3 (`r m_sd_report(only_conditions_blocks(sub_walk_all_2, "Real", 3)$errors)`) to block 4 (`r m_sd_report(only_conditions_blocks(sub_walk_all_2, "Real", 4)$errors)`), `r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all_2, 'Real', 3:4)))$statistic`.
+
+### Summary
+In the last block, all conditios perform similarly as far as the walking distance goes, regardless of them being tested on the VR or in the real building. VR leads to overall higher error rates, but same walking performance, even when considering absolute distances. There are no significant differences in pointing performance between conditions, regardless of pointing being tested in the real world or in the VR.
