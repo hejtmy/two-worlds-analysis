@@ -17,7 +17,7 @@ ez_prepare_block <- function(df, blocks, variable=NULL){
   }
   
   has_all <- filtered_data %>% group_by(id) %>% select(id, "exp_block_id") %>% unique() %>% count
-  has_all <- has_all %>% filter(n == 2)
+  has_all <- has_all %>% filter(n >= 2)
   filtered_data <- filtered_data %>% filter(id %in% has_all$id)
   filtered_data$exp_block_id <- factor(filtered_data$exp_block_id)
   return(filtered_data)

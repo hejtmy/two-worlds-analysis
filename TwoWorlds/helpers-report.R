@@ -46,8 +46,8 @@ only_conditions <- function(df, conditions){
   return(df)
 }
 
-only_condition_blocks <- function(df, condition, ...){
-  df <- only_condition(df, condition)
+only_conditions_blocks <- function(df, condition, ...){
+  df <- only_conditions(df, condition)
   df <- only_blocks(df, ...)
   return(df)
 }
