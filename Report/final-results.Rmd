@@ -334,7 +334,7 @@ First we assessed difference between the two learning conditions in the last blo
 Running a one-way ANOVA togeher together with other conditions from the first experiment (real to real, Vr - real and desktop to real), shows a significant effect of condition on final walking performance (`r apa_print(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))$statistic`), but Tukey post hoc tests failed to find any significant differences due to correction for multiple comparisons. Looking at the final walking performance in the Table XXX, we can see that the differences between conditions are truly negligible. Interestingly, we found no significant difference between the conditions when we analysed absolute distance, rather than normalised (`r apa_print(aov(distance ~ condition, only_blocks(walk_all, c(6))))$statistic`). This means that all aprticipants walked the same distance in the end on average, regardless of them being tested on a treadmill or in the real building. We also found no difference between any of the conditions in their final pointing performance, `r apa_print(aov(abs_error ~ condition, sop_all[sop_all$phase==2,]))$statistic`.
 
 ```{r}
-df <- only_blocks(walk_all, c(6)) %>% group_by(condition) %>% summarize(dist = mean(min_norm_distance, na.rm=T), errors= mean(errors, na.rm=T))
+df <- only_blocks(walk_all, c(6)) %>% group_by(condition) %>% summarize(dist =m_sd_report(min_norm_distance), errors= m_sd_report(errors))
 kable(df, caption='Average performance in all conditions in the last block in visitation errors and walking disntace', digits=2)
 ```
 
