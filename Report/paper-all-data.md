@@ -11,18 +11,12 @@ Per phase separation
 PER BLOCK
 ---------
 
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-2.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-3.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-4.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-5.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-6.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-7.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-8.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-2.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-3.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-4.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-5.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-6.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-7.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-8.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-9.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-2-10.png)
 
 Pointing
 --------
 
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-3-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-3-2.png)
-
-Block measures
-==============
-
-Sum of errors
--------------
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-3-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-3-2.png) \#\# Sum of errors
 
 Measure of overall sum of errors. Mean columns define mean sum of errors for all participants in that block
 
@@ -32,9 +26,7 @@ Measure of overall sum of errors. Mean columns define mean sum of errors for all
 | Real               |     82.90909|     5.454546|     1.590909|     0.8607021|   0.0679299|     0.9632893|   0.0268788|
 | Treadmill VR       |     85.50000|    32.850000|    12.800000|     0.6195643|   0.0792096|     0.7899438|   0.0538944|
 
-    ## Using learning.condition as id variables
-
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-5-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-5-2.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-5-3.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-4-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-4-2.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-4-3.png)
 
 Normalised distance
 -------------------
@@ -43,13 +35,11 @@ Measure of mean distance. First three columns define mean normalised distance in
 
 | learning.condition |  block1.mean|  block3.mean|  block4.mean|  block34.diff|  block34.se|  block14.diff|  block14.se|
 |:-------------------|------------:|------------:|------------:|-------------:|-----------:|-------------:|-----------:|
-| Desktop            |     3.947872|     1.722262|     2.854267|    -0.1640028|   0.0738046|     0.1963527|   0.0763993|
-| Real               |     3.522940|     1.575323|     1.593967|    -0.0190986|   0.0306256|     0.3613898|   0.0527887|
-| Treadmill VR       |     4.739353|     2.218745|     2.249314|    -0.0037351|   0.0487285|     0.3430108|   0.0600789|
+| Desktop            |     3.947872|     1.722262|     2.427133|    -0.1253561|   0.0729458|     0.2389973|   0.0721084|
+| Real               |     3.308835|     1.382138|     1.530321|    -0.0514270|   0.0296911|     0.3464442|   0.0453461|
+| Treadmill VR       |     4.457657|     2.161947|     2.117841|     0.0128666|   0.0527691|     0.3390977|   0.0589867|
 
-    ## Using learning.condition as id variables
-
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-6-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-6-2.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-6-3.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-5-1.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-5-2.png)![](paper-all-data_files/figure-markdown_github/unnamed-chunk-5-3.png)
 
 Stats
 =====
@@ -59,15 +49,32 @@ Block T tests
 
 Paired block comparisons for improvement in different condiutions
 
+### Block 1-4
+
+Paired t tests between min normalised distance difference in blocks 1 and 4.
+
+| condition    |     estimate|  statistic|    p.value|  parameter|  conf.low|  conf.high| method        | alternative |
+|:-------------|------------:|----------:|----------:|----------:|---------:|----------:|:--------------|:------------|
+| real-real    |     1.947895|   8.126597|  0.0000001|         20|  1.447903|   2.447888| Paired t-test | two.sided   |
+| ve-real      |     2.225610|   4.677051|  0.0001877|         18|  1.225870|   3.225349| Paired t-test | two.sided   |
+| vr-real      |     2.295710|   5.332316|  0.0000381|         19|  1.394605|   3.196815| Paired t-test | two.sided   |
+| And for numb |  er of error|          s|           |           |          |           |               |             |
+
+| condition |   estimate|  statistic|  p.value|  parameter|   conf.low|  conf.high| method        | alternative |
+|:----------|----------:|----------:|--------:|----------:|----------:|----------:|:--------------|:------------|
+| real-real |  12.909091|  16.380577|    0e+00|         21|  11.270203|   14.54798| Paired t-test | two.sided   |
+| ve-real   |   9.421053|   8.394127|    1e-07|         18|   7.063107|   11.77900| Paired t-test | two.sided   |
+| vr-real   |   8.775000|  11.168682|    0e+00|         19|   7.130555|   10.41945| Paired t-test | two.sided   |
+
 ### Block 3-4
 
 Paired t tests between min normalised distance difference in blocks 3 and 4.
 
 | condition |    estimate|   statistic|    p.value|  parameter|    conf.low|  conf.high| method        | alternative |
 |:----------|-----------:|-----------:|----------:|----------:|-----------:|----------:|:--------------|:------------|
-| real-real |  -0.0186440|  -0.1581716|  0.8758327|         21|  -0.2637728|  0.2264847| Paired t-test | two.sided   |
-| ve-real   |  -1.1320052|  -2.0610797|  0.0540446|         18|  -2.2858929|  0.0218826| Paired t-test | two.sided   |
-| vr-real   |  -0.0305689|  -0.1145055|  0.9100385|         19|  -0.5893326|  0.5281947| Paired t-test | two.sided   |
+| real-real |  -0.1481832|  -1.1666069|  0.2564469|         21|  -0.4123373|  0.1159708| Paired t-test | two.sided   |
+| ve-real   |  -0.7048706|  -1.7923125|  0.0899076|         18|  -1.5311094|  0.1213682| Paired t-test | two.sided   |
+| vr-real   |   0.0441062|   0.1566285|  0.8771900|         19|  -0.5452841|  0.6334965| Paired t-test | two.sided   |
 
 And for number of errors
 
@@ -81,12 +88,12 @@ And for number of errors
 
 Paired t tests between min normalised distance difference in blocks 1 and 4.
 
-| condition    |     estimate|  statistic|    p.value|  parameter|    conf.low|  conf.high| method        | alternative |
-|:-------------|------------:|----------:|----------:|----------:|-----------:|----------:|:--------------|:------------|
-| real-real    |     1.928734|   5.431976|  0.0000257|         20|   1.1880702|   2.669398| Paired t-test | two.sided   |
-| ve-real      |     1.093604|   1.928134|  0.0697654|         18|  -0.0980027|   2.285211| Paired t-test | two.sided   |
-| vr-real      |     2.490039|   5.001329|  0.0000793|         19|   1.4479740|   3.532105| Paired t-test | two.sided   |
-| And for numb |  er of error|          s|           |           |            |           |               |             |
+| condition    |     estimate|  statistic|    p.value|  parameter|   conf.low|  conf.high| method        | alternative |
+|:-------------|------------:|----------:|----------:|----------:|----------:|----------:|:--------------|:------------|
+| real-real    |     1.781306|   6.130112|  0.0000054|         20|  1.1751603|   2.387451| Paired t-test | two.sided   |
+| ve-real      |     1.520739|   3.299164|  0.0039887|         18|  0.5523257|   2.489152| Paired t-test | two.sided   |
+| vr-real      |     2.339816|   4.684741|  0.0001614|         19|  1.2944454|   3.385187| Paired t-test | two.sided   |
+| And for numb |  er of error|          s|           |           |           |           |               |             |
 
 | condition |  estimate|  statistic|  p.value|  parameter|   conf.low|  conf.high| method        | alternative |
 |:----------|---------:|----------:|--------:|----------:|----------:|----------:|:--------------|:------------|
@@ -100,9 +107,9 @@ Paired t tests between min normalised distance difference in blocks 1 and 6.
 
 | condition |  estimate|  statistic|  p.value|  parameter|  conf.low|  conf.high| method        | alternative |
 |:----------|---------:|----------:|--------:|----------:|---------:|----------:|:--------------|:------------|
-| real-real |  2.283372|   8.817858|  0.0e+00|         20|  1.743215|   2.823529| Paired t-test | two.sided   |
-| ve-real   |  2.563180|   6.199245|  7.5e-06|         18|  1.694519|   3.431841| Paired t-test | two.sided   |
-| vr-real   |  3.511071|   8.363107|  1.0e-07|         18|  2.629044|   4.393098| Paired t-test | two.sided   |
+| real-real |  2.069267|   8.578768|  0.0e+00|         20|  1.566116|   2.572418| Paired t-test | two.sided   |
+| ve-real   |  2.640617|   6.472810|  4.3e-06|         18|  1.783535|   3.497699| Paired t-test | two.sided   |
+| vr-real   |  3.230200|   7.471135|  6.0e-07|         18|  2.321851|   4.138549| Paired t-test | two.sided   |
 
 And for number of errors
 
@@ -119,17 +126,17 @@ Independent block improvement comparisons between conditions for distance
 
 | Comparison        |  mean.first|  mean.second|    p.value|
 |:------------------|-----------:|------------:|----------:|
-| Desktop - real    |  -0.1440074|   -0.3589776|  0.0553851|
-| Treadmil - real   |  -0.3252250|   -0.3589776|  0.6757288|
-| Treadmil- Desktop |  -0.3252250|   -0.1440074|  0.1147730|
+| Desktop - real    |  -0.2006440|   -0.3444842|  0.1514791|
+| Treadmil - real   |  -0.3152113|   -0.3444842|  0.7041065|
+| Treadmil- Desktop |  -0.3152113|   -0.2006440|  0.2722008|
 
 ### Block 3-4 improvement
 
 | Comparison        |  mean.first|  mean.second|    p.value|
 |:------------------|-----------:|------------:|----------:|
-| Desktop - real    |   0.1640028|    0.0190986|  0.0822302|
-| Treadmil - real   |   0.0037351|    0.0190986|  0.7912053|
-| Treadmil- Desktop |   0.0037351|    0.1640028|  0.0795178|
+| Desktop - real    |   0.1253561|    0.0514270|  0.3572766|
+| Treadmil - real   |  -0.0128666|    0.0514270|  0.2967233|
+| Treadmil- Desktop |  -0.0128666|    0.1253561|  0.1342036|
 
 Independent block improvement comparisons between conditions for number of errors
 ---------------------------------------------------------------------------------
@@ -155,12 +162,12 @@ Anova
 
 Simple between subjects anova
 
-|                                   |    Df|       Sum Sq|      Mean Sq|     F value|  Pr(&gt;F)|
-|-----------------------------------|-----:|------------:|------------:|-----------:|----------:|
-| exp\_block\_id                    |     1|   1212.43888|  1212.438885|  191.138055|  0.0000000|
-| learning.condition                |     2|     65.68384|    32.841918|    5.177449|  0.0057266|
-| exp\_block\_id:learning.condition |     2|     28.95909|    14.479545|    2.282665|  0.1023067|
-| Residuals                         |  1803|  11436.90255|     6.343263|          NA|         NA|
+|                                   |    Df|      Sum Sq|      Mean Sq|     F value|  Pr(&gt;F)|
+|-----------------------------------|-----:|-----------:|------------:|-----------:|----------:|
+| exp\_block\_id                    |     1|  1065.02676|  1065.026765|  205.201439|  0.0000000|
+| learning.condition                |     2|    61.91766|    30.958832|    5.964918|  0.0026193|
+| exp\_block\_id:learning.condition |     2|    22.76192|    11.380962|    2.192799|  0.1119080|
+| Residuals                         |  1764|  9155.42903|     5.190152|          NA|         NA|
 
 ### Normalised distance
 
@@ -172,15 +179,15 @@ Within subjects anova for block 3-4 difference.
 <td>
 |     | Effect                            |  DFn|  DFd|         F|          p| p&lt;.05 |        ges|
 |-----|:----------------------------------|----:|----:|---------:|----------:|:---------|----------:|
-| 2   | learning.condition                |    2|   58|  3.310848|  0.0434950| \*       |  0.0664271|
-| 3   | exp\_block\_id                    |    1|   58|  3.998625|  0.0502287|          |  0.0253169|
-| 4   | learning.condition:exp\_block\_id |    2|   58|  3.406268|  0.0399301| \*       |  0.0423779|
+| 2   | learning.condition                |    2|   58|  6.652379|  0.0025060| \*       |  0.1096784|
+| 3   | exp\_block\_id                    |    1|   58|  2.832637|  0.0977427|          |  0.0221110|
+| 4   | learning.condition:exp\_block\_id |    2|   58|  1.886117|  0.1608444|          |  0.0292310|
 
 </td>
 </tr>
 </tbody>
 </table>
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-24-1.png)
 
 Within subjects anova for block 1-4 difference in minimal path.
 
@@ -188,17 +195,17 @@ Within subjects anova for block 1-4 difference in minimal path.
 <tbody>
 <tr>
 <td>
-|     | Effect                            |  DFn|  DFd|          F|          p| p&lt;.05 |        ges|
-|-----|:----------------------------------|----:|----:|----------:|----------:|:---------|----------:|
-| 2   | learning.condition                |    2|   57|   3.902843|  0.0257905| \*       |  0.0704320|
-| 3   | exp\_block\_id                    |    1|   57|  44.825263|  0.0000000| \*       |  0.2599699|
-| 4   | learning.condition:exp\_block\_id |    2|   57|   2.127102|  0.1285465|          |  0.0322646|
+|     | Effect                            |  DFn|  DFd|           F|          p| p&lt;.05 |        ges|
+|-----|:----------------------------------|----:|----:|-----------:|----------:|:---------|----------:|
+| 2   | learning.condition                |    2|   57|   4.7875237|  0.0119690| \*       |  0.0805653|
+| 3   | exp\_block\_id                    |    1|   57|  59.5077079|  0.0000000| \*       |  0.3330743|
+| 4   | learning.condition:exp\_block\_id |    2|   57|   0.9668416|  0.3864303|          |  0.0159693|
 
 </td>
 </tr>
 </tbody>
 </table>
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-24-1.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-25-1.png)
 
 ### Number of errors
 
@@ -210,15 +217,15 @@ Within subjects anova for block 1-4 number of errors.
 <td>
 |     | Effect                            |  DFn|  DFd|           F|          p| p&lt;.05 |        ges|
 |-----|:----------------------------------|----:|----:|-----------:|----------:|:---------|----------:|
-| 2   | learning.condition                |    2|   57|    2.777875|  0.0706020|          |  0.0452731|
-| 3   | exp\_block\_id                    |    1|   57|  220.022968|  0.0000000| \*       |  0.6646649|
-| 4   | learning.condition:exp\_block\_id |    2|   57|    2.406574|  0.0992268|          |  0.0415576|
+| 2   | learning.condition                |    2|   57|    2.846774|  0.0663105|          |  0.0460987|
+| 3   | exp\_block\_id                    |    1|   57|  253.898477|  0.0000000| \*       |  0.6969041|
+| 4   | learning.condition:exp\_block\_id |    2|   57|    1.703376|  0.1912041|          |  0.0299280|
 
 </td>
 </tr>
 </tbody>
 </table>
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-25-1.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-26-1.png)
 
 Within subjects anova for block 3-4 number of errors.
 
@@ -226,14 +233,27 @@ Within subjects anova for block 3-4 number of errors.
 <tbody>
 <tr>
 <td>
-|     | Effect                   |  DFn|  DFd|         F|          p| p&lt;.05 |        ges|
-|-----|:-------------------------|----:|----:|---------:|----------:|:---------|----------:|
-| 2   | condition                |    2|   58|  7.758076|  0.0010335| \*       |  0.1650409|
-| 3   | exp\_block\_id           |    1|   58|  5.135623|  0.0271868| \*       |  0.0225990|
-| 4   | condition:exp\_block\_id |    2|   58|  1.247006|  0.2949528|          |  0.0111038|
+|     | Effect                   |  DFn|  DFd|          F|          p| p&lt;.05 |        ges|
+|-----|:-------------------------|----:|----:|----------:|----------:|:---------|----------:|
+| 2   | condition                |    2|   58|  9.7812233|  0.0002185| \*       |  0.1793309|
+| 3   | exp\_block\_id           |    1|   58|  5.6678041|  0.0205845| \*       |  0.0332652|
+| 4   | condition:exp\_block\_id |    2|   58|  0.4700672|  0.6273202|          |  0.0056753|
 
 </td>
 </tr>
 </tbody>
 </table>
-![](paper-all-data_files/figure-markdown_github/unnamed-chunk-26-1.png)
+![](paper-all-data_files/figure-markdown_github/unnamed-chunk-27-1.png)
+
+Office specific learning
+------------------------
+
+    ##   learning.condition block2 block3 block4 block5 block6
+    ## 1            Desktop  -0.23   0.24   0.39   0.39   0.39
+    ## 2               Real   0.10   0.08   0.34   0.40   0.13
+    ## 3       Treadmill VR  -0.08   0.27   0.32   0.26   0.13
+
+    ##   learning.condition block2 block3 block4 block5 block6
+    ## 1            Desktop  -0.04   0.33  -0.04   0.00   0.12
+    ## 2               Real   0.08  -0.04   0.08   0.15   0.00
+    ## 3       Treadmill VR  -0.01   0.07   0.04   0.01   0.06

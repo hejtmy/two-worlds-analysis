@@ -16,13 +16,56 @@ library(broom)
 library(brainvr.R)
 library(xtable)
 library(restimoter)
+library(papaja)
+library(googlesheets)
+
 
 source("../Scripts/paper-prepare.R")
 
+source("helpers/block-t-test-improvement.R")
+source("helpers/block-t-test.R")
+source("helpers/block-measure.R")
+source("helpers/block-correlation.R")
+
+
+settings <- load_google_sheets()
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
+
 #green, violet, blue, yellow, pink, dark blue
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
-estimote_pal_mono <- function(n){return(rep(estimote_pal[n],6))}
 theme_set(theme_minimal())
+
+### Try running it without outliers
+sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+
+condition_all_sums <- sub_walk_all %>% 
+  group_by(exp_block_id, id, learning.condition) %>% 
+  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
+            sum.errors = sum(errors, na.rm = T),
+            mean.distance = mean(min_norm_distance, na.rm = T),
+            mean.error = mean(errors, na.rm = T))
+
+df_errors <- block_measure(condition_all_sums, "sum.errors")
+df_distance <- block_measure(condition_all_sums, "mean.distance")
+
+df_wide_errors <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
+df_wide_distance <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
+colnames(df_wide_errors) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+df_wide_errors$block34 <- (df_wide_errors$block3-df_wide_errors$block4)/(df_wide_errors$block3+df_wide_errors$block4)
+df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(df_wide_distance$block3+df_wide_distance$block4)
+
+sub_walk_all_factor <- sub_walk_all
+sub_walk_all_factor$exp_block_id <- factor(sub_walk_all_factor$exp_block_id)
+sub_walk_all_factor$id <- factor(sub_walk_all_factor$id)
+sub_walk_all_factor$learning.condition <- factor(sub_walk_all_factor$learning.condition)
+
+knitr::opts_chunk$set(echo=F, warning = F, message = F)
 ```
 
 ## Per phase separation
@@ -182,6 +225,18 @@ block_t_test <- function(df, block1, block2, value){
   df_wide %>% group_by(condition) %>% do(tidy(t.test(.$block1, .$block2, paired = T)))
 }
 ```
+
+### Block 1-4
+Paired t tests between min normalised distance difference in blocks 1 and 4.
+```{r, echo=F}
+kable(block_t_test(sub_walk_all, 3, 1,"min_norm_distance"))
+```
+And for number of errors
+```{r, echo=F}
+kable(block_t_test(sub_walk_all, 3, 1,"errors"))
+```
+
+
 
 ### Block 3-4
 Paired t tests between min normalised distance difference in blocks 3 and 4.
