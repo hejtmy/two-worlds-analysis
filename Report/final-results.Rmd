@@ -40,6 +40,7 @@ theme_set(theme_minimal())
 
 ### Try running it without outliers
 sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+walk_all[!is.na(walk_all$norm_distance) & walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
 
 condition_all_sums <- sub_walk_all %>% 
   group_by(exp_block_id, id, learning.condition) %>% 
@@ -306,7 +307,6 @@ In the last testing block (block 6), we found no differences among the groups in
 
 To attempt to address this issue, we compared the three different modalities, navigating in the real-world (real-world), navigating on the treadmill with the head-mounted display (immersed), and navigating with a joystick in desktop VR (impoverished) on the first block of the experiment.  Comparing normalized distances, there were no difference between (`r apa_print(aov(min_norm_distance ~ learning.condition, only_blocks(sub_walk_all, 1)))$statistic$learning_condition`), nor in visitation errors (`r apa_print(aov(errors ~ learning.condition, only_blocks(sub_walk_all, 1)))$statistic$learning_condition`).  This suggests that participants were readily able to navigate in the different modalities regardless of the interface.  We did, however, find a significant difference in normalized time (`r apa_print(aov(min_norm_time ~ learning.condition, only_blocks(sub_walk_all, 1)))$statistic$learning_condition`). This effect appeared to be driven largely by the fact that treadmill VR participants took to get used to the interface and therefore having longer trial times at the start.  
 
-
 ## Experiment 1b: Comparing transfer from desktop to real and treadmill to desktop
 ```{r}
 ### Try running it without outliers
@@ -351,10 +351,16 @@ First we assessed difference between the two learning conditions in the last blo
 
 
 ## Comparing to previous conditions
-Running a one-way ANOVA togeher together with other conditions from the first experiment (real to real, Vr - real and desktop to real), shows a significant effect of condition on final walking performance (`r apa_print(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))$statistic`), but Tukey post hoc tests failed to find any significant differences due to correction for multiple comparisons. Looking at the final walking performance in the Table XXX, we can see that the differences between conditions are truly negligible. Interestingly, we found no significant difference between the conditions when we analysed absolute distance, rather than normalised (`r apa_print(aov(distance ~ condition, only_blocks(walk_all, c(6))))$statistic`). This means that all aprticipants walked the same distance in the end on average, regardless of them being tested on a treadmill or in the real building. We also found no difference between any of the conditions in their final pointing performance, `r apa_print(aov(abs_error ~ condition, sop_all[sop_all$phase==2,]))$statistic`.
+Running a one-way ANOVA togeher together with other conditions from the first experiment (real to real, Vr - real and desktop to real), shows a significant effect of condition on final walking performance (`r apa_print(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))$statistic`).
 
 ```{r}
-df <- only_blocks(walk_all, c(6)) %>% group_by(condition) %>% summarize(dist =m_sd_report(min_norm_distance), errors= m_sd_report(errors))
+kable(tukey_report_table(TukeyHSD(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))))
+```
+
+Looking at the final walking performance in the Table XXX, we can see that the differences between conditions are truly negligible. Interestingly, we found no significant difference between the conditions when we analysed absolute distance, rather than normalised (`r apa_print(aov(distance ~ condition, only_blocks(walk_all, c(6))))$statistic`). This means that all aprticipants walked the same distance in the end on average, regardless of them being tested on a treadmill or in the real building. We also found no difference between any of the conditions in their final pointing performance, `r apa_print(aov(abs_error ~ condition, sop_all[sop_all$phase==2,]))$statistic`.
+
+```{r}
+df <- only_blocks(walk_all, c(6)) %>% group_by(condition) %>% summarize(dist = m_sd_report(min_norm_distance), errors= m_sd_report(errors))
 kable(df, caption='Average performance in all conditions in the last block in visitation errors and walking disntace', digits=2)
 ```
 
