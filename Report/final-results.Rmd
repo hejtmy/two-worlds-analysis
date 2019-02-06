@@ -125,7 +125,7 @@ kable(df, caption="Paired T test comparing individual error rate improvement fro
 ```
 
 Figure X shows the time course of each learning condition over the 6 blocks of exposure to the environments, in terms of walked distance and visitation errors over the course of the experiment.  As can be seen in Figure XX, all modalities showed an incremental improvement in terms of both distance and visitation errors (see fig. XXX and fig. XXX). At block 4, however, an uptick can be observed for the desktop modality switch group and slight for no modality switch (i.e. real to real).  
-To better quantify these effects, we took two different approaches. First, we analyzed the slope of the learning curves from phase 1 (blocks 1-3) and compared between different Learning Conditions.   
+To better quantify these effects, we took two different approaches. First, we analyzed the slope of the learning curves from phase 1 (blocks 1-3) and compared between different Learning Conditions.
 
 ```{r}
 ### graphs
@@ -411,15 +411,13 @@ Assessing the effects of trasfering from the real world to the Treadmill VR, we 
 Pairwise t-tests comparing change in error rate from 3rd to 4th block show, that the group learning on the treadmill VR does show significant difference (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all_2, 'Treadmill VR', 3:4)))$statistic`) as it effectively didn't change the environment, but the group switching to the VR from the real world demonstrates increase in visitations errors from block 3 (`r m_sd_report(only_conditions_blocks(sub_walk_all_2, "Real", 3)$errors)`) to block 4 (`r m_sd_report(only_conditions_blocks(sub_walk_all_2, "Real", 4)$errors)`), `r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all_2, 'Real', 3:4)))$statistic`.
 
 ```{r}
-
-walk_all_filtered <- rbind(sub_walk_all, sub_walk_all_2)
-ggplot(only_blocks(walk_all_filtered, 6), aes(x = condition, y = min_norm_distance, fill = learning.condition)) +
+ggplot(only_blocks(walk_all, 6), aes(x = condition, y = min_norm_distance, fill = learning.condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
   ylab("Average path distance in the last block of the transfer phase") + xlab("Condition") + 
   scale_fill_manual(values = estimote_pal, "Condition")  + guides(fill=F)
 
-ggplot(only_blocks(walk_all_filtered, 6), aes(x = condition, y = errors, fill = learning.condition)) +
+ggplot(only_blocks(walk_all, 6), aes(x = condition, y = errors, fill = learning.condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
   ylab("Number of visiting errors in the last block of the transfer phase") + xlab("Condition") + 

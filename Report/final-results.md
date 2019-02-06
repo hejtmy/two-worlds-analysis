@@ -363,17 +363,30 @@ performance in the VR.
 Running a one-way ANOVA togeher together with other conditions from the
 first experiment (real to real, Vr - real and desktop to real), shows a
 significant effect of condition on final walking performance
-(\(F(4, 498) = 3.68\), \(\mathit{MSE} = 0.19\), \(p = .006\)), but Tukey
-post hoc tests failed to find any significant differences due to
-correction for multiple comparisons. Looking at the final walking
-performance in the Table XXX, we can see that the differences between
-conditions are truly negligible. Interestingly, we found no significant
-difference between the conditions when we analysed absolute distance,
-rather than normalised (\(F(4, 498) = 1.42\), \(\mathit{MSE} = 147.36\),
-\(p = .225\)). This means that all aprticipants walked the same distance
-in the end on average, regardless of them being tested on a treadmill or
-in the real building. We also found no difference between any of the
-conditions in their final pointing performance, \(F(4, 1216) = 2.32\),
+(\(F(4, 498) = 3.68\), \(\mathit{MSE} = 0.19\), \(p = .006\)).
+
+|                   |        diff | p-value   |
+| ----------------- | ----------: | :-------- |
+| real-vr-real-real | \-0.1028174 | p = 0.42  |
+| ve-real-real-real |   0.0395100 | p = 0.97  |
+| vr-real-real-real |   0.1245411 | p = 0.34  |
+| vr-vr-real-real   | \-0.0449432 | p = 0.94  |
+| ve-real-real-vr   |   0.1423274 | p = 0.13  |
+| vr-real-real-vr   |   0.2273585 | p \< .001 |
+| vr-vr-real-vr     |   0.0578741 | p = 0.83  |
+| vr-real-ve-real   |   0.0850311 | p = 0.72  |
+| vr-vr-ve-real     | \-0.0844533 | p = 0.62  |
+| vr-vr-vr-real     | \-0.1694844 | p = 0.06  |
+
+Looking at the final walking performance in the Table XXX, we can see
+that the differences between conditions are truly negligible.
+Interestingly, we found no significant difference between the conditions
+when we analysed absolute distance, rather than normalised
+(\(F(4, 498) = 1.42\), \(\mathit{MSE} = 147.36\), \(p = .225\)). This
+means that all aprticipants walked the same distance in the end on
+average, regardless of them being tested on a treadmill or in the real
+building. We also found no difference between any of the conditions in
+their final pointing performance, \(F(4, 1216) = 2.32\),
 \(\mathit{MSE} = 818.28\), \(p = .055\).
 
 | condition | dist                 | errors               |
@@ -407,7 +420,7 @@ inquire the experimenter, there was technically no penalty for “trying
 out” wrong door in the
 VR.
 
-![](final-results_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->![](final-results_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
+![](final-results_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->![](final-results_files/figure-gfm/unnamed-chunk-17-2.png)<!-- -->
 
 ### Quantifying transfer
 
@@ -430,7 +443,7 @@ world demonstrates increase in visitations errors from block 3 (M = 1.41
 , SD = 4.09) to block 4 (M = 3.27 , SD = 3.87), \(t(237.27) = -3.63\),
 \(p < .001\).
 
-![](final-results_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->![](final-results_files/figure-gfm/unnamed-chunk-18-2.png)<!-- -->
+![](final-results_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->![](final-results_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->
 
 ### Summary
 
