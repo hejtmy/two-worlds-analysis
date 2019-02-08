@@ -11,6 +11,7 @@ library(car)
 library(lme4)
 library(lmerTest)
 library(ggplot2)
+library(gridExtra)
 library(ez)
 library(Hmisc)
 library(dplyr)
@@ -36,7 +37,8 @@ overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-rea
 
 #green, violet, blue, yellow, pink, dark blue
 estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
-theme_set(theme_minimal())
+theme_set(theme_minimal() + theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=16)))
 
 ### Try running it without outliers
 sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
@@ -51,11 +53,17 @@ condition_all_sums <- sub_walk_all %>%
 
 df_errors <- block_measure(condition_all_sums, "sum.errors")
 df_distance <- block_measure(condition_all_sums, "mean.distance")
+df_distance$graph.learning.condition <- dplyr::recode(df_distance$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
+df_errors$graph.learning.condition <- dplyr::recode(df_errors$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
+
 
 df_wide_errors <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
 df_wide_distance <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
 colnames(df_wide_errors) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
 colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
+df_wide_distance$graph.learning.condition <- dplyr::recode(df_wide_distance$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
+df_wide_errors$graph.learning.condition <- dplyr::recode(df_wide_errors$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
+
 df_wide_errors$block34 <- (df_wide_errors$block3-df_wide_errors$block4)/(df_wide_errors$block3+df_wide_errors$block4)
 df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(df_wide_distance$block3+df_wide_distance$block4)
 
@@ -185,15 +193,27 @@ We also observed significant differences between conditions in pointing performa
 
 ```{r}
 # Pre transfer plot of normalised distances
-make_graph(only_blocks(sub_walk_all, 1:3), "learning.condition", "min_norm_distance", "exp_block_id") + 
+ggplot(only_blocks(sub_walk_all_factor, 1:3), aes(x = graph.exp_block_id, y = min_norm_distance, fill = graph.exp_block_id)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
   ylab("Average normalised trial distance") + xlab("Learning condition") + 
-  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F) +
+  facet_wrap(~graph.learning.condition, strip.position = "bottom", scales = "free_x") + 
+  theme(panel.spacing = unit(0, "lines"), 
+         strip.background = element_blank(),
+         strip.placement = "outside")
 
-make_graph(only_blocks(sub_walk_all, 1:3), "learning.condition", "errors", "exp_block_id") + 
-  ylab("Average normalised trial distance") + xlab("Learning condition") + 
-  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F)
+ggplot(only_blocks(sub_walk_all_factor, 1:3), aes(x = graph.exp_block_id, y = errors, fill = graph.exp_block_id)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average visitation errors") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F) +
+  facet_wrap(~graph.learning.condition, strip.position = "bottom", scales = "free_x") + 
+  theme(panel.spacing = unit(0, "lines"), 
+         strip.background = element_blank(),
+         strip.placement = "outside")
 
-ggplot(point_data_1, aes(x = learning.condition, y = abs_error, fill = learning.condition)) +
+ggplot(point_data_1, aes(x = graph.learning.condition, y = abs_error, fill = graph.learning.condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
   ylab("Average pointing error in degrees after learning phase") + xlab("Learning condition") + 
@@ -253,17 +273,20 @@ To assess the level of performance change form directly before and after the swi
 This allowed us to directly compare the relative improvement or deterioration from pre-switch block to the post-switch one.  These findings are shown in Figure XX for normalized distance (Figure XXa) and visitation errors (Figure XXb).
 
 ```{r, echo=F}
-ggplot(df_distance, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
+ggplot(df_distance, aes(x = graph.learning.condition, y = block34.diff, fill = graph.learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), width=.2, position=position_dodge(.9)) +
   scale_fill_manual(values = estimote_pal) +
-  ylab("Mean normalised distance improvement from block 3 to 4") + xlab("Learning condition")  + guides(fill=F)
+  ylab("Level of transfer for normalised distance") + 
+  xlab("Learning condition") + guides(fill=F) + 
+  theme(axis.title.y = element_text(size = rel(0.9)))
 
-ggplot(df_errors, aes(x = learning.condition, y = block34.diff, fill = learning.condition)) + 
+ggplot(df_errors, aes(x = graph.learning.condition, y = block34.diff, fill = graph.learning.condition)) + 
   geom_bar(stat = 'identity', position="dodge") + 
   geom_errorbar(aes(ymin=block34.diff-block34.se, ymax=block34.diff+block34.se), width=.2, position=position_dodge(.9)) +
   scale_fill_manual(values = estimote_pal) +
-  ylab("Mean sum of errors improvement after switch")+ xlab("Learning condition") + guides(fill=F)
+  ylab("Level of transfer for visitation errors")+ xlab("Learning condition") + 
+  guides(fill=F) + theme(axis.title.y = element_text(size = rel(0.9)))
 ```
 
 Comparing the improvement in walked distance using one-way ANOVA, we see did not find any  significant difference between groups `r apa_print(aov(block34 ~ learning.condition, df_wide_distance))$statistic$learning_condition `. Visual inspection of the data, however, suggested that the desktop condition again showed the least transfer from block 3 to block 4. For visitation errors, there were significant group differences in error rate improvement, `r apa_print(aov(block34 ~ learning.condition, df_wide_errors))$statistic$learning_condition`. Comparing the conditions pairwise, we can asses that there is a significant difference in improvement between real world learnign and desktop (`r apa_print(t.test(block34 ~ learning.condition, only_conditions(df_wide_errors, c('Real', 'Desktop'))))$statistic`), as well as Treadmill VR, `r apa_print(t.test(block34 ~ learning.condition, only_conditions(df_wide_errors, c('Real', 'Treadmill VR'))))$statistic`, but we find no difference in improvement betweem desktop learning and Treadmill VR learning, `r apa_print(t.test(block34 ~ learning.condition, only_conditions(df_wide_errors, c('Treadmill VR', 'Desktop'))))$statistic`.
@@ -366,20 +389,24 @@ kable(df, caption='Average performance in all conditions in the last block in vi
 
 A different story is in comparing the visitation errors across conditions in the last block, where one-way ANOVA shows significant difference (`r apa_print(aov(errors ~ condition, only_blocks(walk_all, c(6))))$statistic`) and Tukey's post hoc tests demonstrates significant differences between all conditions that differs in transfer phase modality, e.g. participants in the real world always perform better than participants on the treadmill VR. Looking at the table XXX, we can clearly see that conditions with transfer phase happening in VR, despite having comparable walked distance, have higher number of visitation errors. We think that this may have emerged from two different sources: firstly, it can point to higher difficulty in recognizing proper doors because of lesser visual accuracy in the VR, where all doors look similar unlike real doors which may demonstrate unique signs of wear or use. The second reason for the increased number of visitation errors in VR conditions can be explained by the lesser "social impact" of wrong choice. Whereas in the real conditions, participants had to actively inquire the experimenter, there was technically no penalty for "trying out" wrong door in the VR.
 
-```{r}
-ggplot(walk_all, aes(x = exp_block_id, y = min_norm_distance, color = factor(condition))) +
-  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
-  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
-  geom_vline(xintercept = 3.5, linetype=4) +
+```{r, fig.width=10, fig.height=8}
+ggplot(walk_all, aes(x = exp_block_id, y = min_norm_distance, group = factor(condition))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar", aes(color=graph.learning.condition, linetype=testing.condition)) + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line", aes(color=graph.learning.condition, linetype=testing.condition)) + 
+  geom_vline(xintercept = 3.5, linetype=4) + 
   ylab("Average normalised trial distance") + xlab("Block") + 
-  scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
+  scale_color_manual(values=estimote_pal, "Learning condition") + 
+  scale_linetype_manual(values=c("dashed", "solid"), "Transfer condition") + 
+  guides(fill=F)
 
 ggplot(walk_all, aes(x = exp_block_id, y = errors, color = factor(condition))) +
-  stat_summary(fun.data=mean_cl_normal,position=position_dodge(width=0.1), width = 0.2, geom="errorbar") + 
-  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line") + 
+  stat_summary(fun.data=mean_cl_normal, position=position_dodge(width=0.1), width = 0.2, geom="errorbar", aes(color=graph.learning.condition, linetype=testing.condition)) + 
+  stat_summary(fun.y=mean,position=position_identity(), size = 1, geom="line", aes(color=graph.learning.condition, linetype=testing.condition)) + 
   geom_vline(xintercept = 3.5, linetype=4) +
-  ylab("Average visitation errors") + xlab("Block") + 
-  scale_color_manual(values=estimote_pal,"Condition") + guides(fill=F)
+  ylab("Average number of visitation errors") + xlab("Block") + 
+  scale_color_manual(values=estimote_pal, "Learning condition") + 
+  scale_linetype_manual(values=c("dashed", "solid"), "Transfer condition") + 
+  guides(fill=F)
 ```
 
 ### Quantifying transfer
@@ -410,18 +437,32 @@ Assessing the effects of trasfering from the real world to the Treadmill VR, we 
 
 Pairwise t-tests comparing change in error rate from 3rd to 4th block show, that the group learning on the treadmill VR does show significant difference (`r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all_2, 'Treadmill VR', 3:4)))$statistic`) as it effectively didn't change the environment, but the group switching to the VR from the real world demonstrates increase in visitations errors from block 3 (`r m_sd_report(only_conditions_blocks(sub_walk_all_2, "Real", 3)$errors)`) to block 4 (`r m_sd_report(only_conditions_blocks(sub_walk_all_2, "Real", 4)$errors)`), `r apa_print(t.test(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all_2, 'Real', 3:4)))$statistic`.
 
-```{r}
-ggplot(only_blocks(walk_all, 6), aes(x = condition, y = min_norm_distance, fill = learning.condition)) +
+```{r, fig.width=10, fig.height=8}
+ggplot(only_blocks(walk_all, 6), aes(x = testing.condition, y = min_norm_distance, fill = graph.learning.condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
-  ylab("Average path distance in the last block of the transfer phase") + xlab("Condition") + 
-  scale_fill_manual(values = estimote_pal, "Condition")  + guides(fill=F)
+  ylab("Average path distance in the last block of the transfer phase") + xlab("Transfer condition") + 
+  scale_fill_manual(values = estimote_pal, "Condition")  + guides(fill=F) + 
+  facet_wrap(~graph.learning.condition, strip.position = "top", scales = "free_x") + 
+  ggtitle("Learning condition")+
+  theme(panel.spacing = unit(0, "lines"), 
+         strip.background = element_blank(),
+         strip.placement = "outside",
+         strip.text = element_text(size = 16),
+          plot.title = element_text(hjust = 0.5))
 
-ggplot(only_blocks(walk_all, 6), aes(x = condition, y = errors, fill = learning.condition)) +
+ggplot(only_blocks(walk_all, 6), aes(x = testing.condition, y = errors, fill = graph.learning.condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
-  ylab("Number of visiting errors in the last block of the transfer phase") + xlab("Condition") + 
-  scale_fill_manual(values = estimote_pal, "Condition")  + guides(fill=F)
+  ylab("Average number of visitation errors in the last block of the transfer phase") + xlab("Transfer condition") + 
+  scale_fill_manual(values = estimote_pal, "Condition")  + guides(fill=F) + 
+  facet_wrap(~graph.learning.condition, strip.position = "top", scales = "free_x") + 
+  ggtitle("Learning condition")+
+  theme(panel.spacing = unit(0, "lines"), 
+         strip.background = element_blank(),
+         strip.placement = "outside",
+         strip.text = element_text(size = 16),
+          plot.title = element_text(hjust = 0.5))
 ```
 
 ### Summary
