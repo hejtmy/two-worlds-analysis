@@ -216,8 +216,9 @@ ggplot(only_blocks(sub_walk_all_factor, 1:3), aes(x = graph.exp_block_id, y = er
 ggplot(point_data_1, aes(x = graph.learning.condition, y = abs_error, fill = graph.learning.condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
-  ylab("Average pointing error in degrees after learning phase") + xlab("Learning condition") + 
-  scale_fill_manual(values = estimote_pal, "Learning condition")  + guides(fill=F)
+  ylab("Average pointing error after learning phase") + xlab("Learning condition") + 
+  scale_fill_manual(values = estimote_pal, "Learning condition") +
+  guides(fill=F) + theme(axis.title.y = element_text(size = rel(0.9)))
 
 ```
 
