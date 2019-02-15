@@ -25,7 +25,7 @@ ez_prepare_block <- function(df, blocks, variable=NULL){
 
 mean.na <- function(data){return(mean(data, na.rm = T))}
 
-m_sd_report <- function(vec, digits=2){
+m_sd_report <- function(vec, digits=3){
   m <- round(mean(vec, na.rm=T), digits)
   s <- round(sd(vec, na.rm=T), digits)
   return(paste("M = ", m, ", SD = ", s, collapse=""))

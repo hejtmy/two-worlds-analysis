@@ -6,7 +6,13 @@ Lukáš Hejtmánek
 Participants
 ------------
 
-A total of 79 undergraduate students at UC Davis (M = 20.4, SD = 2.2) particiapted in the study in exchange for a study credit. 18 participants didn't finish due to motion sickness and 3 were removed due to a technical failure of the real world tracking systen. Only 58 percent the students being able to finish Treadmill VR learning condition.
+| condition |   no|  yes|  percent|
+|:----------|----:|----:|--------:|
+| real-real |    1|   23|     0.96|
+| ve-real   |    2|   20|     0.91|
+| vr-real   |   15|   21|     0.58|
+
+A total of 82 undergraduate students at UC Davis (M = 20.422 , SD = 2.159) particiapted in the study in exchange for a study credit. 18 participants didn't finish due to motion sickness and 3 were removed due to a technical failure of the real world tracking systen. Only 58 percent the students being able to finish Treadmill VR learning condition.
 
 We hypothesized that the degree of transfer to the real-world building would vary as a function of immersion. As a first test of this issue, we wished to determine whether all modalities resulted in some degree of transfer. Data for distance walked and number of door visitation errors were each entered into a 3 (Learning Condition: real, desktop, treadmill VR) × 2 (Block: block 1, block 4) mixed-model analysis of variance (ANOVA). For distance walked, there was a main effect for Learning Condition, *F*(2, 57)=4.79, *M**S**E* = 1.94, *p* = .012. There was a also a main effect for Block, *F*(1, 57)=59.88, *M**S**E* = 1.78, *p* &lt; .001. The Learning Condition by Block interaction effect did not reach significance *F*(2, 57)=0.97, *M**S**E* = 1.78, *p* = .386. Follow-up comparisons showed that for walked distance all three modalities showed an improvement from block 1 (first exposure to the modality) to block 4 (first exposure to the real building for immersed/impoverished conditions, fourth exposure for real-world). Descriptive and inferential statistics for these comparisons are shown in Table X and Table X+1 for distance and errors, respectively.
 
@@ -54,11 +60,11 @@ Quantifying what happens before transfer
 
 To better understand the effect of modality (i.e., real world vs. treadmill VR vs. desktop), we assessed the change in walked distance and visitation errors prior to transfer from block 1 to block 3.
 
-3x2 repeated measures ANOVA revealed a main effect of block on distance performance, suggesting that participants improved their paths in all three conditions, *F*(1, 57)=92.06, *M**S**E* = 1.51, *p* &lt; .001. The interaction effect with modality was not significant , *F*(2, 57)=0.23, *M**S**E* = 1.51, *p* = .795, suggesting that learning rate did not differ as a function of modality. In contrast, for visitation errors, we again found a main effect of block (*F*(1, 58)=407.05, *M**S**E* = 8.21, *p* &lt; .001) but, importantly, a block X modality interaction effect, *F*(2, 58)=6.37, *M**S**E* = 8.21, *p* = .003. This finding suggested that visitation errors improved differently as a function of modality.
+3x2 repeated measures ANOVA revealed a main effect of block on distance performance *F*(1, 57)=92.06, *M**S**E* = 1.51, *p* &lt; .001, suggesting that participants improved their paths in all three conditions. Although the effect of the learning modality was significant (*F*(2, 57)=5.81, *M**S**E* = 1.68, *p* = .005), the interaction between block and modality was not significant, *F*(2, 57)=0.23, *M**S**E* = 1.51, *p* = .795, suggesting that learning rate did not differ as a function of modality. In contrast, for visitation errors, we again found a main effect of block (*F*(1, 58)=407.05, *M**S**E* = 8.21, *p* &lt; .001) adn modality (*F*(2, 58)=7.24, *M**S**E* = 9.74, *p* = .002), but, importantly, a block X modality interaction effect, *F*(2, 58)=6.37, *M**S**E* = 8.21, *p* = .003. This finding suggested that visitation errors improved differently as a function of modality.
 
 To investigate further, we conducted separate one-way ANOVAs to compare learning conditions for walked distance and visitation errors for the last block of learning (block 3). There were main effects of learning condition for both walked distance, *F*(2, 315)=4.18, *M**S**E* = 3.54, *p* = .016, and visitation errors, *F*(2, 363)=32.63, *M**S**E* = 22.37, *p* &lt; .001). Comparing the conditions closer, we find that there is a significant difference in visitations error performance between real world and desktop learning (*t*(198.69)=6.84, *p* &lt; .001) and real world nad treadmill VR learning (*t*(179.90)= − 7.40, *p* &lt; .001), but no difference between Desktop and Treadmill learning (*t*(223.12)= − 1.44, *p* = .150). The situation is the same for distance comparisons. real world and desktop learning (*t*(161.80)=1.99, *p* = .048) and real world nad treadmill VR learning (*t*(140.58)= − 3.09, *p* = .002), but no difference between Desktop and Treadmill learning (*t*(203.90)= − 1.42, *p* = .156).
 
-We also observed significant differences between conditions in pointing performance at the end of the first phase, *F*(2, 729)=17.78, *M**S**E* = 1, 412.53, *p* &lt; .001. Specifically, participants in the real-world learning group (M = 21.93 , SD = 26.34) performed significantly better compared to both the immersive VR group (M = 35.23 , SD = 37.48), *t*(424.16)= − 4.57, *p* &lt; .001, and the desktop group (M = 41.62 , SD = 47.47), *t*(342.85)=5.57, *p* &lt; .001. Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
+We also observed significant differences between conditions in pointing performance at the end of the first phase, *F*(2, 729)=17.78, *M**S**E* = 1, 412.53, *p* &lt; .001. Specifically, participants in the real-world learning group (M = 21.928 , SD = 26.342) performed significantly better compared to both the immersive VR group (M = 35.23 , SD = 37.475), *t*(424.16)= − 4.57, *p* &lt; .001, and the desktop group (M = 41.615 , SD = 47.473), *t*(342.85)=5.57, *p* &lt; .001. Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
 
 ![](final-results_files/figure-markdown_github/unnamed-chunk-7-1.png)![](final-results_files/figure-markdown_github/unnamed-chunk-7-2.png)![](final-results_files/figure-markdown_github/unnamed-chunk-7-3.png)
 
@@ -67,7 +73,7 @@ Quantifying what happens after/during? transfer
 
 We next considered the effects of transferring from either the treadmill or desktop to the real-world building compared with continuing to navigate the real-world building. We did this by directly comparing walked distance and visitation errors on block 3 (the last block before the transfer phase) with the first block of the transfer phase (block 4). Data for distance walked and number of door visitation errors were each entered into a 3 (Learning Condition: real, desktop, treadmill VR) × 2 (Block: block 1, block 4) mixed-model ANOVA. For visitation errors, there was a main effect for Learning Condition,*F*(2, 58)=13.66, *M**S**E* = 10.61, *p* &lt; .001. There was a main effect for Block, *F*(1, 58)=42.67, *M**S**E* = 2.19, *p* &lt; .001. The Learning Condition by Block interaction effect was significant, *F*(2, 58)=9.22, *M**S**E* = 2.19, *p* &lt; .001. For walked distance, there was a main effect of Learning Condition,*F*(2, 58)=6.65, *M**S**E* = 0.90, *p* = .003, but no effect of Block, *F*(1, 58)=2.61, *M**S**E* = 0.78, *p* = .111, and the interaction also failed to reach significance, *F*(2, 58)=1.89, *M**S**E* = 0.78, *p* = .161.
 
-To better understand these differences, we ran separate pairwise t-tests to assess the change from block 3 (last block of learning phase) to block 4 (first block of transfer phase). For distance, we found no significant differences from block 3 (M = 1.36 , SD = 0.75) to block 4 (M = 1.51 , SD = 0.87) for the real-world learning condition, *t*(193.54)= − 1.27, *p* = .207. Similarly, there was no difference between block 3 (M = 2.13 , SD = 2.52) and block 4 (M = 1.96 , SD = 2.09) for the treadmill VR condition, *t*(206.77)=0.51, *p* = .609. For visitation errors, we found an improvement in all conditions, although the effects sizes were greater for the treadmill compared to the desktop conditions. Together, these findings suggested that participants maintained or improved for both distance and visitation errors, although these effects were generally smaller, and even tending toward being worse, for the desktop condition. For summary please see table XXX.
+To better understand these differences, we ran separate pairwise t-tests to assess the change from block 3 (last block of learning phase) to block 4 (first block of transfer phase). For distance, we found no significant differences from block 3 (M = 1.363 , SD = 0.745) to block 4 (M = 1.509 , SD = 0.872) for the real-world learning condition, *t*(193.54)= − 1.27, *p* = .207. Similarly, there was no difference between block 3 (M = 2.127 , SD = 2.52) and block 4 (M = 1.964 , SD = 2.088) for the treadmill VR condition, *t*(206.77)=0.51, *p* = .609. For visitation errors, we found an improvement in all conditions, although the effects sizes were greater for the treadmill compared to the desktop conditions. Together, these findings suggested that participants maintained or improved for both distance and visitation errors, although these effects were generally smaller, and even tending toward being worse, for the desktop condition. For summary please see table XXX.
 
 | learning.condition | exp\_block\_id |     M|    Sd|
 |:-------------------|:---------------|-----:|-----:|
@@ -78,11 +84,11 @@ To better understand these differences, we ran separate pairwise t-tests to asse
 | Treadmill VR       | 3              |  2.13|  2.52|
 | Treadmill VR       | 4              |  1.96|  2.09|
 
-| condition    |  Mdiff|   df|      t| p        |      d| CI          |
-|:-------------|------:|----:|------:|:---------|------:|:------------|
-| Real         |  -0.15|   21|  -1.17| p = 0.26 |  -0.25| -0.41, 0.12 |
-| Desktop      |  -0.70|   18|  -1.79| p = 0.09 |  -0.41| -1.53, 0.12 |
-| Treadmill VR |   0.04|   19|   0.16| p = 0.88 |   0.04| -0.55, 0.63 |
+| condition    |  Mdiff|   df|      t| p         |      d| CI          |
+|:-------------|------:|----:|------:|:----------|------:|:------------|
+| Real         |  -0.15|   21|  -1.17| p = 0.256 |  -0.25| -0.41, 0.12 |
+| Desktop      |  -0.70|   18|  -1.79| p = 0.09  |  -0.41| -1.53, 0.12 |
+| Treadmill VR |   0.04|   19|   0.16| p = 0.877 |   0.04| -0.55, 0.63 |
 
 | learning.condition | exp\_block\_id |     M|    Sd|
 |:-------------------|:---------------|-----:|-----:|
@@ -93,11 +99,11 @@ To better understand these differences, we ran separate pairwise t-tests to asse
 | Treadmill VR       | 3              |  5.47|  6.00|
 | Treadmill VR       | 4              |  2.13|  5.22|
 
-| condition    |  Mdiff|   df|     t| p            |     d| CI         |
-|:-------------|------:|----:|-----:|:-------------|-----:|:-----------|
-| Real         |   0.64|   21|  2.56| p &lt; .0.05 |  0.55| 0.12, 1.17 |
-| Desktop      |   1.35|   18|  2.44| p &lt; .0.05 |  0.56| 0.19, 2.52 |
-| Treadmill VR |   3.34|   19|  5.97| p &lt; .001  |  1.33| 2.17, 4.51 |
+| condition    |  Mdiff|   df|     t| p           |     d| CI         |
+|:-------------|------:|----:|-----:|:------------|-----:|:-----------|
+| Real         |   0.64|   21|  2.56| p = 0.018   |  0.55| 0.12, 1.17 |
+| Desktop      |   1.35|   18|  2.44| p = 0.025   |  0.56| 0.19, 2.52 |
+| Treadmill VR |   3.34|   19|  5.97| p &lt; .001 |  1.33| 2.17, 4.51 |
 
 Quantifying transfer
 --------------------
@@ -119,7 +125,7 @@ Looking at the improvement in visitations errors from block 4 to block 6 in sepa
 
 The story is similar with distance performance, with both Desktop (*t*(96.10)=4.17, *p* &lt; .001) and Treadmill VR (*t*(99.71)=2.69, *p* = .008) improve from the 4th to the 6th block, but so does the real world learning group (*t*(119.02)=3.06, *p* = .003).
 
-In the last testing block (block 6), we found no differences among the groups in either error rate (*F*(2, 363)=1.67, *M**S**E* = 3.33, *p* = .191), nor pointing performance (*F*(2, 726)=1.56, *M**S**E* = 982.05, *p* = .210). However we still see small difference in distance performance (*F*(2, 255)=3.21, *M**S**E* = 0.10, *p* = .042), with real group (M = 1.25 , SD = 0.19) performing better than Treadmill VR group (M = 1.37 , SD = 0.38)(*t*(102.13)= − 2.55, *p* = .012) and desktop group (M = 1.28 , SD = 0.37)(*t*(131.62)=0.90, *p* = .369).
+In the last testing block (block 6), we found no differences among the groups in either error rate (*F*(2, 363)=1.67, *M**S**E* = 3.33, *p* = .191), nor pointing performance (*F*(2, 726)=1.56, *M**S**E* = 982.05, *p* = .210). However we still see small difference in distance performance (*F*(2, 255)=3.21, *M**S**E* = 0.10, *p* = .042), with real group (M = 1.245 , SD = 0.195) performing better than Treadmill VR group (M = 1.37 , SD = 0.383)(*t*(102.13)= − 2.55, *p* = .012) and desktop group (M = 1.285 , SD = 0.368)(*t*(131.62)=0.90, *p* = .369).
 
 Could effects be driven by difficulty with the immersive interface?
 -------------------------------------------------------------------
@@ -135,7 +141,7 @@ To test this idea, we added two more conditions. One group learned the UC Center
 
 ### Participants
 
-A total of 68 undergraduate students at UC Davis particiapted in the second experiment. 27 participants didn't finish due to motion sickness and 2 were removed due to a technical failure of the real world tracking system. Analyses were then conducted on a final set of 41 (14 female) with mean age of 20 (SD = 1.5).
+A total of 70 undergraduate students at UC Davis particiapted in the second experiment. 27 participants didn't finish due to motion sickness. Analyses were then conducted on a final set of 41 (14 female) participants(M = 19.951 , SD = 1.548).
 
 | condition |   no|  yes|  percent|
 |:----------|----:|----:|--------:|
@@ -161,26 +167,26 @@ Running a one-way ANOVA togeher together with other conditions from the first ex
 
 |                   |        diff| p-value     |
 |-------------------|-----------:|:------------|
-| real-vr-real-real |  -0.1028174| p = 0.42    |
-| ve-real-real-real |   0.0395100| p = 0.97    |
+| real-vr-real-real |  -0.1028174| p = 0.416   |
+| ve-real-real-real |   0.0395100| p = 0.972   |
 | vr-real-real-real |   0.1245411| p = 0.34    |
 | vr-vr-real-real   |  -0.0449432| p = 0.94    |
 | ve-real-real-vr   |   0.1423274| p = 0.13    |
 | vr-real-real-vr   |   0.2273585| p &lt; .001 |
-| vr-vr-real-vr     |   0.0578741| p = 0.83    |
-| vr-real-ve-real   |   0.0850311| p = 0.72    |
+| vr-vr-real-vr     |   0.0578741| p = 0.832   |
+| vr-real-ve-real   |   0.0850311| p = 0.721   |
 | vr-vr-ve-real     |  -0.0844533| p = 0.62    |
-| vr-vr-vr-real     |  -0.1694844| p = 0.06    |
+| vr-vr-vr-real     |  -0.1694844| p = 0.058   |
 
 Looking at the final walking performance in the Table XXX, we can see that the differences between conditions are truly negligible. Interestingly, we found no significant difference between the conditions when we analysed absolute distance, rather than normalised (*F*(4, 498)=1.42, *M**S**E* = 147.36, *p* = .225). This means that all aprticipants walked the same distance in the end on average, regardless of them being tested on a treadmill or in the real building. We also found no difference between any of the conditions in their final pointing performance, *F*(4, 1216)=2.32, *M**S**E* = 818.28, *p* = .055.
 
-| condition | dist                 | errors               |
-|:----------|:---------------------|:---------------------|
-| real-real | M = 1.25 , SD = 0.19 | M = 0.04 , SD = 0.19 |
-| real-vr   | M = 1.14 , SD = 0.22 | M = 2.34 , SD = 2.82 |
-| ve-real   | M = 1.28 , SD = 0.37 | M = 0.31 , SD = 1.51 |
-| vr-real   | M = 1.37 , SD = 0.38 | M = 0.45 , SD = 2.82 |
-| vr-vr     | M = 1.2 , SD = 0.7   | M = 2.25 , SD = 2.28 |
+| condition | dist                   | errors                 |
+|:----------|:-----------------------|:-----------------------|
+| real-real | M = 1.245 , SD = 0.195 | M = 0.038 , SD = 0.192 |
+| real-vr   | M = 1.142 , SD = 0.225 | M = 2.342 , SD = 2.818 |
+| ve-real   | M = 1.285 , SD = 0.368 | M = 0.307 , SD = 1.512 |
+| vr-real   | M = 1.37 , SD = 0.383  | M = 0.45 , SD = 2.819  |
+| vr-vr     | M = 1.2 , SD = 0.697   | M = 2.246 , SD = 2.279 |
 
 A different story is in comparing the visitation errors across conditions in the last block, where one-way ANOVA shows significant difference (*F*(4, 607)=33.64, *M**S**E* = 4.62, *p* &lt; .001) and Tukey's post hoc tests demonstrates significant differences between all conditions that differs in transfer phase modality, e.g. participants in the real world always perform better than participants on the treadmill VR. Looking at the table XXX, we can clearly see that conditions with transfer phase happening in VR, despite having comparable walked distance, have higher number of visitation errors. We think that this may have emerged from two different sources: firstly, it can point to higher difficulty in recognizing proper doors because of lesser visual accuracy in the VR, where all doors look similar unlike real doors which may demonstrate unique signs of wear or use. The second reason for the increased number of visitation errors in VR conditions can be explained by the lesser "social impact" of wrong choice. Whereas in the real conditions, participants had to actively inquire the experimenter, there was technically no penalty for "trying out" wrong door in the VR.
 
@@ -190,7 +196,7 @@ A different story is in comparing the visitation errors across conditions in the
 
 Assessing the effects of trasfering from the real world to the Treadmill VR, we ran 2 (Learning condition: real vs treadmill VR) x 2 (block 3 vs blcok 4) ANOVA on data for distance walked and visitation errors. There was no effect of block *F*(1, 38)=1.10, *M**S**E* = 0.47, *p* = .301 nor learning condition (*F*(1, 38)=3.47, *M**S**E* = 0.83, *p* = .070) on distance walked and we observed no interaction effects (*F*(1, 38)=2.40, *M**S**E* = 0.47, *p* = .129). But we found significant interaction effect between block and learning condition in visitation errors, *F*(2, 58)=9.22, *M**S**E* = 2.19, *p* &lt; .001.
 
-Pairwise t-tests comparing change in error rate from 3rd to 4th block show, that the group learning on the treadmill VR does show significant difference (*t*(244.20)=0.91, *p* = .362) as it effectively didn't change the environment, but the group switching to the VR from the real world demonstrates increase in visitations errors from block 3 (M = 1.41 , SD = 4.09) to block 4 (M = 3.27 , SD = 3.87), *t*(237.27)= − 3.63, *p* &lt; .001.
+Pairwise t-tests comparing change in error rate from 3rd to 4th block show, that the group learning on the treadmill VR does show significant difference (*t*(244.20)=0.91, *p* = .362) as it effectively didn't change the environment, but the group switching to the VR from the real world demonstrates increase in visitations errors from block 3 (M = 1.408 , SD = 4.094) to block 4 (M = 3.275 , SD = 3.874), *t*(237.27)= − 3.63, *p* &lt; .001.
 
 ![](final-results_files/figure-markdown_github/unnamed-chunk-19-1.png)![](final-results_files/figure-markdown_github/unnamed-chunk-19-2.png)
 
