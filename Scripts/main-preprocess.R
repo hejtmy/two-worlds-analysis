@@ -19,8 +19,8 @@ sop_all <- multi_sop_results(ls)
 walk_all <- multi_walk_results(ls)
 
 ##renames all jesiccas
-walk_all <- walk_all %>% mutate(goal = replace(goal, goal=="Jesicca's office", "Jessica's office"),
-                                start = replace(start, start=="Jesicca's office", "Jessica's office"))
+walk_all <- walk_all %>% mutate(goal = replace(goal, goal == "Jesicca's office", "Jessica's office"),
+                                start = replace(start, start == "Jesicca's office", "Jessica's office"))
 
 ### Total trial ----
 walk_all$exp_trial_id <- walk_all$trial_id + (walk_all$phase-1)*18

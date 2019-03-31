@@ -9,7 +9,6 @@ output: html_document
 #needs lme and car in the top because of the recode
 library(car)
 library(lme4)
-library(lmerTest)
 library(ggplot2)
 library(gridExtra)
 library(ez)
@@ -22,65 +21,23 @@ library(papaja)
 library(googlesheets)
 
 source("../Scripts/paper-prepare.R")
-source("helpers/block-t-test-improvement.R")
-source("helpers/block-t-test.R")
-source("helpers/block-measure.R")
 source("../TwoWorlds/helpers-report.R")
 
 settings <- load_google_sheets()
 df_participants <- settings$participants
 df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
-all_participant_experiment <- df_participants
-df_participants <- df_participants %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 
 overview <- settings$versions
 overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
-all_participant_experiment <- overview %>% left_join(all_participant_experiment[, c('Code', 'sex')], by="Code")
-overview <- overview %>% filter(condition %in% c("vr-real", "real-real", "ve-real"))
 overview <- overview %>% left_join(df_participants[, c('Code', 'sex')], by="Code")
 
-#green, violet, blue, yellow, pink, dark blue
-estimote_pal <- c('#b6d6c1', '#54003d','#93d5f6','#d5d215','#f3aacb','#2d2556')
-theme_set(theme_minimal() + theme(axis.text=element_text(size=14),
-        axis.title=element_text(size=16)))
-
 ### Try running it without outliers
-sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
 walk_all[!is.na(walk_all$norm_distance) & walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
-
-condition_all_sums <- sub_walk_all %>% 
-  group_by(exp_block_id, id, learning.condition) %>% 
-  summarise(sum.distance = sum(min_norm_distance, na.rm = T), 
-            sum.errors = sum(errors, na.rm = T),
-            mean.distance = mean(min_norm_distance, na.rm = T),
-            mean.error = mean(errors, na.rm = T))
-
-df_errors <- block_measure(condition_all_sums, "sum.errors")
-df_distance <- block_measure(condition_all_sums, "mean.distance")
-df_distance$graph.learning.condition <- dplyr::recode(df_distance$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
-df_errors$graph.learning.condition <- dplyr::recode(df_errors$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
-
-
-df_wide_errors <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "sum.errors")
-df_wide_distance <- dcast(condition_all_sums, learning.condition + id ~ exp_block_id, value.var = "mean.distance")
-colnames(df_wide_errors) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
-colnames(df_wide_distance) <- c("learning.condition","id","block1", "block2","block3","block4","block5","block6")
-df_wide_distance$graph.learning.condition <- dplyr::recode(df_wide_distance$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
-df_wide_errors$graph.learning.condition <- dplyr::recode(df_wide_errors$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
-
-df_wide_errors$block34 <- (df_wide_errors$block3-df_wide_errors$block4)/(df_wide_errors$block3+df_wide_errors$block4)
-df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(df_wide_distance$block3+df_wide_distance$block4)
-
-sub_walk_all_factor <- sub_walk_all
-sub_walk_all_factor$exp_block_id <- factor(sub_walk_all_factor$exp_block_id)
-sub_walk_all_factor$id <- factor(sub_walk_all_factor$id)
-sub_walk_all_factor$learning.condition <- factor(sub_walk_all_factor$learning.condition)
 
 knitr::opts_chunk$set(echo=F, warning = F, message = F)
 ```
 
-
-## Participants
+## Dropout rate per gender and condition
 ```{r}
 # need revising 
 # is_ok == data well measured
@@ -92,6 +49,7 @@ finished$percent <- round(finished$yes/(finished$yes+finished$no), 2)
 is_ok <- overview %>% filter(finished=="yes") %>% group_by(condition) %>% count(is_ok)
 is_ok <- dcast(is_ok, condition~is_ok)
 is_ok$percent <- round(is_ok$yes/(is_ok$yes+is_ok$no), 2)
+kable(is_ok)
 kable(finished)
 
 finished_gender <- overview %>% group_by(condition, sex) %>% count(finished)
@@ -99,12 +57,53 @@ finished_gender <- dcast(finished_gender, condition+sex~finished)
 finished_gender$no[is.na(finished_gender$no)] <- 0
 finished_gender$percent <- round(finished_gender$yes/(finished_gender$yes+finished_gender$no), 2)
 kable(finished_gender)
+```
 
-### All experiment
-finished_gender <- all_participant_experiment %>% group_by(condition, sex) %>% count(finished)
-finished_gender <- dcast(finished_gender, condition+sex~finished)
-finished_gender$no[is.na(finished_gender$no)] <- 0
-finished_gender$percent <- round(finished_gender$yes/(finished_gender$yes+finished_gender$no), 2)
-kable(finished_gender)
+## POinting results
 
+### Experiment 1 phase 1
+```{r}
+summary(aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 1, ]))
+ggplot(sub_sop_all[sub_sop_all$phase == 1, ], aes(learning.condition, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+### Experiment 1 phase 2
+```{r}
+summary(aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 2, ]))
+ggplot(sub_sop_all[sub_sop_all$phase == 2, ], aes(learning.condition, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+### Experiment 2 phase 1
+```{r}
+summary(aov(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 2, ]))
+ggplot(sub_sop_all_2[sub_sop_all_2$phase == 1, ], aes(learning.condition, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+### Experiment 2 phase 2
+```{r}
+summary(aov(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 2, ]))
+ggplot(sub_sop_all_2[sub_sop_all_2$phase == 2, ], aes(learning.condition, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+### Both experiments split by final condition
+```{r}
+summary(aov(abs_error ~ type, data = sop_all[sop_all$phase == 2, ]))
+ggplot(sop_all[sop_all$phase == 2, ], aes(type, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+### Plot of type to type evolution
+```{r}
+ggplot(sop_all, aes(phase, abs_error, color=condition)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.25), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.25),geom="line")
 ```
