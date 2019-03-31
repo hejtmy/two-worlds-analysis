@@ -77,9 +77,19 @@ ggplot(sub_sop_all[sub_sop_all$phase == 2, ], aes(learning.condition, abs_error)
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
 
+
+```{r}
+ggplot(sub_sop_all, aes(learning.condition, abs_error, group=factor(phase), fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+ggplot(sub_sop_all, aes(factor(phase), abs_error, group=learning.condition, fill=learning.condition)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
 ### Experiment 2 phase 1
 ```{r}
-summary(aov(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 2, ]))
+summary(aov(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 1, ]))
 ggplot(sub_sop_all_2[sub_sop_all_2$phase == 1, ], aes(learning.condition, abs_error)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
@@ -93,10 +103,32 @@ ggplot(sub_sop_all_2[sub_sop_all_2$phase == 2, ], aes(learning.condition, abs_er
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
 
+
+```{r}
+ggplot(sub_sop_all_2, aes(learning.condition, abs_error, group=factor(phase), fill=factor(phase))) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+ggplot(sub_sop_all_2, aes(factor(phase), abs_error, group=learning.condition, fill=learning.condition)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
 ### Both experiments split by final condition
 ```{r}
 summary(aov(abs_error ~ type, data = sop_all[sop_all$phase == 2, ]))
 ggplot(sop_all[sop_all$phase == 2, ], aes(type, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+
+```{r}
+ggplot(sop_all, aes(learning.condition, abs_error, group=factor(phase), fill=factor(phase))) +
+  facet_wrap(~testing.condition)+
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+ggplot(sop_all, aes(factor(phase), abs_error, group=learning.condition, fill=learning.condition)) +
+  facet_wrap(~testing.condition)+
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
@@ -106,4 +138,16 @@ ggplot(sop_all[sop_all$phase == 2, ], aes(type, abs_error)) +
 ggplot(sop_all, aes(phase, abs_error, color=condition)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.25), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.25),geom="line")
+```
+
+###
+```{r}
+ez_point <- sop_all[complete.cases(sop_all),]
+ez_point$phase <- as.factor(ez_point$phase)
+ezANOVA(ez_point,
+        within = .(phase),
+        between = .(learning.condition),
+        dv=abs_error,
+        wid=id
+        )
 ```
