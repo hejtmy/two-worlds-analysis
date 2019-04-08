@@ -11,6 +11,7 @@ library(car)
 library(lme4)
 library(ggplot2)
 library(gridExtra)
+library(effsize)
 library(ez)
 library(Hmisc)
 library(dplyr)
@@ -22,8 +23,8 @@ library(googlesheets)
 
 source("../Scripts/paper-prepare.R")
 source("../TwoWorlds/helpers-report.R")
-
-settings <- load_google_sheets()
+#settings <- load_google_sheets()
+load('../settings.data')
 df_participants <- settings$participants
 df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
 
@@ -33,6 +34,7 @@ overview <- overview %>% left_join(df_participants[, c('Code', 'sex')], by="Code
 
 ### Try running it without outliers
 walk_all[!is.na(walk_all$norm_distance) & walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
 
 knitr::opts_chunk$set(echo=F, warning = F, message = F)
 ```
@@ -65,22 +67,22 @@ kable(finished_gender)
 ```{r}
 av <- aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 1, ])
 summary(av)
-apa_print(av)$full_result$learning_condition
 ggplot(sub_sop_all[sub_sop_all$phase == 1, ], aes(learning.condition, abs_error)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
 
+Anova results are `r apa_print(av)$full_result$learning_condition`
+
 ### Experiment 1 phase 2
 ```{r}
 av <- aov(abs_error ~ learning.condition, data = sub_sop_all[sub_sop_all$phase == 2, ])
 summary(av)
-apa_print(av)$full_result$learning_condition
 ggplot(sub_sop_all[sub_sop_all$phase == 2, ], aes(learning.condition, abs_error)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
-
+Anova results are `r apa_print(av)$full_result$learning_condition`
 
 ```{r}
 ggplot(sub_sop_all, aes(learning.condition, abs_error, group=factor(phase), fill=factor(phase))) +
@@ -92,24 +94,20 @@ ggplot(sub_sop_all, aes(factor(phase), abs_error, group=learning.condition, fill
 ```
 
 ### Experiment 2 phase 1
+T test results is `r t_test_effect(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 1, ])`
 ```{r}
-av <- t.test(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 1, ])
-summary(av)
-apa_print(av)$full_result
 ggplot(sub_sop_all_2[sub_sop_all_2$phase == 1, ], aes(learning.condition, abs_error)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
 
 ### Experiment 2 phase 2
+T test results is `r t_test_effect(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 2, ])`
 ```{r}
-av <- t.test(abs_error ~ learning.condition, data = sub_sop_all_2[sub_sop_all_2$phase == 2, ])
-apa_print(av)$full_result
 ggplot(sub_sop_all_2[sub_sop_all_2$phase == 2, ], aes(learning.condition, abs_error)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
-
 
 ```{r}
 ggplot(sub_sop_all_2, aes(learning.condition, abs_error, group=factor(phase), fill=factor(phase))) +
@@ -120,11 +118,19 @@ ggplot(sub_sop_all_2, aes(factor(phase), abs_error, group=learning.condition, fi
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
 ```
 
-### Both experiments split by final condition
+### Both experiments split condition
 ```{r}
-av <- aov(abs_error ~ type, data = sop_all[sop_all$phase == 2, ])
+av <- aov(abs_error ~ condition, data = sop_all[sop_all$phase == 2, ])
 summary(av)
-apa_print(av)$full_result$learning_condition
+ggplot(sop_all[sop_all$phase == 2, ], aes(condition, abs_error)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+Anova results are `r apa_print(av)$full_result$condition`
+
+### Both experiments split by final condition
+T test results is `r t_test_effect(abs_error ~ type, data = sop_all[sop_all$phase == 2, ])`
+```{r}
 ggplot(sop_all[sop_all$phase == 2, ], aes(type, abs_error)) +
   stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
   stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
@@ -173,6 +179,68 @@ apa_print(aov(b4$min_norm_distance ~ b4$learning.condition))$full_result$b4_lear
 ```
 
 ## Gender effects
+```{r}
+walk_all <- walk_all %>% left_join(df_participants[, c('Code', 'sex')], by=c("id"="Code"))
+sub_walk_all <- sub_walk_all %>% left_join(df_participants[, c('Code', 'sex')], by=c("id"="Code"))
+sop_all <- sop_all %>% left_join(df_participants[, c('Code', 'sex')], by=c("id"="Code"))
+sub_sop_all <- sub_sop_all %>% left_join(df_participants[, c('Code', 'sex')], by=c("id"="Code"))
+sub_sop_all_2 <- sub_sop_all_2 %>% left_join(df_participants[, c('Code', 'sex')], by=c("id"="Code"))
+```
+
+To assess effects of gender, we pooled data per gender and per modality (desktop, immersive VR and real world) and analysed some of the effects separately. 
+
+```{r}
+ez_data <- ez_prepare(sop_all, 'sex')
+ez_fit <- ezANOVA(
+        ez_data,
+        dv = abs_error,
+        wid = id,
+        between = .(type, sex),
+        return_aov = T,
+        type = 3)
+```
+
+Analysing complete pointing performance (averaged across both sessions) overall has not been affected by gender `r apa_print(ez_fit$aov)$full_result$sex` or interaction between gender and modality  `r apa_print(ez_fit$aov)$full_result$type_sex`. 
+
+### Walkign distance
+```{r}
+ez_data <- ez_prepare(walk_all, 'sex')
+ez_fit <- ezANOVA(
+        ez_data,
+        dv = min_norm_distance,
+        wid = id,
+        between = .(type, sex),
+        return_aov = T,
+        type = 3)
+#ez_data %>% group_by(sex, type) %>% summarise(mean = mean(min_norm_distance, na.rm=T))
+ggplot(ez_data, aes(graph.type, min_norm_distance, group=sex, fill=sex)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+Analysing complete walking distance as a product of either gender or modality, (averaged across all blocks) the walked normalised distance has not been affected by gender `r apa_print(ez_fit$aov)$full_result$sex` or interaction between gender and modality  `r apa_print(ez_fit$aov)$full_result$type_sex`. 
+
+### Visitation errors
+```{r}
+ez_data <- ez_prepare(walk_all, 'sex')
+ez_fit <- ezANOVA(
+        ez_data,
+        dv = errors,
+        wid = id,
+        between = .(type, sex),
+        return_aov = T,
+        type = 3)
+#ez_data %>% group_by(sex, type) %>% summarise(mean = mean(min_norm_distance, na.rm=T))
+ggplot(ez_data, aes(graph.type, errors, group=sex, fill=sex)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+Analysing complete visitations errors as a product of either gender or modality, (averaged across all blocks) number of errors has not been affected by gender `r apa_print(ez_fit$aov)$full_result$sex` or interaction between gender and modality  `r apa_print(ez_fit$aov)$full_result$type_sex`.
 
 
-## NEw charts
+Therefore we decided not to include gender specific analyses in our paper, as it might muddy the analyses with another predictor.
+
+## New charts
+
+
+## Effect sizes

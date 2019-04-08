@@ -30,3 +30,11 @@ m_sd_report <- function(vec, digits=3){
   s <- round(sd(vec, na.rm=T), digits)
   return(paste("M = ", m, ", SD = ", s, collapse=""))
 }
+
+t_test_effect <- function(f, data, paired = F){
+  t <- t.test(formula = f, data = data, paired = paired)
+  text <- apa_print(t)$statistic
+  d <- cohen.d(f, data, paired = paired)
+  text <- paste0(text, ", $d = ", round(d$estimate, 3), "$")
+  return(text)
+}

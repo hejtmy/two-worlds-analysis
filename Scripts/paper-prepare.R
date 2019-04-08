@@ -4,6 +4,8 @@ source_folder("../TwoWorlds")
 source('../Scripts/analysis-helpers.R')
 sop_all <- read.table("../sop.csv", sep=";", header = T, stringsAsFactors = F)
 walk_all <- read.table("../walk.csv", sep=";", header = T, stringsAsFactors = F)
+walk_all$graph.type <- dplyr::recode(walk_all$type, "real" = "Real-world", "vr" = "Immersive VR", 've'='Desktop')
+sop_all$graph.type <- dplyr::recode(sop_all$type, "real" = "Real-world", "vr" = "Immersive VR", 've'='Desktop')
 walk_all$learning.condition <- walk_all$condition
 walk_all$learning.condition <- dplyr::recode(walk_all$learning.condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
 walk_all$graph.condition <- dplyr::recode(walk_all$condition, "real-real" = "Real-world to Real-world", "ve-real" = "Desktop to Real-world", "vr-real" = "Immersive VR to Real-world", "real-vr" = "Real-world to Immersive VR", "vr-vr" = "Immersive VR to Immersive VR")
