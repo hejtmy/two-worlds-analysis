@@ -71,6 +71,7 @@ df_wide_distance$graph.learning.condition <- dplyr::recode(df_wide_distance$lear
 df_wide_errors$graph.learning.condition <- dplyr::recode(df_wide_errors$learning.condition, "Real" = "Real-world", "Treadmill VR" = "Immersive VR")
 
 df_wide_errors$block34 <- (df_wide_errors$block3-df_wide_errors$block4)/(df_wide_errors$block3+df_wide_errors$block4)
+df_wide_errors$block34[is.na(df_wide_errors$block34)] <- 0 #fixes case where person scores 0 in block 3 and 4 and so we have
 df_wide_distance$block34 <- (df_wide_distance$block3-df_wide_distance$block4)/(df_wide_distance$block3+df_wide_distance$block4)
 
 sub_walk_all_factor <- sub_walk_all
@@ -202,7 +203,7 @@ point_data_1 <- sub_sop_all[sub_sop_all$phase == 1,]
 aov_point_phase1 <- aov(abs_error ~ learning.condition, data = point_data_1)
 ```
 
-We also observed significant differences between conditions in pointing performance at the end of the first phase, `r apa_print(aov_point_phase1)$full_result$learning_condition`.  Specifically, participants in the real-world learning group  (`r m_sd_report(only_conditions(point_data_1, "Real")$abs_error)`) performed significantly better compared to both the immersive VR group (`r m_sd_report(only_conditions(point_data_1, "Treadmill VR")$abs_error)`), `r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Treadmill VR')))`, and the desktop group (`r m_sd_report(only_conditions(point_data_1, "Desktop")$abs_error)`), `r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Desktop')))`. Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
+We also observed significant differences between conditions in pointing performance at the end of the first phase, `r apa_print(aov_point_phase1)$full_result$learning_condition`.  Specifically, participants in the real-world learning group  (`r m_sd_report(only_conditions(point_data_1, "Real")$abs_error)`) performed significantly better compared to both the immersive VR group (`r m_sd_report(only_conditions(point_data_1, "Treadmill VR")$abs_error)`), `r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Treadmill VR')))`, and the desktop group (`r m_sd_report(only_conditions(point_data_1, "Desktop")$abs_error)`), `r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Desktop')))`, but no difference between VR and desktop (`r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Treadmill VR', 'Desktop')))`). Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
 
 ```{r}
 # Pre transfer plot of normalised distances
@@ -234,7 +235,6 @@ ggplot(point_data_1, aes(x = graph.learning.condition, y = abs_error, fill = gra
   guides(fill=F) + theme(axis.title.y = element_text(size = rel(0.9)))
 
 ```
-
 
 ## Quantifying what happens after/during? transfer
 ```{r}
@@ -279,6 +279,30 @@ df_error <- block_t_test_improvement(sub_walk_all_factor, 3, 4, "errors")
 df <- block_t_test_improvement_report(df_error)
 df$condition <- dplyr::recode(df$condition, "real-real" = "Real", "ve-real" = "Desktop", "vr-real" = "Treadmill VR", "real-vr" = "Real", "vr-vr" = "Treadmill VR")
 kable(df, caption="Paired T test comparing individual error rate improvement from pre switch block to post-switch block", digits = 2)
+```
+
+```{r}
+### graphs
+ggplot(only_blocks(sub_walk_all_factor, 3:4), aes(x = graph.exp_block_id, y = min_norm_distance, fill = graph.exp_block_id)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average normalised trial distance") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F) +
+  facet_wrap(~graph.learning.condition, strip.position = "bottom", scales = "free_x") + 
+  theme(panel.spacing = unit(0, "lines"), 
+         strip.background = element_blank(),
+         strip.placement = "outside")
+
+ggplot(only_blocks(sub_walk_all_factor, 3:4), aes(x = graph.exp_block_id, y = errors, fill = graph.exp_block_id)) +
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar") +
+  ylab("Average visitation errors") + xlab("Learning condition") + 
+  scale_fill_manual(values=estimote_pal,"Block") + guides(fill=F) +
+  facet_wrap(~graph.learning.condition, strip.position = "bottom", scales = "free_x") + 
+  theme(panel.spacing = unit(0, "lines"), 
+         strip.background = element_blank(),
+         strip.placement = "outside")
+
 ```
 
 ## Quantifying transfer 
@@ -332,7 +356,7 @@ ez_fit_errors <- ezANOVA(
         type = 3)
 ```
 
-As an additional assay of transfer, we wished to determine whether learning post modality switch was faster in the group that had been exposed to the real-world in the learning blocks compared to the VR groups. Comparing walked distance and visitation errors across between blocks 4 and 6 by running repeated measures ANOVA, we found a significant effect of learning condition on distance,`r apa_print(ez_fit_distance$aov)$full_result$learning_condition` and visitation errors `r apa_print(ez_fit_errors$aov)$full_result$learning_condition`. We also wound significant interaction effect between learning condition and block for both distance `r apa_print(ez_fit_distance$aov)$full_result$learning_condition` and visitation errors `r apa_print(ez_fit_errors$aov)$full_result$learning_condition`.
+As an additional assay of transfer, we wished to determine whether learning post modality switch was faster in the group that had been exposed to the real-world in the learning blocks compared to the VR groups. Comparing walked distance and visitation errors across between blocks 4 and 6 by running repeated measures ANOVA, we found a significant effect of learning condition on distance,`r apa_print(ez_fit_distance$aov)$full_result$learning_condition` and visitation errors `r apa_print(ez_fit_errors$aov)$full_result$learning_condition`. We also wound significant interaction effect between learning condition and block for both distance `r apa_print(ez_fit_distance$aov)$full_result$learning_condition_exp_block_id` and visitation errors `r apa_print(ez_fit_errors$aov)$full_result$learning_condition_exp_block_id`.
 
 Looking at the improvement in visitations errors from block 4 to block 6 in separate learning conditions using t-tests, we can assess that only Desktop group (`r t_test_effect(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Desktop'), c(4,6)))`) and Treadmill VR group (`r t_test_effect(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Treadmill VR'), c(4,6)))`) have improved, whereas group learned in the real world did not improve any more in the transfer phase (`r t_test_effect(errors ~ exp_block_id, only_conditions_blocks(sub_walk_all, c('Real'), c(4,6)))`). 
 
@@ -393,6 +417,8 @@ Running a one-way ANOVA togeher together with other conditions from the first ex
 
 ```{r}
 kable(tukey_report_table(TukeyHSD(aov(min_norm_distance ~ condition, only_blocks(walk_all, c(6))))))
+
+kable(tukey_report_table(TukeyHSD(aov(errors ~ condition, only_blocks(walk_all, c(6))))))
 ```
 
 Looking at the final walking performance in the Table XXX, we can see that the differences between conditions are truly negligible. Interestingly, we found no significant difference between the conditions when we analysed absolute distance, rather than normalised (`r apa_print(aov(distance ~ condition, only_blocks(walk_all, c(6))))$full_result`). This means that all aprticipants walked the same distance in the end on average, regardless of them being tested on a treadmill or in the real building. We also found no difference between any of the conditions in their final pointing performance, `r apa_print(aov(abs_error ~ condition, sop_all[sop_all$phase==2,]))$full_result`.
