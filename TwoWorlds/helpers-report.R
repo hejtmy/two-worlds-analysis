@@ -1,7 +1,7 @@
 apa_p <- function(values){
   output <- c()
   for (value in values){
-    if(value < 0.01){ output <- c(output, "p < .001"); next}
+    if(value < 0.001){ output <- c(output, "p < .001"); next}
     output <- c(output, paste0("p = ", round(value, 3)))
   }
   return(output)

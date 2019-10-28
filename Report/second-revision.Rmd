@@ -1,0 +1,113 @@
+---
+title: "2nd Revision"
+author: "Lukáš Hejtmánek"
+date: "20 March 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#needs lme and car in the top because of the recode
+library(ggplot2)
+library(effsize)
+library(ez)
+library(Hmisc)
+library(dplyr)
+library(reshape2)
+library(broom)
+library(knitr)
+library(papaja)
+library(googlesheets)
+
+source("../Scripts/paper-prepare.R")
+source("../TwoWorlds/helpers-report.R")
+load('../settings.data')
+df_participants <- settings$participants
+df_participants <- df_participants %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+
+overview <- settings$versions
+overview <- overview %>% mutate(condition=paste0(First.phase,"-",Second.phase))
+overview <- overview %>% left_join(df_participants[, c('Code', 'sex')], by="Code")
+
+### Try running it without outliers
+walk_all[!is.na(walk_all$norm_distance) & walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+sub_walk_all[!is.na(sub_walk_all$norm_distance) & sub_walk_all$norm_distance > 3, c("distance", "min_norm_distance")] <- NA
+
+knitr::opts_chunk$set(echo=T, warning = F, message = F)
+```
+
+## Difference in experiment 1 block 1
+
+```{r, result="asis"}
+apa_print(aov(min_norm_distance ~ learning.condition, data = sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$full_result$learning_condition
+apa_print(aov(errors ~ learning.condition, data = sub_walk_all[sub_walk_all$exp_block_id == 1, ]))$full_result$learning_condition
+```
+## Difference in experiment 1 block 2
+
+```{r}
+apa_print(aov(min_norm_distance ~ learning.condition, data = sub_walk_all[sub_walk_all$exp_block_id == 2, ]))$full_result$learning_condition
+apa_print(aov(errors ~ learning.condition, data = sub_walk_all[sub_walk_all$exp_block_id == 2, ]))$full_result$learning_condition
+```
+```{r}
+only_blocks(sub_walk_all, 2) %>% group_by(learning.condition) %>% summarize(avg = mean(errors, na.rm=T))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Real', 'Treadmill VR'), 2))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Real', 'Desktop'), 2))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Treadmill VR', 'Desktop'), 2))
+```
+
+## Difference in experiment 2 block 1
+
+```{r}
+apa_print(aov(min_norm_distance ~ learning.condition, data = sub_walk_all_2[sub_walk_all_2$exp_block_id == 1, ]))$full_result$learning_condition
+apa_print(aov(errors ~ learning.condition, data = sub_walk_all_2[sub_walk_all_2$exp_block_id == 1, ]))$full_result$learning_condition
+```
+
+## Block 4 comparisons in experiment 1
+
+```{r}
+only_blocks(sub_walk_all, 4) %>% group_by(learning.condition) %>% summarize(avg = mean(errors, na.rm=T))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Real', 'Treadmill VR'), 4))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Real', 'Desktop'), 4))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Treadmill VR', 'Desktop'), 4))
+
+only_blocks(sub_walk_all, 4) %>% group_by(learning.condition) %>% summarize(avg = mean(min_norm_distance, na.rm=T))
+t_test_effect(min_norm_distance ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Real', 'Treadmill VR'), 4))
+t_test_effect(min_norm_distance ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Real', 'Desktop'), 4))
+t_test_effect(min_norm_distance ~ learning.condition, only_conditions_blocks(sub_walk_all, c('Treadmill VR', 'Desktop'), 4))
+```
+
+## Block 4 comparisons in experiment 2
+
+```{r}
+only_blocks(sub_walk_all_2, 4) %>% group_by(learning.condition) %>% summarize(avg = mean(errors, na.rm=T))
+t_test_effect(errors ~ learning.condition, only_conditions_blocks(sub_walk_all_2, c('Real', 'Treadmill VR'), 4))
+only_blocks(sub_walk_all_2, 4) %>% group_by(learning.condition) %>% summarize(avg = mean(min_norm_distance, na.rm=T))
+t_test_effect(min_norm_distance ~ learning.condition, only_conditions_blocks(sub_walk_all_2, c('Real', 'Treadmill VR'), 4))
+```
+
+## Absolute vs normalised values 
+```{r}
+b4 <- only_blocks(sub_walk_all, c(4))
+apa_print(aov(b4$distance ~ b4$learning.condition))$full_result$b4_learning_condition
+apa_print(aov(b4$min_norm_distance ~ b4$learning.condition))$full_result$b4_learning_condition
+ggplot(b4, aes(learning.condition, min_norm_distance, fill)) + 
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+b6 <- only_blocks(sub_walk_all, c(6))
+apa_print(aov(b6$distance ~ b6$learning.condition))$full_result$b6_learning_condition
+apa_print(aov(b6$min_norm_distance ~ b6$learning.condition))$full_result$b6_learning_condition
+ggplot(b6, aes(learning.condition, distance, fill)) + 
+  stat_summary(fun.data=mean_cl_normal,position=position_dodge(0.95), geom="errorbar") + 
+  stat_summary(fun.y=mean,position=position_dodge(width=0.95),geom="bar")
+```
+
+## Dropout changes
+```{r}
+finished_condition <- overview %>% filter(Second.phase != "ve") %>% select(First.phase, Second.phase, finished)
+finished_condition <- finished_condition %>% mutate(has_vr = First.phase == "vr" |  Second.phase == "vr")
+exp_1 <- finished_condition[finished_condition$Second.phase == "vr", ]
+chsqt_1 <- table(exp_1$First.phase, exp_1$finished) %>% chisq.test()
+exp_2 <- finished_condition[finished_condition$Second.phase == "real", ]
+chsqt_2 <- table(exp_2$First.phase, exp_2$finished) %>% chisq.test()
+chsqt_1
+chsqt_2
+```
