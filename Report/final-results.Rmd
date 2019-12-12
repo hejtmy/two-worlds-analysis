@@ -200,7 +200,7 @@ To investigate further, we conducted separate one-way ANOVAs to compare learning
 
 ```{r}
 point_data_1 <- sub_sop_all[sub_sop_all$phase == 1,]
-aov_point_phase1 <- aov(abs_error ~ learning.condition, data = point_data_1)
+aov_point_phase1 <- aov(abs_error ~ learning.condition, data = point_data_2)
 ```
 
 We also observed significant differences between conditions in pointing performance at the end of the first phase, `r apa_print(aov_point_phase1)$full_result$learning_condition`.  Specifically, participants in the real-world learning group  (`r m_sd_report(only_conditions(point_data_1, "Real")$abs_error)`) performed significantly better compared to both the immersive VR group (`r m_sd_report(only_conditions(point_data_1, "Treadmill VR")$abs_error)`), `r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Treadmill VR')))`, and the desktop group (`r m_sd_report(only_conditions(point_data_1, "Desktop")$abs_error)`), `r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Real', 'Desktop')))`, but no difference between VR and desktop (`r t_test_effect(abs_error ~ learning.condition, only_conditions(point_data_1, c('Treadmill VR', 'Desktop')))`). Overall, these findings suggested that participants learned the building the best as a result of real-world navigation, followed by the immersive condition, with the desktop condition showing the slowest acquisition.
