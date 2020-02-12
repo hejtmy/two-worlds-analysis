@@ -1,6 +1,3 @@
-Pipeline:
+Code to preprocess and analyze data for *How Much of What We Learn in Virtual Reality Transfers to Real-World Navigation?*  [paper](https://brill.com/view/journals/msr/aop/article-10.1163-22134808-20201445/article-10.1163-22134808-20201445.xml).
 
-1. Load unity data
-1. Load restimote data
-1. Translate Unity data to correspond to restimote
-1. Add in goals positions
+The code currently uses old and deprecated version of brainvr.R package, which was replaced by brainvr.reader (https://github.com/BrainVR/brainvr-reader). It also uses quite old version of navr(https://github.com/hejtmy/navr). As I didn't know packrat or other forms of containig package versions at the time of the coading the preprocessing parts, it might be somewhat complicated to restore the code to working version :( Luckily, these packages were used "only" to preprocess the data and plot paths. Rest of the code which deals with specific analyses in the `reports` folder shoudl be functional.
